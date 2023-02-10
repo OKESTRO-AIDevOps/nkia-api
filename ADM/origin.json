@@ -5,14 +5,14 @@
       {
         "REPO_ADDR": "https://gitlab.mipllab.com/lw/target.git",
         "REPO_ID": "seantywork",
-        "REPO_PW": "glpat-Vn85_rQmD9rvKMMF1dGB"
+        "REPO_PW": "YOUR_SECRET"
       }
     ],
     "REGS": [
       {
         "REG_ADDR": "docker.io/seantywork",
         "REG_ID": "seantywork",
-        "REG_PW": "dckr_pat_8nrxhFJOptxJE7F2hAsuaztpW0s"
+        "REG_PW": "YOUR_SECRET"
       }
     ]
   }
