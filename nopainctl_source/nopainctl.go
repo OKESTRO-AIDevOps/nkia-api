@@ -714,6 +714,37 @@ func set() {
 
 	} else if code == "secret" {
 
+		_, main_ns := getBoth()
+
+		cmd := exec.Command("kubectl", "get", "secret", "-n", main_ns, "--no-headers", "-o", "custom-columns=:metadata.name")
+
+		out, err := cmd.Output()
+
+		if err != nil {
+
+			strerr := err.Error()
+
+			fmt.Println(strerr)
+
+			return
+
+		}
+
+		strout := string(out)
+
+		if strout == "\n" || strout == "" {
+
+			fmt.Println("No Pre-existing secret")
+
+		} else {
+
+			fmt.Println("Secret already exists")
+			fmt.Println("Further action will overwrite the existing secret")
+
+		}
+
+		fmt.Println("Type the url of the registry of which you want ")
+
 	} else if code == "hpa" {
 
 	} else if code == "external-access" {
