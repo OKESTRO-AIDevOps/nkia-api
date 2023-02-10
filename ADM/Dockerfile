@@ -41,6 +41,18 @@ RUN curl -L "https://github.com/docker/compose/releases/download/${DOCKER_COMPOS
 
 
 RUN apt update
+
+
+RUN curl https://baltocdn.com/helm/signing.asc | apt-key add - 
+
+RUN apt install apt-transport-https --yes 
+
+RUN echo "deb https://baltocdn.com/helm/stable/debian/ all main" | tee /etc/apt/sources.list.d/helm-stable-debian.list 
+
+RUN apt update 
+
+RUN apt install -y helm
+
 RUN apt install -y kubectl
 RUN apt -y install python3-pip
 RUN apt -y install git
@@ -57,7 +69,7 @@ RUN mkdir /root/.kube
 COPY . /home/NPIA_server
 WORKDIR /home/NPIA_server
 
-VOLUME /var/lib/docker
+VOLUME /var/lib/docker.sock
 EXPOSE 7331
 
-CMD ["python3","NPIA_remote.py"]
+CMD ["tail","-f","/dev/null"]

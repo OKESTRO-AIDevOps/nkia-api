@@ -2,7 +2,7 @@ version: "3"
 
 services:
         npiaserver:
-                build: ./NPIA_server
+                build: ./
                 container_name: npiaserver
                 ports:
                         - "7331:7331"
