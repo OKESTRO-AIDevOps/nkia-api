@@ -53,6 +53,7 @@ def push(reg_url, reg_id, reg_pw):
 
 def deploy(reg_url, reg_id, reg_pw):
 
+    subprocess.run(['./kompose','-o','ops_src.yaml','convert'])
 
     in_file = open('ops_src.yaml', 'r')
     yaml_file = yaml.safe_load(in_file)
@@ -124,11 +125,11 @@ def kill(obj_rsc, obj_nm):
 
 
 
-def hpa(obj_rsc, obj_nm):
+def hpa(obj_rsc, obj_nm, kcfg_path):
 
 
 
-    res = subprocess.run(['kubectl','get','nodes','-o','yaml'],capture_output=True,text=True)
+    res = subprocess.run(['kubectl','--kubeconfig',kcfg_path,'get','nodes','-o','yaml'],capture_output=True,text=True)
 
 
     loaded_yaml = yaml.load_all(res.stdout,Loader=SafeLoader)
@@ -226,11 +227,11 @@ def hpa(obj_rsc, obj_nm):
 
 
 
-def qos(obj_rsc, obj_nm):
+def qos(obj_rsc, obj_nm, code, kcfg_path):
 
 
     # node spec allocatable and extracted values
-    res = subprocess.run(['kubectl','get','nodes','-o','yaml'],capture_output=True,text=True)
+    res = subprocess.run(['kubectl','--kubeconfig',kcfg_path,'get','nodes','-o','yaml'],capture_output=True,text=True)
 
 
     loaded_yaml = yaml.load_all(res.stdout,Loader=SafeLoader)
@@ -283,16 +284,27 @@ def qos(obj_rsc, obj_nm):
     
 
 
+    if code == 'highest':
 
-    cpu_limits = qos_cpu_high
+        cpu_limits = qos_cpu_middle
 
-    mem_limits = qos_mem_high
+        mem_limits = qos_mem_middle 
 
-    cpu_requests = qos_cpu_middle
+        cpu_requests = qos_cpu_middle
 
-    mem_requests = qos_mem_middle 
+        mem_requests = qos_mem_middle 
 
- 
+    elif code == 'higher':
+
+        cpu_limits = qos_cpu_high
+
+        mem_limits = qos_mem_high
+
+        cpu_requests = qos_cpu_middle
+
+        mem_requests = qos_mem_middle 
+
+
 
 
     readf = open('ops_src.yaml','r',encoding='utf8')
@@ -369,9 +381,9 @@ def qosundo(obj_rsc, obj_nm):
 
 
 
-def ingr(ns,host_nm,svc_nm):
+def ingr(ns,host_nm,svc_nm,kcfg_path):
 
-    res = subprocess.run(['kubectl','get', '-n',ns,'service',svc_nm,'-o','yaml'],capture_output=True,text=True)
+    res = subprocess.run(['kubectl',"--kubeconfig",kcfg_path,'get', '-n',ns,'service',svc_nm,'-o','yaml'],capture_output=True,text=True)
 
 
     loaded_yaml = yaml.load_all(res.stdout,Loader=SafeLoader)
@@ -398,211 +410,6 @@ def ingr(ns,host_nm,svc_nm):
     out_file = open('ingr.yaml', 'w')
     yaml.safe_dump(ingr_file, out_file)
     out_file.close()
-
-
-
-def secretCheck(ns):
-
-    ret_sign = 'NTOK'
-
-    outs = subprocess.run(['kubectl','get','-n',ns,'secret','docker-secret'])
-
-    so = str(outs.stdout,'utf-8')
-
-    se = str(outs.stderr,'utf-8')
-
-    if so != '' and se == '':
-
-        ret_sign = 'OK'
-
-
-    print(ret_sign)
-
-
-def dcFormatCheck():
-
-    endl = '*** 5. RESULT  ***\n'
-
-    fata = '*** 3. FATAL ERROR ***\n'
-
-    warn = '*** 2. POTENTIAL ERROR ***\n'
-
-    etc = '*** 4. UNHANDLED EVENT  ***\n'
-
-    info = '*** 1. MAIN INFORMATION ***\n'
-
-    flag = 'OK:REP----------\n\n'
-
-    fata_sig = 0
-
-    warn_sig = 0
-
-    etc_sig = 0
-
-    info_sig = 0
-
-    outs = subprocess.run(['./kompose','-o','ops_src.yaml','convert'],capture_output=True)
-
-    so = str(outs.stdout,'utf-8')
-
-    se = str(outs.stderr,'utf-8')
-
-
-    if so == '' and se != '' :
-
-        so = se
-
-    so_list = so.splitlines()
-
-    for elm in so_list :
-
-        elm_li = elm.split('\x1b[0m')
-
-        if 'WARN' in elm_li[0]:
-
-            warn_sig = 1
-
-            warn += '- '+ elm_li[1] + '\n'
-
-        elif 'INFO' in elm_li[0]:
-
-            info_sig = 1
-
-            info += '- ' + elm_li[1] + '\n'
-
-
-        elif 'FATA' in elm_li[0]:
-
-            fata_sig = 1
-
-            flag = 'NTOK:REP----------\n\n'
-
-            fata += '- ' + elm_li[1] + '\n'
-
-        else :
-
-            etc_sig = 1
-
-            etc += '- ' + elm_li[1] + '\n'
-
-
-    if fata_sig == 0:
-
-        fata += '- No Fatal Event to Be Reported \n'
-
-
-    if warn_sig == 0:
-
-
-        warn += '- No Potential Error Cause to Be Reported \n'
-
-    if etc_sig == 0:
-
-        etc += '- No Unhandled Event to Be Reported \n'
-
-    if info_sig == 0:
-
-        info += '- No Main Information to Be Reported \n'
-
-
-    report = flag + info + warn + fata + etc + endl
-
-
-    print(report)
-
-
-
-def projectProbe(ns):
-
-
-    project = '*** 1. Project ***\n'
-
-    component = '*** 2. Component ***\n'
-
-    cause = '*** 3. Root Cause ***\n'
-
-    probe = '*** 4. Probe ***\n'
-
-    log = '*** 5. In-Component Logs ***\n'
-
-    report = ''
-
-    outs = subprocess.run(['./probe.sh',ns],capture_output=True)
-
-    so = str(outs.stdout,'utf-8')
-
-    if so == '\n':
-
-        report = 'Nothing To Probe\n'
-
-        print(report)
-
-    else :
-
-        number = 1
-
-        so_list = so.splitlines()
-
-        rep_list = []
-
-        for el in so_list:
-
-            rep = ''
-
-            tmp_el = el.split(' ')
-
-            el = [ x for x in tmp_el if x != '']
-
-            pr_nm = el[0]
-
-            co_nm = el[1]
-
-            ca_nm = el[2]
-
-            prj_tmp = project + '- '+pr_nm +'\n'
-
-            com_tmp = component + '- '+co_nm + '\n'
-
-            cau_tmp = cause + '- ' + ca_nm + '\n'
-
-            el_out = subprocess.run(['kubectl','get','event','-n',ns,'--field-selector','involvedObject.name='+co_nm],capture_output=True)
-
-            el_so =  str(el_out.stdout,'utf-8')
-
-            el_se =  str(el_out.stderr,'utf-8')
-
-            if el_se != '':
-
-                el_so = el_se
-
-            prb_tmp = probe + el_so + '\n'
-
-            el_out = subprocess.run(['kubectl','logs','-n',ns,'--tail=100','--all-containers=true',co_nm],capture_output=True)
-
-            el_so =  str(el_out.stdout,'utf-8')
-
-            el_se =  str(el_out.stderr,'utf-8')
-
-            if el_se != '':
-
-                el_so = el_se
-
-            log_tmp = log + el_so + '\n'
-
-            rep = str(number) + '\n'
-
-            rep = rep + prj_tmp + com_tmp + cau_tmp + prb_tmp + log_tmp
-
-            rep_list.append(rep)
-
-            number += 1
-        
-        for i in range(len(rep_list)):
-
-            report += rep_list[i]
-
-        print(report)
-
 
 
 
@@ -641,7 +448,9 @@ elif flag == 'hpa':
 
     rsc_nm = sys.argv[3]
 
-    hpa(rsc,rsc_nm)
+    kcfg_path = sys.argv[4]
+
+    hpa(rsc,rsc_nm, kcfg_path)
 
 elif flag == 'qos':
 
@@ -649,7 +458,11 @@ elif flag == 'qos':
 
     rsc_nm = sys.argv[3]
 
-    qos(rsc,rsc_nm)
+    code = sys.argv[4]
+
+    kcfg_path = sys.argv[5]
+
+    qos(rsc,rsc_nm, code, kcfg_path)
 
 elif flag == 'qosundo':
 
@@ -667,21 +480,9 @@ elif flag == 'ingr':
 
     svc_nm = sys.argv[4]
 
-    ingr(ns,host_nm,svc_nm)
+    kcfg_path = sys.argv[5]
 
-elif flag == 'sc':
+    ingr(ns,host_nm,svc_nm,kcfg_path)
 
-    ns = sys.argv[2]
 
-    secretCheck(ns)
-
-elif flag == 'dcfc':
-
-    dcFormatCheck()
-
-elif flag == 'pp':
-
-    ns = sys.argv[2]
-
-    projectProbe(ns)
 
