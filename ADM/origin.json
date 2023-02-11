@@ -1,8 +1,10 @@
 {
     "KCFG_PATH":"/root/.kube/config",
     "MAIN_NS":"test-ns",
+    "AVAILABLE_NS":["tets-ns"],
     "REPOS": [
       {
+        "NS":"test-ns",
         "REPO_ADDR": "https://gitlab.mipllab.com/lw/target.git",
         "REPO_ID": "seantywork",
         "REPO_PW": "YOUR_SECRET"
@@ -10,6 +12,7 @@
     ],
     "REGS": [
       {
+        "NS":"test-ns",
         "REG_ADDR": "docker.io/seantywork",
         "REG_ID": "seantywork",
         "REG_PW": "YOUR_SECRET"
