@@ -7,6 +7,7 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"os/user"
 	"strings"
 )
 
@@ -390,13 +391,11 @@ func run() {
 
 	}
 
-	fmt.Println("Initiaing.....")
+	//cmd := exec.Command("docker-compose", "up", "-d", "--build", "-f", "./ADM/docker-compose.yaml")
 
-	cmd := exec.Command("docker-compose", "up", "-d", "--build", "-f", "./ADM/docker-compose.yaml")
+	//cmd.Run()
 
-	cmd.Run()
-
-	fmt.Println("Initiation Completed")
+	fmt.Println("Initiated")
 
 	evelp := 0
 
@@ -440,6 +439,12 @@ func run() {
 
 			lifecycle()
 
+		} else if code == "origin" {
+
+			fmt.Println("Setting cluster origin...")
+
+			origin()
+
 		} else if code == "list" {
 
 			list_all()
@@ -456,9 +461,9 @@ func run() {
 
 	}
 
-	cmd = exec.Command("docker-compose", "down", "-f", "./ADM/docker-compose.yaml")
+	//cmd = exec.Command("docker-compose", "down", "-f", "./ADM/docker-compose.yaml")
 
-	cmd.Run()
+	//cmd.Run()
 
 	fmt.Println("nopainctl session has been successfully terminated")
 
@@ -642,223 +647,7 @@ func set() {
 	fmt.Println("COMMAND : /set/<>")
 	fmt.Scanln(&code)
 
-	if code == "namespace-new" {
-
-		ns := ""
-		repo_url_in := ""
-		reg_url_in := ""
-
-		var app_origin appOrigin
-
-		fmt.Println("New namespace to create : ")
-		fmt.Scanln(&ns)
-
-		fmt.Println("Repository url to be used in this namespace : ")
-		fmt.Scanln(&repo_url_in)
-
-		fmt.Println("Registry url to be used in this namespace : ")
-		fmt.Scanln(&reg_url_in)
-
-		file_content, _ := os.ReadFile("./ADM/origin.json")
-
-		_ = json.Unmarshal(file_content, &app_origin)
-
-		repo_url, reg_url := getRecordInfo(app_origin.RECORDS, ns)
-
-		if repo_url != "N" || reg_url != "N" {
-
-			yorn := "y"
-
-			fmt.Println("Associated repository or registry information already exists")
-
-			fmt.Println("Further action will overwrite the previous information")
-
-			fmt.Println("Are you sure want to proceed? [ y | n ]")
-
-			fmt.Scanln(&yorn)
-
-			if yorn == "n" {
-
-				return
-
-			}
-
-		}
-
-		cmd := exec.Command("kubectl", "create", "namespace", ns)
-
-		out, err := cmd.Output()
-
-		if err != nil {
-
-			strerr := err.Error()
-
-			fmt.Println(strerr)
-
-			return
-		}
-
-		strout := string(out)
-
-		fmt.Println(strout)
-
-		app_origin.RECORDS = setRecordInfo(app_origin.RECORDS, ns, repo_url_in, reg_url_in)
-
-		app_origin_bytes, _ := json.Marshal(app_origin)
-
-		_ = os.WriteFile("./ADM/origin.json", app_origin_bytes, 0644)
-
-		fmt.Println("Namespace record has been successfully set")
-
-	} else if code == "namesapce-main" {
-
-		new_main_ns := ""
-
-		var app_origin appOrigin
-
-		file_content, _ := os.ReadFile("./ADM/origin.json")
-
-		_ = json.Unmarshal(file_content, &app_origin)
-
-		available_list := []string{}
-
-		for i := 0; i < len(app_origin.RECORDS); i++ {
-
-			available_list = append(available_list, app_origin.RECORDS[i].NS)
-
-		}
-
-		cmd := exec.Command("kubectl", "get", "namespace", "--no-headers", "-o", "custom-columns=:metadata.name")
-
-		out, err := cmd.Output()
-
-		if err != nil {
-
-			strerr := err.Error()
-
-			fmt.Println(strerr)
-
-			return
-
-		}
-
-		fmt.Println("Available namespaces are ----- ")
-
-		strout := string(out)
-
-		strout_list := strings.Split(strout, "\n")
-
-		str_ready_list := []string{}
-
-		for i := 0; i < len(strout_list); i++ {
-
-			a := strout_list[i]
-
-			hit := checkIfAInStrList(a, available_list)
-
-			if !hit {
-
-				continue
-
-			}
-
-			str_ready_list = append(str_ready_list, a)
-
-			fmt.Println(a)
-
-		}
-
-		fmt.Println("Choose from the above : ")
-
-		fmt.Scanln(&new_main_ns)
-
-		hit := checkIfAInStrList(new_main_ns, str_ready_list)
-
-		if !hit {
-
-			fmt.Println("Not an available namespace")
-
-			return
-
-		}
-
-		app_origin.MAIN_NS = new_main_ns
-
-		app_origin_bytes, _ := json.Marshal(app_origin)
-
-		_ = os.WriteFile("./ADM/origin.json", app_origin_bytes, 0644)
-
-		fmt.Println("Target namespace has been set")
-
-	} else if code == "origin-repo" {
-
-		var app_origin appOrigin
-
-		file_content, _ := os.ReadFile("./ADM/origin.json")
-
-		_ = json.Unmarshal(file_content, &app_origin)
-
-		repo_url := ""
-
-		repo_id := ""
-
-		repo_pw := ""
-
-		fmt.Println("Type repository url : ")
-
-		fmt.Scanln(&repo_url)
-
-		fmt.Println("Type repository id : ")
-
-		fmt.Scanln(&repo_id)
-
-		fmt.Println("Type repository password: ")
-
-		fmt.Scanln(&repo_pw)
-
-		app_origin.REPOS = setRepoInfo(app_origin.REPOS, repo_url, repo_id, repo_pw)
-
-		app_origin_bytes, _ := json.Marshal(app_origin)
-
-		_ = os.WriteFile("./ADM/origin.json", app_origin_bytes, 0644)
-
-		fmt.Println("Repository info has been set")
-
-	} else if code == "origin-reg" {
-
-		var app_origin appOrigin
-
-		file_content, _ := os.ReadFile("./ADM/origin.json")
-
-		_ = json.Unmarshal(file_content, &app_origin)
-
-		reg_url := ""
-
-		reg_id := ""
-
-		reg_pw := ""
-
-		fmt.Println("Type registry url : ")
-
-		fmt.Scanln(&reg_url)
-
-		fmt.Println("Type registry id : ")
-
-		fmt.Scanln(&reg_id)
-
-		fmt.Println("Type registry password: ")
-
-		fmt.Scanln(&reg_pw)
-
-		app_origin.REGS = setRegInfo(app_origin.REGS, reg_url, reg_id, reg_pw)
-
-		app_origin_bytes, _ := json.Marshal(app_origin)
-
-		_ = os.WriteFile("./ADM/origin.json", app_origin_bytes, 0644)
-
-		fmt.Println("Registry info has been set")
-
-	} else if code == "secret" {
+	if code == "secret" {
 
 		var app_origin appOrigin
 
@@ -1689,10 +1478,6 @@ func list_all() {
 	fmt.Println("[ /check/event ] : gets all events in a namespace")
 	fmt.Println("[ /check/resource ] : gets all resources in a namespace")
 	fmt.Println("[ /check/namespace ] : gets all namespaces available of the target cluster")
-	fmt.Println("[ /set/namespace-main ] : uses a namespace")
-	fmt.Println("[ /set/namespace-new ] : creates a namespace")
-	fmt.Println("[ /set/origin-repo ] : sets repository info")
-	fmt.Println("[ /set/origin-reg ] : sets registry info")
 	fmt.Println("[ /set/secret ] : sets cluster secret based on origin info")
 	fmt.Println("[ /set/hpa ] : deploys HorizontalPodAutoscaler of a deployment in a namespace")
 	fmt.Println("[ /set/external-access ] : deploys ingress of a service in a namespace")
@@ -1705,6 +1490,7 @@ func list_all() {
 	fmt.Println("[ /lifecycle/revert] : reverts a deployment in a namespace to a previous status")
 	fmt.Println("[ /lifecycle/history] : gets revision history of a deployment in a namespace")
 	fmt.Println("[ /lifecycle/kill ] : deletes a deployment in a namespace and a corresponding service")
+	fmt.Println("[ /origin ] : sets up origin file ")
 	fmt.Println("[ /*/back ] : steps back to the previous stage")
 	fmt.Println("[ /list, /*/list ] : lists all available commands")
 	fmt.Println("[ /trm ] : ends nopainctl session")
@@ -1728,7 +1514,403 @@ func terminate() int {
 
 }
 
+func origin() {
+
+	fmt.Println("Initiated")
+
+	evelp := 0
+
+	code := ""
+
+	fmt.Println("For help, type [ list ]")
+	fmt.Println("To terminate, type [ trm ]")
+
+	for evelp == 0 {
+
+		fmt.Println("COMMAND : /<>")
+		fmt.Scanln(&code)
+
+		if code == "set" {
+
+			fmt.Println("Setting cluster origin...")
+
+			origin_set()
+
+		} else if code == "run" {
+
+			fmt.Println("Starting nopainctl ...")
+
+			run()
+
+		} else if code == "list" {
+
+			origin_list_all()
+
+		} else if code == "trm" {
+
+			evelp = terminate()
+
+		} else {
+
+			fmt.Println("Invalid command")
+
+		}
+
+	}
+
+	//cmd = exec.Command("docker-compose", "down", "-f", "./ADM/docker-compose.yaml")
+
+	//cmd.Run()
+
+	fmt.Println("nopainctl session has been successfully terminated")
+
+	fmt.Println("Bye")
+
+}
+
+func origin_set() {
+
+	code := ""
+
+	fmt.Println("COMMAND : /set/<>")
+	fmt.Scanln(&code)
+
+	if code == "kubeconfig-path" {
+
+		kcfg_path_in := ""
+
+		var app_origin appOrigin
+
+		file_content, _ := os.ReadFile("./ADM/origin.json")
+
+		_ = json.Unmarshal(file_content, &app_origin)
+
+		fmt.Println("Kube config file path (must be absolute path including the file name) : ")
+
+		fmt.Scanln(kcfg_path_in)
+
+		root_idx := strings.Index(kcfg_path_in, "/")
+
+		if root_idx != 0 {
+
+			fmt.Println("Must be absolute path")
+
+			return
+
+		}
+
+		if _, err := os.Stat(kcfg_path_in); err != nil {
+
+			fmt.Println("Unable to find kube config file at the specified location")
+
+			return
+
+		}
+
+		app_origin.KCFG_PATH = kcfg_path_in
+
+		app_origin_bytes, _ := json.Marshal(app_origin)
+
+		_ = os.WriteFile("./ADM/origin.json", app_origin_bytes, 0644)
+
+		fmt.Println("Kube config path has been set")
+
+	} else if code == "namespace-new" {
+
+		kcfg_path, _ := getBoth()
+
+		ns := ""
+		repo_url_in := ""
+		reg_url_in := ""
+
+		var app_origin appOrigin
+
+		fmt.Println("New namespace to create : ")
+		fmt.Scanln(&ns)
+
+		fmt.Println("Repository url to be used in this namespace : ")
+		fmt.Scanln(&repo_url_in)
+
+		fmt.Println("Registry url to be used in this namespace : ")
+		fmt.Scanln(&reg_url_in)
+
+		file_content, _ := os.ReadFile("./ADM/origin.json")
+
+		_ = json.Unmarshal(file_content, &app_origin)
+
+		repo_url, reg_url := getRecordInfo(app_origin.RECORDS, ns)
+
+		if repo_url != "N" || reg_url != "N" {
+
+			yorn := "y"
+
+			fmt.Println("Associated repository or registry information already exists")
+
+			fmt.Println("Further action will overwrite the previous information")
+
+			fmt.Println("Are you sure want to proceed? [ y | n ]")
+
+			fmt.Scanln(&yorn)
+
+			if yorn == "n" {
+
+				return
+
+			}
+
+		}
+
+		cmd := exec.Command("kubectl", "--kubeconfig", kcfg_path, "create", "namespace", ns)
+
+		out, err := cmd.Output()
+
+		if err != nil {
+
+			strerr := err.Error()
+
+			fmt.Println(strerr)
+
+			return
+		}
+
+		strout := string(out)
+
+		fmt.Println(strout)
+
+		app_origin.RECORDS = setRecordInfo(app_origin.RECORDS, ns, repo_url_in, reg_url_in)
+
+		app_origin_bytes, _ := json.Marshal(app_origin)
+
+		_ = os.WriteFile("./ADM/origin.json", app_origin_bytes, 0644)
+
+		fmt.Println("Namespace record has been successfully set")
+
+	} else if code == "namespace-main" {
+
+		kcfg_path, _ := getBoth()
+
+		new_main_ns := ""
+
+		var app_origin appOrigin
+
+		file_content, _ := os.ReadFile("./ADM/origin.json")
+
+		_ = json.Unmarshal(file_content, &app_origin)
+
+		available_list := []string{}
+
+		for i := 0; i < len(app_origin.RECORDS); i++ {
+
+			available_list = append(available_list, app_origin.RECORDS[i].NS)
+
+		}
+
+		cmd := exec.Command("kubectl", "--kubeconfig", kcfg_path, "get", "namespace", "--no-headers", "-o", "custom-columns=:metadata.name")
+
+		out, err := cmd.Output()
+
+		if err != nil {
+
+			strerr := err.Error()
+
+			fmt.Println(strerr)
+
+			return
+
+		}
+
+		fmt.Println("Available namespaces are ----- ")
+
+		strout := string(out)
+
+		strout_list := strings.Split(strout, "\n")
+
+		str_ready_list := []string{}
+
+		for i := 0; i < len(strout_list); i++ {
+
+			a := strout_list[i]
+
+			hit := checkIfAInStrList(a, available_list)
+
+			if !hit {
+
+				continue
+
+			}
+
+			str_ready_list = append(str_ready_list, a)
+
+			fmt.Println(a)
+
+		}
+
+		fmt.Println("Choose from the above : ")
+
+		fmt.Scanln(&new_main_ns)
+
+		hit := checkIfAInStrList(new_main_ns, str_ready_list)
+
+		if !hit {
+
+			fmt.Println("Not an available namespace")
+
+			return
+
+		}
+
+		app_origin.MAIN_NS = new_main_ns
+
+		app_origin_bytes, _ := json.Marshal(app_origin)
+
+		_ = os.WriteFile("./ADM/origin.json", app_origin_bytes, 0644)
+
+		fmt.Println("Target namespace has been set")
+
+	} else if code == "origin-repo" {
+
+		var app_origin appOrigin
+
+		file_content, _ := os.ReadFile("./ADM/origin.json")
+
+		_ = json.Unmarshal(file_content, &app_origin)
+
+		repo_url := ""
+
+		repo_id := ""
+
+		repo_pw := ""
+
+		fmt.Println("Type repository url : ")
+
+		fmt.Scanln(&repo_url)
+
+		fmt.Println("Type repository id : ")
+
+		fmt.Scanln(&repo_id)
+
+		fmt.Println("Type repository password: ")
+
+		fmt.Scanln(&repo_pw)
+
+		app_origin.REPOS = setRepoInfo(app_origin.REPOS, repo_url, repo_id, repo_pw)
+
+		app_origin_bytes, _ := json.Marshal(app_origin)
+
+		_ = os.WriteFile("./ADM/origin.json", app_origin_bytes, 0644)
+
+		fmt.Println("Repository info has been set")
+
+	} else if code == "origin-reg" {
+
+		var app_origin appOrigin
+
+		file_content, _ := os.ReadFile("./ADM/origin.json")
+
+		_ = json.Unmarshal(file_content, &app_origin)
+
+		reg_url := ""
+
+		reg_id := ""
+
+		reg_pw := ""
+
+		fmt.Println("Type registry url : ")
+
+		fmt.Scanln(&reg_url)
+
+		fmt.Println("Type registry id : ")
+
+		fmt.Scanln(&reg_id)
+
+		fmt.Println("Type registry password: ")
+
+		fmt.Scanln(&reg_pw)
+
+		app_origin.REGS = setRegInfo(app_origin.REGS, reg_url, reg_id, reg_pw)
+
+		app_origin_bytes, _ := json.Marshal(app_origin)
+
+		_ = os.WriteFile("./ADM/origin.json", app_origin_bytes, 0644)
+
+		fmt.Println("Registry info has been set")
+
+	} else if code == "list" {
+
+		origin_list_all()
+
+	} else if code == "back" {
+
+		return
+
+	} else {
+
+		fmt.Println("Invalid command")
+	}
+
+}
+
+func origin_list_all() {
+
+	fmt.Println("*COMMAND LIST*")
+	fmt.Println("[ /set/kubeconfig-path ] : sets the kubeconfig file path, must be absolute path")
+	fmt.Println("[ /set/namespace-main ] : uses a namespace")
+	fmt.Println("[ /set/namespace-new ] : creates a namespace")
+	fmt.Println("[ /set/origin-repo ] : sets repository info")
+	fmt.Println("[ /set/origin-reg ] : sets registry info")
+	fmt.Println("[ /run ] : starts nopainctl ")
+	fmt.Println("[ /*/back ] : steps back to the previous stage")
+	fmt.Println("[ /list, /*/list ] : lists all available commands")
+	fmt.Println("[ /trm ] : ends nopainctl session")
+
+}
+
 func main() {
+
+	currentUser, err := user.Current()
+
+	if err != nil {
+
+		strerr := err.Error()
+
+		fmt.Println(strerr)
+
+		return
+
+	}
+
+	if currentUser.Username != "root" {
+
+		fmt.Println("You're not running this process as root")
+		fmt.Println("Use [ sudo ./nopainctl ] instead")
+
+		return
+
+	}
+
+	arg_len := len(os.Args)
+
+	if arg_len < 2 {
+
+		fmt.Println("No argument")
+		fmt.Println("There are only two options you can choose from")
+
+		fmt.Println("1. [ sudo ./nopainctl run ] : starts nopainctl program")
+		fmt.Println("2. [ sudo ./nopainctl origin] : sets up origin file")
+
+		return
+
+	} else if arg_len > 2 {
+
+		fmt.Println("Too many arguments")
+		fmt.Println("There are only two options you can choose from")
+
+		fmt.Println("1. [ sudo ./nopainctl run ] : starts nopainctl program")
+		fmt.Println("2. [ sudo ./nopainctl origin] : sets up origin file")
+
+		return
+
+	}
 
 	action := os.Args[1]
 
@@ -1736,13 +1918,20 @@ func main() {
 
 		run()
 
-	} else if action == "set" {
+	} else if action == "origin" {
 
-		set()
+		origin()
 
 	} else {
 
-		fmt.Println("Option Not Available")
+		fmt.Println("Wrong argument")
+		fmt.Println("There are only two options you can choose from")
+
+		fmt.Println("1. [ sudo ./nopainctl run ] : starts nopainctl program")
+		fmt.Println("2. [ sudo ./nopainctl origin] : sets up origin file")
+
+		return
+
 	}
 
 }
