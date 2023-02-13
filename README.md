@@ -52,10 +52,14 @@ mv nopainctl ../
 
 ```
 
-then
+then 
 
 ```bash
-sudo ./nopainctl
+
+cd ../
+
+sudo ./nopainctl run  #for running nopainctl main process
+sudo ./nopainctl origin  #for setting up ADM/origin.json
 
 ```
 
