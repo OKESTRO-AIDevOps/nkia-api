@@ -52,13 +52,26 @@ mv nopainctl ../
 
 ```
 
+then 
+
+```bash
+
+cd ../
+
+sudo ./nopainctl run  #for running nopainctl main process
+sudo ./nopainctl origin  #for setting up ADM/origin.json
+
+```
+
 then
 
 ```bash
-sudo ./nopainctl
+
+nopainctl> list  # list all available commands for each entry
 
 ```
 
 ## Important Logs
 
 - [2023-02-09] Created main CLI : nopainctl
+- [2023-02-13] npia_arc : deprecated former version of nopainctl in Python
