@@ -681,19 +681,7 @@ func set() {
 
 		cmd := exec.Command("kubectl", "--kubeconfig", kcfg_path, "-n", main_ns, "get", "secret", "docker-secret", "--no-headers", "-o", "custom-columns=:metadata.name")
 
-		out, err := cmd.Output()
-
-		if err != nil {
-
-			strerr := err.Error()
-
-			fmt.Println(strerr)
-
-			return
-
-		}
-
-		strout := string(out)
+		_, err := cmd.Output()
 
 		docker_server := "--docker-server="
 
@@ -707,7 +695,7 @@ func set() {
 
 		docker_password += reg_pw
 
-		if strout == "\n" || strout == "" {
+		if err != nil {
 
 			fmt.Println("No Pre-existing secret")
 
@@ -965,14 +953,14 @@ func cicd() {
 
 		}
 
-		cmd = exec.Command("docker-compose", "up", "-d")
+		cmd = exec.Command("docker-compose", "up", "-d", "--build")
 
 		bld_out, _ := cmd.StdoutPipe()
 
 		bld_err, _ := cmd.StderrPipe()
 
 		go func() {
-			merged := io.MultiReader(bld_err, bld_out)
+			merged := io.MultiReader(bld_out, bld_err)
 			scanner := bufio.NewScanner(merged)
 			for scanner.Scan() {
 				msg := scanner.Text()
@@ -995,7 +983,7 @@ func cicd() {
 		bld_err, _ = cmd.StderrPipe()
 
 		go func() {
-			merged := io.MultiReader(bld_err, bld_out)
+			merged := io.MultiReader(bld_out, bld_err)
 			scanner := bufio.NewScanner(merged)
 			for scanner.Scan() {
 				msg := scanner.Text()
@@ -1587,7 +1575,7 @@ func origin_set() {
 
 		fmt.Println("Kube config file path (must be absolute path including the file name) : ")
 
-		fmt.Scanln(kcfg_path_in)
+		fmt.Scanln(&kcfg_path_in)
 
 		root_idx := strings.Index(kcfg_path_in, "/")
 

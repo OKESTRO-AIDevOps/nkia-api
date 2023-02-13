@@ -3,11 +3,14 @@ from yaml.loader import SafeLoader
 import json
 import sys
 import subprocess
+import os
+from pathlib import Path
+
 
 flag = sys.argv[1]
 
 
-
+BASE_DIR = Path(__file__).resolve().parent
 
 
 def push(reg_url, reg_id, reg_pw):
@@ -16,7 +19,9 @@ def push(reg_url, reg_id, reg_pw):
 
     img_prefix = 'target_'
 
-    in_file = open('docker-compose.yaml', 'r')
+    docker_compose_yaml = os.path.join(BASE_DIR,'docker-compose.yaml')
+
+    in_file = open(docker_compose_yaml, 'r')
     dc_file = yaml.safe_load(in_file)
     in_file.close()
 
@@ -46,16 +51,26 @@ def push(reg_url, reg_id, reg_pw):
         subprocess.run(['docker','tag',source,dest])
 
         subprocess.run(['docker','push',dest])
+
+
+    target = os.path.join(BASE_DIR,'target')
     
-    subprocess.run(['docker-compose','down'],cwd='./target')
+    subprocess.run(['docker-compose','down'],cwd=target)
 
 
 
 def deploy(reg_url, reg_id, reg_pw):
 
-    subprocess.run(['./kompose','-o','ops_src.yaml','convert'])
+        
+    kompose = os.path.join(BASE_DIR,'kompose')
 
-    in_file = open('ops_src.yaml', 'r')
+    ops_src_yaml = os.path.join(BASE_DIR,'ops_src.yaml')
+
+    docker_compose_yaml = os.path.join(BASE_DIR,'docker-compose.yaml')
+
+    subprocess.run([kompose,'-f',docker_compose_yaml,'-o',ops_src_yaml,'convert'])
+
+    in_file = open(ops_src_yaml, 'r')
     yaml_file = yaml.safe_load(in_file)
     in_file.close()
 
@@ -83,7 +98,7 @@ def deploy(reg_url, reg_id, reg_pw):
                 container["imagePullPolicy"] = 'Always'
 
 
-    out_file = open('ops_src.yaml', 'w')
+    out_file = open(ops_src_yaml, 'w')
     yaml.safe_dump(yaml_file, out_file)
     out_file.close()
 
@@ -93,9 +108,9 @@ def deploy(reg_url, reg_id, reg_pw):
 def kill(obj_rsc, obj_nm):
 
 
+    ops_src_yaml = os.path.join(BASE_DIR,'ops_src.yaml')
 
-
-    readf = open('ops_src.yaml','r',encoding='utf8')
+    readf = open(ops_src_yaml,'r',encoding='utf8')
 
     loaded_yaml = yaml.load_all(readf,Loader=SafeLoader)
 
@@ -115,7 +130,9 @@ def kill(obj_rsc, obj_nm):
 
     readf.close()
 
-    writef = open('delete_ops_src.yaml','w')
+    delete_ops_src_yaml = os.path.join(BASE_DIR,'delete_ops_src.yaml')
+
+    writef = open(delete_ops_src_yaml,'w')
 
     yaml.safe_dump_all(kill_doc,writef)
 
@@ -127,7 +144,7 @@ def kill(obj_rsc, obj_nm):
 
 def hpa(obj_rsc, obj_nm, kcfg_path):
 
-
+    ops_src_yaml = os.path.join(BASE_DIR,'ops_src.yaml')
 
     res = subprocess.run(['kubectl','--kubeconfig',kcfg_path,'get','nodes','-o','yaml'],capture_output=True,text=True)
 
@@ -176,7 +193,7 @@ def hpa(obj_rsc, obj_nm, kcfg_path):
     metadata_name = obj_nm
 
 
-    readf = open('./ops_src.yaml','r',encoding='utf8')
+    readf = open(ops_src_yaml,'r',encoding='utf8')
 
     loaded_yaml = yaml.load_all(readf,Loader=SafeLoader)
 
@@ -196,7 +213,9 @@ def hpa(obj_rsc, obj_nm, kcfg_path):
 
     readf.close()
 
-    readf = open('./hpa-tmpl.yaml','r',encoding='utf8')
+    hpa_tmpl_yaml = os.path.join(BASE_DIR,'hpa-tmpl.yaml')
+
+    readf = open(hpa_tmpl_yaml,'r',encoding='utf8')
 
     loaded_yaml = yaml.load_all(readf,Loader=SafeLoader)
 
@@ -216,8 +235,11 @@ def hpa(obj_rsc, obj_nm, kcfg_path):
 
     doc_yaml["spec"]["maxReplicas"] = maxRepl
 
+    readf.close()
 
-    writef = open('hpa.yaml','w')
+    hpa_yaml = os.path.join(BASE_DIR,'hpa.yaml')
+
+    writef = open(hpa_yaml,'w')
 
     yaml.safe_dump(doc_yaml,writef)
 
@@ -305,9 +327,9 @@ def qos(obj_rsc, obj_nm, code, kcfg_path):
         mem_requests = qos_mem_middle 
 
 
+    ops_src_yaml = os.path.join(BASE_DIR,'ops_src.yaml')
 
-
-    readf = open('ops_src.yaml','r',encoding='utf8')
+    readf = open(ops_src_yaml,'r',encoding='utf8')
 
     loaded_yaml = yaml.load_all(readf,Loader=SafeLoader)
 
@@ -332,7 +354,9 @@ def qos(obj_rsc, obj_nm, code, kcfg_path):
 
     readf.close()
 
-    writef = open('qos.yaml','w')
+    qos_yaml = os.path.join(BASE_DIR,'qos.yaml')
+
+    writef = open(qos_yaml,'w')
 
     yaml.safe_dump(qos_doc,writef)
 
@@ -350,8 +374,9 @@ def qosundo(obj_rsc, obj_nm):
         resource_type = 'Deployment'
  
 
+    ops_src_yaml = os.path.join(BASE_DIR,'ops_src.yaml')
 
-    readf = open('ops_src.yaml','r',encoding='utf8')
+    readf = open(ops_src_yaml,'r',encoding='utf8')
 
     loaded_yaml = yaml.load_all(readf,Loader=SafeLoader)
 
@@ -371,7 +396,9 @@ def qosundo(obj_rsc, obj_nm):
 
     readf.close()
 
-    writef = open('qos.yaml','w')
+    qos_yaml = os.path.join(BASE_DIR,'qos.yaml')
+
+    writef = open(qos_yaml,'w')
 
     yaml.safe_dump(qos_doc,writef)
 
@@ -394,7 +421,9 @@ def ingr(ns,host_nm,svc_nm,kcfg_path):
 
     port_number = doc_yaml["spec"]["ports"][0]["port"]
 
-    in_file = open('ingr-tmpl.yaml', 'r')
+    ingr_tmpl_yaml = os.path.join(BASE_DIR,'ingr-tmpl.yaml')
+
+    in_file = open(ingr_tmpl_yaml, 'r')
     ingr_file = yaml.safe_load(in_file)
     in_file.close()
 
@@ -407,7 +436,9 @@ def ingr(ns,host_nm,svc_nm,kcfg_path):
 
     ingr_file["spec"]["rules"][0]["http"]["paths"][0]["backend"]["service"]["port"]["number"] = port_number
 
-    out_file = open('ingr.yaml', 'w')
+    ingr_yaml = os.path.join(BASE_DIR,'ingr.yaml')
+
+    out_file = open(ingr_yaml, 'w')
     yaml.safe_dump(ingr_file, out_file)
     out_file.close()
 
