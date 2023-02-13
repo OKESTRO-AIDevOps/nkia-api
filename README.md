@@ -63,7 +63,13 @@ sudo ./nopainctl origin  #for setting up ADM/origin.json
 
 ```
 
+then
 
+```bash
+
+nopainctl> list  # list all available commands for each entry
+
+```
 
 ## Important Logs
 
