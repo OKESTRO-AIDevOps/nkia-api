@@ -1,3 +1,3 @@
-module lineworld.co.kr/nopainctl
+module nopainctl
 
-go 1.19
+go 1.20
