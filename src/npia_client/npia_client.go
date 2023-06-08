@@ -8,8 +8,17 @@ import (
 	"os"
 	"os/exec"
 	"os/user"
+	"path/filepath"
 	"strings"
 )
+
+var LIB_ROOT, _ = filepath.Abs("../../lib")
+
+var LIB_BIN = filepath.Join(LIB_ROOT, "bin")
+
+var LIB_SCRIPTS = filepath.Join(LIB_ROOT, "scripts")
+
+var LIB_TEMPLATE = filepath.Join(LIB_ROOT, "template")
 
 type appOrigin struct {
 	KCFG_PATH string
