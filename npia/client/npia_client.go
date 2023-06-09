@@ -6,6 +6,6 @@ import (
 
 func main() {
 
-	fmt.Println("agent")
+	fmt.Println("client")
 
 }

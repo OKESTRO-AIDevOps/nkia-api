@@ -5,344 +5,18 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	admor "npia/pkg/adminorigin"
+	. "npia/pkg/libinterface"
+	pkgutils "npia/pkg/utils"
 	"os"
 	"os/exec"
 	"os/user"
-	"path/filepath"
 	"strings"
 )
 
-var LIB_ROOT, _ = filepath.Abs("../../lib")
-
-var LIB_BIN = filepath.Join(LIB_ROOT, "bin")
-
-var LIB_SCRIPTS = filepath.Join(LIB_ROOT, "scripts")
-
-var LIB_TEMPLATE = filepath.Join(LIB_ROOT, "template")
-
-type appOrigin struct {
-	KCFG_PATH string
-	MAIN_NS   string
-	RECORDS   []recordInfo
-	REPOS     []repoInfo
-	REGS      []regInfo
-}
-
-type recordInfo struct {
-	NS        string
-	REPO_ADDR string
-	REG_ADDR  string
-}
-
-type repoInfo struct {
-	REPO_ADDR string
-	REPO_ID   string
-	REPO_PW   string
-}
-
-type regInfo struct {
-	REG_ADDR string
-	REG_ID   string
-	REG_PW   string
-}
-
-func getRecordInfo(records []recordInfo, ns string) (string, string) {
-
-	arr_leng := len(records)
-
-	var repo_addr string = "N"
-
-	var reg_addr string = "N"
-
-	for i := 0; i < arr_leng; i++ {
-
-		if records[i].NS == ns {
-
-			repo_addr = records[i].REPO_ADDR
-
-			reg_addr = records[i].REG_ADDR
-
-			break
-
-		}
-
-	}
-
-	return repo_addr, reg_addr
-
-}
-
-func setRecordInfo(records []recordInfo, ns string, repo_addr string, reg_addr string) []recordInfo {
-
-	exists := 0
-
-	arr_leng := len(records)
-
-	var new_record_info recordInfo
-
-	for i := 0; i < arr_leng; i++ {
-
-		if records[i].NS == ns {
-
-			exists = 1
-
-			records[i].REPO_ADDR = repo_addr
-
-			records[i].REG_ADDR = reg_addr
-
-			break
-
-		}
-	}
-
-	if exists != 1 {
-
-		new_record_info.NS = ns
-
-		new_record_info.REPO_ADDR = repo_addr
-
-		new_record_info.REG_ADDR = reg_addr
-
-		records = append(records, new_record_info)
-
-	}
-
-	return records
-
-}
-
-func getRepoInfo(repos []repoInfo, addr string) (string, string) {
-
-	arr_leng := len(repos)
-
-	var repo_id string = "N"
-
-	var repo_pw string = "N"
-
-	for i := 0; i < arr_leng; i++ {
-
-		if repos[i].REPO_ADDR == addr {
-
-			repo_id = repos[i].REPO_ID
-
-			repo_pw = repos[i].REPO_PW
-
-			break
-
-		}
-	}
-
-	return repo_id, repo_pw
-
-}
-
-func setRepoInfo(repos []repoInfo, addr string, id string, pw string) []repoInfo {
-
-	exists := 0
-
-	arr_leng := len(repos)
-
-	repo_id := id
-
-	repo_pw := pw
-
-	var new_repo_info repoInfo
-
-	for i := 0; i < arr_leng; i++ {
-
-		if repos[i].REPO_ADDR == addr {
-
-			exists = 1
-
-			repos[i].REPO_ID = repo_id
-
-			repos[i].REPO_PW = repo_pw
-
-			break
-
-		}
-	}
-
-	if exists != 1 {
-
-		new_repo_info.REPO_ADDR = addr
-
-		new_repo_info.REPO_ID = repo_id
-
-		new_repo_info.REPO_PW = repo_pw
-
-		repos = append(repos, new_repo_info)
-
-	}
-
-	return repos
-
-}
-
-func getRegInfo(regs []regInfo, addr string) (string, string) {
-
-	arr_leng := len(regs)
-
-	var reg_id string = "N"
-
-	var reg_pw string = "N"
-
-	for i := 0; i < arr_leng; i++ {
-
-		if regs[i].REG_ADDR == addr {
-
-			reg_id = regs[i].REG_ID
-
-			reg_pw = regs[i].REG_PW
-
-			break
-
-		}
-	}
-
-	return reg_id, reg_pw
-
-}
-
-func setRegInfo(regs []regInfo, addr string, id string, pw string) []regInfo {
-
-	exists := 0
-
-	arr_leng := len(regs)
-
-	reg_id := id
-
-	reg_pw := pw
-
-	var new_reg_info regInfo
-
-	for i := 0; i < arr_leng; i++ {
-
-		if regs[i].REG_ADDR == addr {
-
-			exists = 1
-
-			regs[i].REG_ID = reg_id
-
-			regs[i].REG_PW = reg_pw
-
-			break
-
-		}
-	}
-
-	if exists != 1 {
-
-		new_reg_info.REG_ADDR = addr
-
-		new_reg_info.REG_ID = reg_id
-
-		new_reg_info.REG_PW = reg_pw
-
-		regs = append(regs, new_reg_info)
-
-	}
-
-	return regs
-}
-
-func checkAppOrigin() string {
-
-	var app_origin appOrigin
-
-	file_content, err := os.ReadFile("./ADM/origin.json")
-
-	if err != nil {
-
-		return "Origin file is corrupted"
-
-	}
-
-	err = json.Unmarshal(file_content, &app_origin)
-
-	if err != nil {
-
-		return "Origin file is corrputed"
-	}
-
-	if app_origin.KCFG_PATH == "" {
-
-		return "Origin path is not set"
-
-	}
-
-	kcfg := app_origin.KCFG_PATH
-
-	cmd := exec.Command("kubectl", "--kubeconfig", kcfg, "get", "nodes")
-
-	_, err = cmd.Output()
-
-	if err != nil {
-
-		strerr := err.Error()
-
-		return strerr
-
-	}
-
-	if len(app_origin.RECORDS) == 0 {
-
-		return "WARNRC"
-
-	}
-
-	if len(app_origin.REGS) == 0 || len(app_origin.REPOS) == 0 {
-
-		return "WARNRE"
-
-	}
-
-	if app_origin.MAIN_NS == "" {
-
-		return "WARNNS"
-	}
-
-	return "OKAY"
-}
-
-func getBoth() (string, string) {
-
-	var app_origin appOrigin
-
-	file_content, _ := os.ReadFile("./ADM/origin.json")
-
-	_ = json.Unmarshal(file_content, &app_origin)
-
-	kcfg_path := app_origin.KCFG_PATH
-
-	main_ns := app_origin.MAIN_NS
-
-	return kcfg_path, main_ns
-
-}
-
-func checkIfAInStrList(a string, str_list []string) bool {
-
-	hit := false
-
-	for i := 0; i < len(str_list); i++ {
-
-		if str_list[i] == a {
-
-			hit = true
-
-			return hit
-		}
-
-	}
-
-	return hit
-
-}
-
 func run() {
 
-	check_app_origin := checkAppOrigin()
+	check_app_origin := admor.CheckAppOrigin()
 
 	if check_app_origin == "WARNRC" {
 
@@ -489,7 +163,7 @@ func check() {
 
 	if code == "pod" {
 
-		kcfg_path, main_ns := getBoth()
+		kcfg_path, main_ns := admor.GetKubeConfigAndTargetNameSpace()
 
 		cmd := exec.Command("kubectl", "--kubeconfig", kcfg_path, "-n", main_ns, "get", "pods")
 
@@ -510,7 +184,7 @@ func check() {
 
 	} else if code == "net" {
 
-		kcfg_path, main_ns := getBoth()
+		kcfg_path, main_ns := admor.GetKubeConfigAndTargetNameSpace()
 
 		cmd := exec.Command("kubectl", "--kubeconfig", kcfg_path, "-n", main_ns, "get", "services")
 
@@ -531,7 +205,7 @@ func check() {
 
 	} else if code == "dpl" {
 
-		kcfg_path, main_ns := getBoth()
+		kcfg_path, main_ns := admor.GetKubeConfigAndTargetNameSpace()
 
 		cmd := exec.Command("kubectl", "--kubeconfig", kcfg_path, "-n", main_ns, "get", "deployments")
 
@@ -552,7 +226,7 @@ func check() {
 
 	} else if code == "node" {
 
-		kcfg_path, _ := getBoth()
+		kcfg_path, _ := admor.GetKubeConfigAndTargetNameSpace()
 
 		cmd := exec.Command("kubectl", "--kubeconfig", kcfg_path, "get", "nodes")
 
@@ -573,7 +247,7 @@ func check() {
 
 	} else if code == "event" {
 
-		kcfg_path, main_ns := getBoth()
+		kcfg_path, main_ns := admor.GetKubeConfigAndTargetNameSpace()
 
 		cmd := exec.Command("kubectl", "--kubeconfig", kcfg_path, "-n", main_ns, "get", "events")
 
@@ -594,7 +268,7 @@ func check() {
 
 	} else if code == "resource" {
 
-		kcfg_path, main_ns := getBoth()
+		kcfg_path, main_ns := admor.GetKubeConfigAndTargetNameSpace()
 
 		cmd := exec.Command("kubectl", "--kubeconfig", kcfg_path, "-n", main_ns, "get", "all")
 
@@ -615,7 +289,7 @@ func check() {
 
 	} else if code == "namespace" {
 
-		kcfg_path, _ := getBoth()
+		kcfg_path, _ := admor.GetKubeConfigAndTargetNameSpace()
 
 		cmd := exec.Command("kubectl", "--kubeconfig", kcfg_path, "get", "namespaces")
 
@@ -658,15 +332,17 @@ func set() {
 
 	if code == "secret" {
 
-		var app_origin appOrigin
+		var app_origin admor.AppOrigin
 
-		file_content, _ := os.ReadFile("./ADM/origin.json")
+		adm_origin_json := LIBIF.GetLibComponentPath(".etc", "ADM_origin.json")
+
+		file_content, _ := os.ReadFile(adm_origin_json)
 
 		_ = json.Unmarshal(file_content, &app_origin)
 
-		kcfg_path, main_ns := getBoth()
+		kcfg_path, main_ns := admor.GetKubeConfigAndTargetNameSpace()
 
-		_, reg_url := getRecordInfo(app_origin.RECORDS, main_ns)
+		_, reg_url := admor.GetRecordInfo(app_origin.RECORDS, main_ns)
 
 		if reg_url == "N" {
 
@@ -677,7 +353,7 @@ func set() {
 
 		}
 
-		reg_id, reg_pw := getRegInfo(app_origin.REGS, reg_url)
+		reg_id, reg_pw := admor.GetRegInfo(app_origin.REGS, reg_url)
 
 		if reg_id == "N" || reg_pw == "N" {
 
@@ -747,7 +423,9 @@ func set() {
 
 	} else if code == "hpa" {
 
-		if _, err := os.Stat("./ADM/ops_src.yaml"); err != nil {
+		ops_src_yaml := LIBIF.GetLibComponentPath(".usr", "ops_src.yaml")
+
+		if _, err := os.Stat(ops_src_yaml); err != nil {
 
 			str_stdout := "Failed Because Ops Resource Doesn't Exist"
 
@@ -756,7 +434,7 @@ func set() {
 			return
 		}
 
-		kcfg_path, main_ns := getBoth()
+		kcfg_path, main_ns := admor.GetKubeConfigAndTargetNameSpace()
 
 		rsc := "deployment"
 
@@ -765,11 +443,15 @@ func set() {
 		fmt.Println("Deployment to autoscale : ")
 		fmt.Scanln(&rsc_nm)
 
-		cmd := exec.Command("python3", "./ADM/yaml_handle.py", "hpa", rsc, rsc_nm, kcfg_path)
+		yaml_handle_py := LIBIF.GetLibComponentPath("scripts", "yaml_handle.py")
+
+		hpa_yaml := LIBIF.GetLibComponentPath(".usr", "hpa.yaml")
+
+		cmd := exec.Command("python3", yaml_handle_py, "hpa", rsc, rsc_nm, kcfg_path)
 
 		cmd.Run()
 
-		cmd = exec.Command("kubectl", "--kubeconfig", kcfg_path, "-n", main_ns, "apply", "-f", "./ADM/hpa.yaml")
+		cmd = exec.Command("kubectl", "--kubeconfig", kcfg_path, "-n", main_ns, "apply", "-f", hpa_yaml)
 
 		out, err := cmd.Output()
 
@@ -789,7 +471,7 @@ func set() {
 
 	} else if code == "external-access" {
 
-		kcfg_path, main_ns := getBoth()
+		kcfg_path, main_ns := admor.GetKubeConfigAndTargetNameSpace()
 
 		host_nm := ""
 
@@ -800,11 +482,15 @@ func set() {
 		fmt.Println("Upstream network name you want to connect to : ")
 		fmt.Scanln(svc_nm)
 
-		cmd := exec.Command("python3", "./ADM/yaml_handle.py", "ingr", main_ns, host_nm, svc_nm, kcfg_path)
+		yaml_handle_py := LIBIF.GetLibComponentPath("scripts", "yaml_handle.py")
+
+		ingress_yaml := LIBIF.GetLibComponentPath(".usr", "ingress.yaml")
+
+		cmd := exec.Command("python3", yaml_handle_py, "ingr", main_ns, host_nm, svc_nm, kcfg_path)
 
 		cmd.Run()
 
-		cmd = exec.Command("kubectl", "--kubeconfig", kcfg_path, "-n", main_ns, "apply", "-f", "./ADM/ingr.yaml")
+		cmd = exec.Command("kubectl", "--kubeconfig", kcfg_path, "-n", main_ns, "apply", "-f", ingress_yaml)
 
 		out, err := cmd.Output()
 
@@ -846,15 +532,15 @@ func cicd() {
 
 	if code == "build" {
 
-		_, main_ns := getBoth()
+		_, main_ns := admor.GetKubeConfigAndTargetNameSpace()
 
-		var app_origin appOrigin
+		var app_origin admor.AppOrigin
 
 		file_content, _ := os.ReadFile("./ADM/origin.json")
 
 		_ = json.Unmarshal(file_content, &app_origin)
 
-		repo_url, reg_url := getRecordInfo(app_origin.RECORDS, main_ns)
+		repo_url, reg_url := admor.GetRecordInfo(app_origin.RECORDS, main_ns)
 
 		if repo_url == "N" || reg_url == "N" {
 
@@ -864,9 +550,9 @@ func cicd() {
 
 		}
 
-		repo_id, repo_pw := getRepoInfo(app_origin.REPOS, repo_url)
+		repo_id, repo_pw := admor.GetRepoInfo(app_origin.REPOS, repo_url)
 
-		reg_id, reg_pw := getRegInfo(app_origin.REGS, reg_url)
+		reg_id, reg_pw := admor.GetRegInfo(app_origin.REGS, reg_url)
 
 		if repo_id == "N" || repo_pw == "N" {
 
@@ -1008,15 +694,15 @@ func cicd() {
 
 	} else if code == "deploy" {
 
-		kcfg_path, main_ns := getBoth()
+		kcfg_path, main_ns := admor.GetKubeConfigAndTargetNameSpace()
 
-		var app_origin appOrigin
+		var app_origin admor.AppOrigin
 
 		file_content, _ := os.ReadFile("./ADM/origin.json")
 
 		_ = json.Unmarshal(file_content, &app_origin)
 
-		repo_url, reg_url := getRecordInfo(app_origin.RECORDS, main_ns)
+		repo_url, reg_url := admor.GetRecordInfo(app_origin.RECORDS, main_ns)
 
 		if repo_url == "N" || reg_url == "N" {
 
@@ -1026,9 +712,9 @@ func cicd() {
 
 		}
 
-		repo_id, repo_pw := getRepoInfo(app_origin.REPOS, repo_url)
+		repo_id, repo_pw := admor.GetRepoInfo(app_origin.REPOS, repo_url)
 
-		reg_id, reg_pw := getRegInfo(app_origin.REGS, reg_url)
+		reg_id, reg_pw := admor.GetRegInfo(app_origin.REGS, reg_url)
 
 		if repo_id == "N" || repo_pw == "N" {
 
@@ -1185,7 +871,7 @@ func qos() {
 			return
 		}
 
-		kcfg_path, main_ns := getBoth()
+		kcfg_path, main_ns := admor.GetKubeConfigAndTargetNameSpace()
 
 		rsc := "deployment"
 
@@ -1229,7 +915,7 @@ func qos() {
 			return
 		}
 
-		kcfg_path, main_ns := getBoth()
+		kcfg_path, main_ns := admor.GetKubeConfigAndTargetNameSpace()
 
 		rsc := "deployment"
 
@@ -1273,7 +959,7 @@ func qos() {
 			return
 		}
 
-		kcfg_path, main_ns := getBoth()
+		kcfg_path, main_ns := admor.GetKubeConfigAndTargetNameSpace()
 
 		rsc := "deployment"
 
@@ -1328,7 +1014,7 @@ func lifecycle() {
 
 	if code == "update" {
 
-		kcfg_path, main_ns := getBoth()
+		kcfg_path, main_ns := admor.GetKubeConfigAndTargetNameSpace()
 
 		rsc_rscnm := ""
 
@@ -1356,7 +1042,7 @@ func lifecycle() {
 
 	} else if code == "revert" {
 
-		kcfg_path, main_ns := getBoth()
+		kcfg_path, main_ns := admor.GetKubeConfigAndTargetNameSpace()
 
 		rsc_rscnm := ""
 
@@ -1384,7 +1070,7 @@ func lifecycle() {
 
 	} else if code == "history" {
 
-		kcfg_path, main_ns := getBoth()
+		kcfg_path, main_ns := admor.GetKubeConfigAndTargetNameSpace()
 
 		rsc_rscnm := ""
 
@@ -1421,7 +1107,7 @@ func lifecycle() {
 			return
 		}
 
-		kcfg_path, main_ns := getBoth()
+		kcfg_path, main_ns := admor.GetKubeConfigAndTargetNameSpace()
 
 		rsc := "deployment"
 
@@ -1576,7 +1262,7 @@ func origin_set() {
 
 		kcfg_path_in := ""
 
-		var app_origin appOrigin
+		var app_origin admor.AppOrigin
 
 		file_content, _ := os.ReadFile("./ADM/origin.json")
 
@@ -1614,13 +1300,13 @@ func origin_set() {
 
 	} else if code == "namespace-new" {
 
-		kcfg_path, _ := getBoth()
+		kcfg_path, _ := admor.GetKubeConfigAndTargetNameSpace()
 
 		ns := ""
 		repo_url_in := ""
 		reg_url_in := ""
 
-		var app_origin appOrigin
+		var app_origin admor.AppOrigin
 
 		fmt.Println("New namespace to create : ")
 		fmt.Scanln(&ns)
@@ -1635,7 +1321,7 @@ func origin_set() {
 
 		_ = json.Unmarshal(file_content, &app_origin)
 
-		repo_url, reg_url := getRecordInfo(app_origin.RECORDS, ns)
+		repo_url, reg_url := admor.GetRecordInfo(app_origin.RECORDS, ns)
 
 		if repo_url != "N" || reg_url != "N" {
 
@@ -1674,7 +1360,7 @@ func origin_set() {
 
 		fmt.Println(strout)
 
-		app_origin.RECORDS = setRecordInfo(app_origin.RECORDS, ns, repo_url_in, reg_url_in)
+		app_origin.RECORDS = admor.SetRecordInfo(app_origin.RECORDS, ns, repo_url_in, reg_url_in)
 
 		app_origin_bytes, _ := json.Marshal(app_origin)
 
@@ -1684,11 +1370,11 @@ func origin_set() {
 
 	} else if code == "namespace-main" {
 
-		kcfg_path, _ := getBoth()
+		kcfg_path, _ := admor.GetKubeConfigAndTargetNameSpace()
 
 		new_main_ns := ""
 
-		var app_origin appOrigin
+		var app_origin admor.AppOrigin
 
 		file_content, _ := os.ReadFile("./ADM/origin.json")
 
@@ -1728,7 +1414,7 @@ func origin_set() {
 
 			a := strout_list[i]
 
-			hit := checkIfAInStrList(a, available_list)
+			hit := pkgutils.CheckIfEleInStrList(a, available_list)
 
 			if !hit {
 
@@ -1746,7 +1432,7 @@ func origin_set() {
 
 		fmt.Scanln(&new_main_ns)
 
-		hit := checkIfAInStrList(new_main_ns, str_ready_list)
+		hit := pkgutils.CheckIfEleInStrList(new_main_ns, str_ready_list)
 
 		if !hit {
 
@@ -1766,7 +1452,7 @@ func origin_set() {
 
 	} else if code == "origin-repo" {
 
-		var app_origin appOrigin
+		var app_origin admor.AppOrigin
 
 		file_content, _ := os.ReadFile("./ADM/origin.json")
 
@@ -1790,7 +1476,7 @@ func origin_set() {
 
 		fmt.Scanln(&repo_pw)
 
-		app_origin.REPOS = setRepoInfo(app_origin.REPOS, repo_url, repo_id, repo_pw)
+		app_origin.REPOS = admor.SetRepoInfo(app_origin.REPOS, repo_url, repo_id, repo_pw)
 
 		app_origin_bytes, _ := json.Marshal(app_origin)
 
@@ -1800,7 +1486,7 @@ func origin_set() {
 
 	} else if code == "origin-reg" {
 
-		var app_origin appOrigin
+		var app_origin admor.AppOrigin
 
 		file_content, _ := os.ReadFile("./ADM/origin.json")
 
@@ -1824,7 +1510,7 @@ func origin_set() {
 
 		fmt.Scanln(&reg_pw)
 
-		app_origin.REGS = setRegInfo(app_origin.REGS, reg_url, reg_id, reg_pw)
+		app_origin.REGS = admor.SetRegInfo(app_origin.REGS, reg_url, reg_id, reg_pw)
 
 		app_origin_bytes, _ := json.Marshal(app_origin)
 
