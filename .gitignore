@@ -1,2 +1,3 @@
-ADM/origin.json
-nopainctl
+lib/.usr/*
+lib/.etc/*
+test/data/*

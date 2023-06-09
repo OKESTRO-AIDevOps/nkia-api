@@ -1,0 +1,3 @@
+## Documentation
+
+[Logs](logs.md)

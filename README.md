@@ -1,77 +1,14 @@
-# CloudAgentCLI-NPIA
+# NPIA (CloudAgentCLI)
+
+## Officially: eNabling Product Integration Architecture
+
+## Unofficially: No Pain In the A**
 
 
-## How to run
+## What does it do?
 
-You need
+It runs on Kubernetes master node, making it easier to interact with the cluster
 
-- go 1.19+
+using command line interface. However, it doesn't just stop there. I'm working 
 
-- ADM/origin.json
-
-### ADM/origin.json 
-
-
-```json
-  {
-    "KCFG_PATH":"",
-    "MAIN_NS":"",
-    "RECORDS":[
-      {
-        "NS":"",
-        "REPO_ADDR":"",
-        "REG_ADDR":""
-      }
-    ],
-    "REPOS": [
-      {
-        "REPO_ADDR": "",
-        "REPO_ID": "",
-        "REPO_PW": ""
-      }
-    ],
-    "REGS": [
-      {
-        "REG_ADDR": "",
-        "REG_ID": "",
-        "REG_PW": ""
-      }
-    ]
-  }
-
-```
-
-### Build
-
-At nopainctl_source directory, run below
-
-```bash
-go build
-
-mv nopainctl ../
-
-```
-
-then 
-
-```bash
-
-cd ../
-
-sudo ./nopainctl run  #for running nopainctl main process
-sudo ./nopainctl origin  #for setting up ADM/origin.json
-
-```
-
-then
-
-```bash
-
-nopainctl> list  # list all available commands for each entry
-
-```
-
-## Important Logs
-
-- [2023-02-09] Created main CLI : nopainctl
-- [2023-02-13] npia_arc : deprecated former version of nopainctl in Python
+hard to offer API for remote cluster management.
