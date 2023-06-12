@@ -18,7 +18,3 @@ func CheckIfEleInStrList(ele string, str_list []string) bool {
 	return hit
 
 }
-
-func ConvertAllToStr() {
-
-}

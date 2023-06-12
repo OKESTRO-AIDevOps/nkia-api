@@ -8,13 +8,16 @@ func main() {
 
 	fmt.Println("---*** Test Run ***---")
 
-	//1PathTest()
+	//path/PathTest()
 
-	//2ReadDirectory()
+	//ls/ReadDirectory()
 
-	//3adm_json := LIBIF.GetIfaceComponentPath(".etc", "ADM_origin.json")
+	//libinterface/adm_json := LIBIF.GetIfaceComponentPath(".etc", "ADM_origin.json")
 
-	//3fmt.Println(adm_json)
+	//libinterface/fmt.Println(adm_json)
 
-	StringifyAllJSONFields()
+	//parsejson/ParseJSON("./data/cpu_usage.json")
+
+	ParseJSONGabs("./data/cpu_usage.json")
+
 }
