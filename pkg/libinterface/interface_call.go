@@ -2,6 +2,7 @@ package libinterface
 
 import (
 	"path/filepath"
+	//. "github.com/goccy/go-yaml"
 )
 
 func (libif LibIface) GetLibComponentPath(iface_name string, component string) string {
