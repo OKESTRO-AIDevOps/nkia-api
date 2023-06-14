@@ -4,17 +4,34 @@ import (
 	"fmt"
 )
 
+var TEST_LOCAL = true
+
+var TEST_PKG = false
+
 func main() {
 
-	fmt.Println("---*** Test Run ***---")
+	if err := Test_local(); err != nil {
 
-	//1PathTest()
+		_ = fmt.Errorf("test failure: local: %s", err.Error())
 
-	//2ReadDirectory()
+		return
 
-	//3adm_json := LIBIF.GetIfaceComponentPath(".etc", "ADM_origin.json")
+	} else {
 
-	//3fmt.Println(adm_json)
+		fmt.Println("test success: local")
 
-	StringifyAllJSONFields()
+	}
+
+	if err := Test_pkg(); err != nil {
+
+		_ = fmt.Errorf("test failure: pkg: %s", err.Error())
+
+		return
+
+	} else {
+
+		fmt.Println("test success: pkg")
+
+	}
+
 }

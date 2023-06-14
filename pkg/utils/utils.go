@@ -1,5 +1,14 @@
 package utils
 
+import (
+	"encoding/json"
+	"fmt"
+	"npia/pkg/promquery"
+	"os"
+
+	agph "github.com/guptarohit/asciigraph"
+)
+
 func CheckIfEleInStrList(ele string, str_list []string) bool {
 
 	hit := false
@@ -19,6 +28,16 @@ func CheckIfEleInStrList(ele string, str_list []string) bool {
 
 }
 
-func ConvertAllToStr() {
+func RenderASCIIGraph(render_target string) {
+
+	var render_data promquery.PQOutputFormat
+
+	file_byte, _ := os.ReadFile(render_target)
+
+	json.Unmarshal(file_byte, &render_data)
+
+	out := agph.Plot(render_data.Values)
+
+	fmt.Println(out)
 
 }
