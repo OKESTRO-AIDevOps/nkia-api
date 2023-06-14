@@ -2,16 +2,17 @@ package kuberead
 
 import (
 	"fmt"
-	admor "npia/pkg/adminorigin"
 
-	api "npia/pkg/api"
+	admor "github.io/seantywork/npia/pkg/adminorigin"
+
+	ioman "github.io/seantywork/npia/pkg/iomanager"
 
 	"os/exec"
 )
 
-func ReadPod() (api.API_OUTPUT, error) {
+func ReadPod() (ioman.API_OUTPUT, error) {
 
-	var api_o api.API_OUTPUT
+	var api_o ioman.API_OUTPUT
 
 	kcfg_path, main_ns := admor.GetKubeConfigAndTargetNameSpace()
 
@@ -32,9 +33,9 @@ func ReadPod() (api.API_OUTPUT, error) {
 
 }
 
-func ReadService() (api.API_OUTPUT, error) {
+func ReadService() (ioman.API_OUTPUT, error) {
 
-	var api_o api.API_OUTPUT
+	var api_o ioman.API_OUTPUT
 
 	kcfg_path, main_ns := admor.GetKubeConfigAndTargetNameSpace()
 
@@ -57,9 +58,9 @@ func ReadService() (api.API_OUTPUT, error) {
 
 }
 
-func ReadDeployment() (api.API_OUTPUT, error) {
+func ReadDeployment() (ioman.API_OUTPUT, error) {
 
-	var api_o api.API_OUTPUT
+	var api_o ioman.API_OUTPUT
 
 	kcfg_path, main_ns := admor.GetKubeConfigAndTargetNameSpace()
 
@@ -80,9 +81,9 @@ func ReadDeployment() (api.API_OUTPUT, error) {
 
 }
 
-func ReadNode() (api.API_OUTPUT, error) {
+func ReadNode() (ioman.API_OUTPUT, error) {
 
-	var api_o api.API_OUTPUT
+	var api_o ioman.API_OUTPUT
 
 	kcfg_path, _ := admor.GetKubeConfigAndTargetNameSpace()
 
@@ -103,9 +104,9 @@ func ReadNode() (api.API_OUTPUT, error) {
 
 }
 
-func ReadEvent() (api.API_OUTPUT, error) {
+func ReadEvent() (ioman.API_OUTPUT, error) {
 
-	var api_o api.API_OUTPUT
+	var api_o ioman.API_OUTPUT
 
 	kcfg_path, main_ns := admor.GetKubeConfigAndTargetNameSpace()
 
@@ -126,9 +127,9 @@ func ReadEvent() (api.API_OUTPUT, error) {
 
 }
 
-func ReadResource() (api.API_OUTPUT, error) {
+func ReadResource() (ioman.API_OUTPUT, error) {
 
-	var api_o api.API_OUTPUT
+	var api_o ioman.API_OUTPUT
 
 	kcfg_path, main_ns := admor.GetKubeConfigAndTargetNameSpace()
 
@@ -149,9 +150,9 @@ func ReadResource() (api.API_OUTPUT, error) {
 
 }
 
-func ReadNamespace() (api.API_OUTPUT, error) {
+func ReadNamespace() (ioman.API_OUTPUT, error) {
 
-	var api_o api.API_OUTPUT
+	var api_o ioman.API_OUTPUT
 
 	kcfg_path, _ := admor.GetKubeConfigAndTargetNameSpace()
 

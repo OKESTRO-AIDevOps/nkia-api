@@ -2,17 +2,18 @@ package kubewrite
 
 import (
 	"fmt"
-	admor "npia/pkg/adminorigin"
 	"os"
 
-	api "npia/pkg/api"
+	admor "github.io/seantywork/npia/pkg/adminorigin"
+
+	ioman "github.io/seantywork/npia/pkg/iomanager"
 
 	"os/exec"
 )
 
-func ReadPod() (api.API_OUTPUT, error) {
+func ReadPod() (ioman.API_OUTPUT, error) {
 
-	var api_o api.API_OUTPUT
+	var api_o ioman.API_OUTPUT
 
 	kcfg_path, main_ns := admor.GetKubeConfigAndTargetNameSpace()
 
