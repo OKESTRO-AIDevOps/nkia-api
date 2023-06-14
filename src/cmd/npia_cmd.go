@@ -8,9 +8,9 @@ import (
 	"os/user"
 	"strings"
 
-	admor "github.io/seantywork/npia/pkg/adminorigin"
-	kuberead "github.io/seantywork/npia/pkg/kuberead"
-	pkgutils "github.io/seantywork/npia/pkg/utils"
+	admor "github.com/seantywork/x0f_npia/pkg/adminorigin"
+	kuberead "github.com/seantywork/x0f_npia/pkg/kuberead"
+	pkgutils "github.com/seantywork/x0f_npia/pkg/utils"
 
 	"github.com/fatih/color"
 )

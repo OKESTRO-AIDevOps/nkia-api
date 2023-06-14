@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.io/seantywork/npia/pkg/promquery"
+	"github.com/seantywork/x0f_npia/pkg/promquery"
 
 	agph "github.com/guptarohit/asciigraph"
 )
