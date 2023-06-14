@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"os"
 
-	admor "github.io/seantywork/npia/pkg/adminorigin"
+	admor "github.com/seantywork/x0f_npia/pkg/adminorigin"
 
-	ioman "github.io/seantywork/npia/pkg/iomanager"
+	ioman "github.com/seantywork/x0f_npia/pkg/iomanager"
 
 	"os/exec"
 )

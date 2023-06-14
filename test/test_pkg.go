@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.io/seantywork/npia/pkg/builtinresource"
+	"github.com/seantywork/x0f_npia/pkg/builtinresource"
 )
 
 func Test_pkg() error {
