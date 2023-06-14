@@ -1,4 +1,4 @@
-package kuberesource
+package builtinresource
 
 type HorizontalPodAutoscaler struct {
 	APIVersion string `yaml:"apiVersion"`

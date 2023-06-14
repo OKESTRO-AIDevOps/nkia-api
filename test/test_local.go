@@ -6,9 +6,21 @@ import (
 	"strings"
 
 	goya "github.com/goccy/go-yaml"
+	//"github.com/fatih/color"
 )
 
-func YAMLLoad(file_path string) {
+func Test_local() error {
+
+	if !TEST_LOCAL {
+
+		return nil
+
+	}
+
+	return nil
+}
+
+func test_YAMLLoad(file_path string) {
 
 	file_byte, _ := os.ReadFile(file_path)
 
@@ -16,13 +28,13 @@ func YAMLLoad(file_path string) {
 
 	for _, yaml_file := range file_list {
 
-		ReadFromYAML(yaml_file, "$.spec.ports[0].port")
+		test_ReadFromYAML(yaml_file, "$.spec.ports[0].port")
 
 	}
 
 }
 
-func ReadFromYAML(yaml_file string, yaml_path string) {
+func test_ReadFromYAML(yaml_file string, yaml_path string) {
 
 	ypath, _ := goya.PathString(yaml_path)
 
