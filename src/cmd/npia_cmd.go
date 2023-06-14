@@ -3,13 +3,14 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	admor "npia/pkg/adminorigin"
-	kuberead "npia/pkg/kuberead"
-	pkgutils "npia/pkg/utils"
 	"os"
 	"os/exec"
 	"os/user"
 	"strings"
+
+	admor "github.io/seantywork/npia/pkg/adminorigin"
+	kuberead "github.io/seantywork/npia/pkg/kuberead"
+	pkgutils "github.io/seantywork/npia/pkg/utils"
 
 	"github.com/fatih/color"
 )

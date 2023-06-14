@@ -3,8 +3,9 @@ package utils
 import (
 	"encoding/json"
 	"fmt"
-	"npia/pkg/promquery"
 	"os"
+
+	"github.io/seantywork/npia/pkg/promquery"
 
 	agph "github.com/guptarohit/asciigraph"
 )

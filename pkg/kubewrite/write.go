@@ -2,10 +2,11 @@ package kubewrite
 
 import (
 	"fmt"
-	admor "npia/pkg/adminorigin"
 	"os"
 
-	ioman "npia/pkg/iomanager"
+	admor "github.io/seantywork/npia/pkg/adminorigin"
+
+	ioman "github.io/seantywork/npia/pkg/iomanager"
 
 	"os/exec"
 )

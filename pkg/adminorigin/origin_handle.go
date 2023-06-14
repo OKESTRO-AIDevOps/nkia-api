@@ -2,9 +2,10 @@ package adminorigin
 
 import (
 	"encoding/json"
-	. "npia/pkg/libinterface"
 	"os"
 	"os/exec"
+
+	. "github.io/seantywork/npia/pkg/libinterface"
 )
 
 var adm_origin_json = LIBIF.GetLibComponentPath(".etc", "ADM_origin.json")
