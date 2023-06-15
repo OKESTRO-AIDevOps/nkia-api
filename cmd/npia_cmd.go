@@ -1,12 +1,11 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"os/user"
 
-	dotfs "github.com/seantywork/x0f_npia/pkg/dotfs"
-	kuberead "github.com/seantywork/x0f_npia/pkg/kuberead"
+	"github.com/seantywork/x0f_npia/pkg/dotfs"
+	"github.com/seantywork/x0f_npia/pkg/kuberead"
 	"github.com/seantywork/x0f_npia/pkg/kubewrite"
 
 	"github.com/fatih/color"
@@ -57,12 +56,20 @@ func run() error {
 
 		}
 
-	} else if check_app_origin == "WARNNS" {
+	} else if check_app_origin != "OKAY" {
+
+		return fmt.Errorf("failed load app origin: %s", check_app_origin)
+
+	}
+
+	err = checkRuntimeParamNS()
+
+	if err != nil {
 
 		yn := "y"
 
-		fmt.Println("Target namespace is not set")
-		fmt.Println("Setting it is possible in later stages")
+		fmt.Println("Runtime target namespace is not set")
+		fmt.Println("Setting them is possible in later stages")
 		fmt.Println("Are you sure you want to proceed? [ y | n ]")
 
 		fmt.Scanln(&yn)
@@ -70,14 +77,9 @@ func run() error {
 		if yn == "n" {
 
 			fmt.Println("Abort.")
-
 			return nil
 
 		}
-
-	} else if check_app_origin != "OKAY" {
-
-		return fmt.Errorf("failed load app origin: %s", check_app_origin)
 
 	}
 
@@ -131,6 +133,26 @@ func run() error {
 
 			} else {
 				evelp = evelp_lower
+			}
+
+		case "origin":
+
+			evelp, err = origin_set()
+
+			if err != nil {
+
+				return fmt.Errorf("origin: %s", err.Error())
+
+			}
+
+		case "runtime":
+
+			evelp, err = runtime_set()
+
+			if err != nil {
+
+				return fmt.Errorf("runtime: %s", err.Error())
+
 			}
 
 		case "list":
@@ -279,6 +301,16 @@ func read() (int, error) {
 
 			}
 
+		case "runtime":
+
+			evelp, err = runtime_set()
+
+			if err != nil {
+
+				return 1, fmt.Errorf("runtime: %s", err.Error())
+
+			}
+
 		case "list":
 
 			list_all()
@@ -385,6 +417,16 @@ func write() (int, error) {
 
 			}
 
+		case "runtime":
+
+			evelp, err = runtime_set()
+
+			if err != nil {
+
+				return 1, fmt.Errorf("runtime: %s", err.Error())
+
+			}
+
 		case "list":
 
 			list_all()
@@ -450,6 +492,16 @@ func cicd() (int, error) {
 
 			}
 
+		case "runtime":
+
+			evelp, err = runtime_set()
+
+			if err != nil {
+
+				return 1, fmt.Errorf("runtime: %s", err.Error())
+
+			}
+
 		case "list":
 
 			list_all()
@@ -494,6 +546,7 @@ func list_all() {
 	fmt.Println("[ /write/history ]: gets revision history of a deployment in a namespace")
 	fmt.Println("[ /write/kill ]: deletes a deployment in a namespace and a corresponding service")
 	fmt.Println("[ origin ] : sets up origin file ")
+	fmt.Println("[ runtime ] : sets up runtime parameters")
 	fmt.Println("[ back ] : steps back to the previous stage")
 	fmt.Println("[ list ] : lists all available commands")
 	fmt.Println("[ trm ] : ends nopainctl session")
@@ -514,190 +567,6 @@ func terminate() int {
 	}
 
 	return 0
-
-}
-
-func origin_set() (int, error) {
-
-	code := ""
-
-	fmt.Println("TARGET : origin")
-	fmt.Scanln(&code)
-
-	evelp := 0
-
-	for evelp == 0 {
-
-		switch code {
-
-		case "namespace-new":
-			ns := ""
-			repo := ""
-			reg := ""
-
-			color.Blue("RUN: origin namespace-new")
-
-			fmt.Println("New namespace:")
-			fmt.Scanln(&ns)
-			fmt.Println("New repo URL:")
-			fmt.Scan(&repo)
-			fmt.Println("New reg URL:")
-			fmt.Scanln(&reg)
-
-			if err := dotfs.SetAdminOriginNewNS(ns, repo, reg); err != nil {
-
-				return 1, fmt.Errorf("namespace-new: %s", err.Error())
-
-			} else {
-
-				fmt.Println("namespace-new: success")
-
-			}
-
-		case "namespace-main":
-
-			ns := ""
-			color.Blue("RUN: origin namespace-main")
-
-			fmt.Println("Target namespace:")
-			fmt.Scanln(&ns)
-
-			if err := setRuntimeParams(ns); err != nil {
-
-				err = fmt.Errorf("namespace-main: %s", err.Error())
-
-				fmt.Println(err.Error())
-
-			} else {
-
-				fmt.Println("namespace-main: success")
-
-			}
-
-		case "origin-repo":
-
-			ns := ""
-			repo := ""
-			repo_id := ""
-			repo_pw := ""
-
-			var app_origin dotfs.AppOrigin
-
-			color.Blue("RUN: origin origin-repo")
-
-			fmt.Println("Target namespace:")
-			fmt.Scanln(&ns)
-			fmt.Println("Target repo URL:")
-			fmt.Scanln(&repo)
-			fmt.Println("Target repo ID:")
-			fmt.Scanln(&repo_id)
-			fmt.Println("Target repo PW:")
-			fmt.Scanln(&repo_pw)
-
-			file_byte, err := dotfs.LoadAdmOrigin()
-
-			if err != nil {
-
-				return 1, fmt.Errorf("origin-repo: %s", err.Error())
-
-			}
-
-			err = json.Unmarshal(file_byte, &app_origin)
-
-			if err != nil {
-
-				return 1, fmt.Errorf("origin-repo: %s", err.Error())
-
-			}
-
-			app_origin.REPOS = dotfs.SetRepoInfo(app_origin.REPOS, repo, repo_id, repo_pw)
-
-			err = dotfs.UnloadAdmOrigin(app_origin)
-
-			if err != nil {
-				return 1, fmt.Errorf("origin-repo: %s", err.Error())
-			}
-
-		case "origin-reg":
-
-			ns := ""
-			reg := ""
-			reg_id := ""
-			reg_pw := ""
-
-			var app_origin dotfs.AppOrigin
-
-			color.Blue("RUN: origin origin-reg")
-
-			fmt.Println("Target namespace:")
-			fmt.Scanln(&ns)
-			fmt.Println("Target reg URL:")
-			fmt.Scanln(&reg)
-			fmt.Println("Target reg ID:")
-			fmt.Scanln(&reg_id)
-			fmt.Println("Target reg PW:")
-			fmt.Scanln(&reg_pw)
-
-			file_byte, err := dotfs.LoadAdmOrigin()
-
-			if err != nil {
-
-				return 1, fmt.Errorf("origin-reg: %s", err.Error())
-
-			}
-
-			err = json.Unmarshal(file_byte, &app_origin)
-
-			if err != nil {
-
-				return 1, fmt.Errorf("origin-reg: %s", err.Error())
-
-			}
-
-			app_origin.REGS = dotfs.SetRegInfo(app_origin.REGS, reg, reg_id, reg_pw)
-
-			err = dotfs.UnloadAdmOrigin(app_origin)
-
-			if err != nil {
-				return 1, fmt.Errorf("origin-reg: %s", err.Error())
-			}
-
-		case "list":
-
-			list_all()
-
-		case "back":
-
-			return 0, nil
-
-		case "trm":
-
-			evelp = terminate()
-
-		default:
-
-			fmt.Println("Invalid option")
-			list_all()
-
-		}
-	}
-
-	return 0, nil
-
-}
-
-func origin_list_all() {
-
-	fmt.Println("*COMMAND LIST*")
-	fmt.Println("[ /set/kubeconfig-path ] : sets the kubeconfig file path, must be absolute path")
-	fmt.Println("[ /set/namespace-main ] : uses a namespace")
-	fmt.Println("[ /set/namespace-new ] : creates a namespace")
-	fmt.Println("[ /set/origin-repo ] : sets repository info")
-	fmt.Println("[ /set/origin-reg ] : sets registry info")
-	fmt.Println("[ /run ] : starts nopainctl ")
-	fmt.Println("[ /*/back ] : steps back to the previous stage")
-	fmt.Println("[ /list, /*/list ] : lists all available commands")
-	fmt.Println("[ /trm ] : ends nopainctl session")
 
 }
 
@@ -726,7 +595,9 @@ func main() {
 
 	if err := run(); err != nil {
 
-		_ = fmt.Errorf("Error: %s", err.Error())
+		err_final := fmt.Errorf("Error: %s", err.Error())
+
+		fmt.Println(err_final.Error())
 
 	}
 

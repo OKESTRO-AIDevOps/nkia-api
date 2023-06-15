@@ -1,4 +1,4 @@
-package kubereadkubereadio
+package kuberead
 
 import (
 	"fmt"

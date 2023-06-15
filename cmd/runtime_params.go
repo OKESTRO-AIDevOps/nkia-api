@@ -4,14 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 
-	dotfs "github.com/seantywork/x0f_npia/pkg/dotfs"
+	"github.com/seantywork/x0f_npia/pkg/dotfs"
 )
 
 var RPARAM = map[string]string{
 	"NS": "",
 }
 
-func setRuntimeParams(ns string) error {
+func setRuntimeParamNS(ns string) error {
 
 	var app_origin dotfs.AppOrigin
 
@@ -49,4 +49,15 @@ func setRuntimeParams(ns string) error {
 
 	return nil
 
+}
+
+func checkRuntimeParamNS() error {
+
+	if RPARAM["NS"] == "" {
+
+		return fmt.Errorf("check failed: %s", "ns not set")
+
+	}
+
+	return nil
 }
