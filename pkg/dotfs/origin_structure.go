@@ -1,11 +1,9 @@
-package adminorigin
+package dotfs
 
 type AppOrigin struct {
-	KCFG_PATH string
-	MAIN_NS   string
-	RECORDS   []RecordInfo
-	REPOS     []RepoInfo
-	REGS      []RegInfo
+	RECORDS []RecordInfo
+	REPOS   []RepoInfo
+	REGS    []RegInfo
 }
 
 type RecordInfo struct {
