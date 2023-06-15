@@ -1,22 +1,18 @@
-package kuberead
+package kubereadkubereadio
 
 import (
 	"fmt"
 
-	admor "github.com/seantywork/x0f_npia/pkg/adminorigin"
-
-	ioman "github.com/seantywork/x0f_npia/pkg/iomanager"
+	apist "github.com/seantywork/x0f_npia/pkg/apistandard"
 
 	"os/exec"
 )
 
-func ReadPod() (ioman.API_OUTPUT, error) {
+func ReadPod(main_ns string) (apist.API_OUTPUT, error) {
 
-	var api_o ioman.API_OUTPUT
+	var api_o apist.API_OUTPUT
 
-	kcfg_path, main_ns := admor.GetKubeConfigAndTargetNameSpace()
-
-	cmd := exec.Command("kubectl", "--kubeconfig", kcfg_path, "-n", main_ns, "get", "pods")
+	cmd := exec.Command("kubectl", "-n", main_ns, "get", "pods")
 
 	out, err := cmd.Output()
 
@@ -33,13 +29,11 @@ func ReadPod() (ioman.API_OUTPUT, error) {
 
 }
 
-func ReadService() (ioman.API_OUTPUT, error) {
+func ReadService(main_ns string) (apist.API_OUTPUT, error) {
 
-	var api_o ioman.API_OUTPUT
+	var api_o apist.API_OUTPUT
 
-	kcfg_path, main_ns := admor.GetKubeConfigAndTargetNameSpace()
-
-	cmd := exec.Command("kubectl", "--kubeconfig", kcfg_path, "-n", main_ns, "get", "services")
+	cmd := exec.Command("kubectl", "-n", main_ns, "get", "services")
 
 	out, err := cmd.Output()
 
@@ -58,13 +52,11 @@ func ReadService() (ioman.API_OUTPUT, error) {
 
 }
 
-func ReadDeployment() (ioman.API_OUTPUT, error) {
+func ReadDeployment(main_ns string) (apist.API_OUTPUT, error) {
 
-	var api_o ioman.API_OUTPUT
+	var api_o apist.API_OUTPUT
 
-	kcfg_path, main_ns := admor.GetKubeConfigAndTargetNameSpace()
-
-	cmd := exec.Command("kubectl", "--kubeconfig", kcfg_path, "-n", main_ns, "get", "services")
+	cmd := exec.Command("kubectl", "-n", main_ns, "get", "services")
 
 	out, err := cmd.Output()
 
@@ -81,13 +73,11 @@ func ReadDeployment() (ioman.API_OUTPUT, error) {
 
 }
 
-func ReadNode() (ioman.API_OUTPUT, error) {
+func ReadNode(main_ns string) (apist.API_OUTPUT, error) {
 
-	var api_o ioman.API_OUTPUT
+	var api_o apist.API_OUTPUT
 
-	kcfg_path, _ := admor.GetKubeConfigAndTargetNameSpace()
-
-	cmd := exec.Command("kubectl", "--kubeconfig", kcfg_path, "get", "nodes")
+	cmd := exec.Command("kubectl", "get", "nodes")
 
 	out, err := cmd.Output()
 
@@ -104,13 +94,11 @@ func ReadNode() (ioman.API_OUTPUT, error) {
 
 }
 
-func ReadEvent() (ioman.API_OUTPUT, error) {
+func ReadEvent(main_ns string) (apist.API_OUTPUT, error) {
 
-	var api_o ioman.API_OUTPUT
+	var api_o apist.API_OUTPUT
 
-	kcfg_path, main_ns := admor.GetKubeConfigAndTargetNameSpace()
-
-	cmd := exec.Command("kubectl", "--kubeconfig", kcfg_path, "-n", main_ns, "get", "events")
+	cmd := exec.Command("kubectl", "-n", main_ns, "get", "events")
 
 	out, err := cmd.Output()
 
@@ -127,13 +115,11 @@ func ReadEvent() (ioman.API_OUTPUT, error) {
 
 }
 
-func ReadResource() (ioman.API_OUTPUT, error) {
+func ReadResource(main_ns string) (apist.API_OUTPUT, error) {
 
-	var api_o ioman.API_OUTPUT
+	var api_o apist.API_OUTPUT
 
-	kcfg_path, main_ns := admor.GetKubeConfigAndTargetNameSpace()
-
-	cmd := exec.Command("kubectl", "--kubeconfig", kcfg_path, "-n", main_ns, "get", "all")
+	cmd := exec.Command("kubectl", "-n", main_ns, "get", "all")
 
 	out, err := cmd.Output()
 
@@ -150,13 +136,11 @@ func ReadResource() (ioman.API_OUTPUT, error) {
 
 }
 
-func ReadNamespace() (ioman.API_OUTPUT, error) {
+func ReadNamespace(main_ns string) (apist.API_OUTPUT, error) {
 
-	var api_o ioman.API_OUTPUT
+	var api_o apist.API_OUTPUT
 
-	kcfg_path, _ := admor.GetKubeConfigAndTargetNameSpace()
-
-	cmd := exec.Command("kubectl", "--kubeconfig", kcfg_path, "get", "namespaces")
+	cmd := exec.Command("kubectl", "get", "namespaces")
 
 	out, err := cmd.Output()
 

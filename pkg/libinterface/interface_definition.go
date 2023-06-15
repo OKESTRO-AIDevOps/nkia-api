@@ -1,35 +1,51 @@
 package libinterface
 
 import (
-	"io/fs"
+	"fmt"
 	"os"
 	"path/filepath"
 )
 
 type LibIface map[string]string
 
-func _CONSTRUCTLIBIFACE(root string, files []fs.FileInfo, dir *os.File) LibIface {
+func ConstructLibIface(lib_root string) (LibIface, error) {
 
 	tmp_libif := make(LibIface)
 
-	for _, f := range files {
+	_ROOT, err := filepath.Abs(lib_root)
+
+	if err != nil {
+
+		return tmp_libif, fmt.Errorf("construct iface failed: %s", err.Error())
+
+	}
+
+	_DIR, err := os.Open(_ROOT)
+
+	if err != nil {
+
+		return tmp_libif, fmt.Errorf("construct iface failed: %s", err.Error())
+
+	}
+
+	_FILES, err := _DIR.Readdir(-1)
+
+	if err != nil {
+
+		return tmp_libif, fmt.Errorf("construct iface failed: %s", err.Error())
+
+	}
+
+	for _, f := range _FILES {
 
 		iface_name := f.Name()
 
-		full_path := filepath.Join(root, iface_name)
+		full_path := filepath.Join(_ROOT, iface_name)
 
 		tmp_libif[iface_name] = full_path
 	}
 
-	dir.Close()
+	_DIR.Close()
 
-	return tmp_libif
+	return tmp_libif, nil
 }
-
-var _ROOT, _ = filepath.Abs("../../lib")
-
-var _DIR, _ = os.Open(_ROOT)
-
-var _FILES, _ = _DIR.Readdir(-1)
-
-var LIBIF LibIface = _CONSTRUCTLIBIFACE(_ROOT, _FILES, _DIR)

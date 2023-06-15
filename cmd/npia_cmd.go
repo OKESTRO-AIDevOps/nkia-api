@@ -3,27 +3,30 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"os"
-	"os/exec"
 	"os/user"
-	"strings"
 
-	admor "github.com/seantywork/x0f_npia/pkg/adminorigin"
+	dotfs "github.com/seantywork/x0f_npia/pkg/dotfs"
 	kuberead "github.com/seantywork/x0f_npia/pkg/kuberead"
-	pkgutils "github.com/seantywork/x0f_npia/pkg/utils"
+	"github.com/seantywork/x0f_npia/pkg/kubewrite"
 
 	"github.com/fatih/color"
 )
 
 func run() error {
 
-	check_app_origin := admor.CheckAppOrigin()
+	check_app_origin, err := dotfs.CheckAppOrigin()
+
+	if err != nil {
+
+		return fmt.Errorf("run failed: %s", err.Error())
+
+	}
 
 	if check_app_origin == "WARNRC" {
 
 		yn := "y"
 
-		fmt.Println("No namespace and corresponding repositry, registry urls aren't set")
+		fmt.Println("No namespace and corresponding repository, registry urls aren't set")
 		fmt.Println("Setting them is possible in later stages")
 		fmt.Println("Are you sure you want to proceed? [ y | n ]")
 
@@ -162,6 +165,8 @@ func read() (int, error) {
 
 	evelp := 0
 
+	var err error
+
 	for evelp == 0 {
 
 		switch code {
@@ -170,7 +175,7 @@ func read() (int, error) {
 
 			color.Blue("RUN: /read/pod")
 
-			if api_o, err := kuberead.ReadPod(); err != nil {
+			if api_o, err := kuberead.ReadPod(RPARAM["NS"]); err != nil {
 
 				return 1, fmt.Errorf("pod: %s", err.Error())
 
@@ -184,7 +189,7 @@ func read() (int, error) {
 
 			color.Blue("RUN: /read/service")
 
-			if api_o, err := kuberead.ReadService(); err != nil {
+			if api_o, err := kuberead.ReadService(RPARAM["NS"]); err != nil {
 
 				return 1, fmt.Errorf("service: %s", err.Error())
 
@@ -198,7 +203,7 @@ func read() (int, error) {
 
 			color.Blue("RUN: /read/deployment")
 
-			if api_o, err := kuberead.ReadDeployment(); err != nil {
+			if api_o, err := kuberead.ReadDeployment(RPARAM["NS"]); err != nil {
 
 				return 1, fmt.Errorf("deployment: %s", err.Error())
 
@@ -212,7 +217,7 @@ func read() (int, error) {
 
 			color.Blue("RUN: /read/node")
 
-			if api_o, err := kuberead.ReadNode(); err != nil {
+			if api_o, err := kuberead.ReadNode(RPARAM["NS"]); err != nil {
 
 				return 1, fmt.Errorf("node: %s", err.Error())
 
@@ -226,7 +231,7 @@ func read() (int, error) {
 
 			color.Blue("RUN: /read/event")
 
-			if api_o, err := kuberead.ReadEvent(); err != nil {
+			if api_o, err := kuberead.ReadEvent(RPARAM["NS"]); err != nil {
 
 				return 1, fmt.Errorf("event: %s", err.Error())
 
@@ -240,7 +245,7 @@ func read() (int, error) {
 
 			color.Blue("RUN: /read/resource")
 
-			if api_o, err := kuberead.ReadResource(); err != nil {
+			if api_o, err := kuberead.ReadResource(RPARAM["NS"]); err != nil {
 
 				return 1, fmt.Errorf("event: %s", err.Error())
 
@@ -254,7 +259,7 @@ func read() (int, error) {
 
 			color.Blue("RUN: /read/namespace")
 
-			if api_o, err := kuberead.ReadNamespace(); err != nil {
+			if api_o, err := kuberead.ReadNamespace(RPARAM["NS"]); err != nil {
 
 				return 1, fmt.Errorf("event: %s", err.Error())
 
@@ -266,7 +271,13 @@ func read() (int, error) {
 
 		case "origin":
 
-			origin_set()
+			evelp, err = origin_set()
+
+			if err != nil {
+
+				return 1, fmt.Errorf("origin: %s", err.Error())
+
+			}
 
 		case "list":
 
@@ -301,6 +312,8 @@ func write() (int, error) {
 
 	evelp := 0
 
+	var err error
+
 	for evelp == 0 {
 
 		switch code {
@@ -308,6 +321,27 @@ func write() (int, error) {
 		case "secret":
 
 			color.Blue("RUN: /write/secret")
+
+			permit_overwrite := 1
+
+			check := "y"
+
+			fmt.Println("Permit overwrite if secret exists? [ y | n ] :")
+			fmt.Scanln(&check)
+
+			if check == "n" {
+				permit_overwrite = 0
+			}
+
+			if api_o, err := kubewrite.WriteSecret(RPARAM["NS"], permit_overwrite); err != nil {
+
+				return 1, fmt.Errorf("secret: %s", err.Error())
+
+			} else {
+
+				fmt.Println(api_o.BODY)
+
+			}
 
 		case "hpa":
 
@@ -343,7 +377,13 @@ func write() (int, error) {
 
 		case "origin":
 
-			origin_set()
+			evelp, err = origin_set()
+
+			if err != nil {
+
+				return 1, fmt.Errorf("origin: %s", err.Error())
+
+			}
 
 		case "list":
 
@@ -379,6 +419,8 @@ func cicd() (int, error) {
 
 	evelp := 0
 
+	var err error
+
 	for evelp == 0 {
 
 		switch code {
@@ -400,7 +442,13 @@ func cicd() (int, error) {
 
 		case "origin":
 
-			origin_set()
+			evelp, err = origin_set()
+
+			if err != nil {
+
+				return 1, fmt.Errorf("origin: %s", err.Error())
+
+			}
 
 		case "list":
 
@@ -469,339 +517,172 @@ func terminate() int {
 
 }
 
-func origin() {
+func origin_set() (int, error) {
 
-	fmt.Println("Initiated")
+	code := ""
+
+	fmt.Println("TARGET : origin")
+	fmt.Scanln(&code)
 
 	evelp := 0
 
-	code := ""
-
-	fmt.Println("For help, type [ list ]")
-	fmt.Println("To terminate, type [ trm ]")
-
 	for evelp == 0 {
 
-		fmt.Println("COMMAND : /<>")
-		fmt.Scanln(&code)
+		switch code {
 
-		if code == "set" {
+		case "namespace-new":
+			ns := ""
+			repo := ""
+			reg := ""
 
-			fmt.Println("Setting cluster origin...")
+			color.Blue("RUN: origin namespace-new")
 
-			origin_set()
+			fmt.Println("New namespace:")
+			fmt.Scanln(&ns)
+			fmt.Println("New repo URL:")
+			fmt.Scan(&repo)
+			fmt.Println("New reg URL:")
+			fmt.Scanln(&reg)
 
-		} else if code == "run" {
+			if err := dotfs.SetAdminOriginNewNS(ns, repo, reg); err != nil {
 
-			fmt.Println("Starting nopainctl ...")
+				return 1, fmt.Errorf("namespace-new: %s", err.Error())
 
-			run()
+			} else {
 
-		} else if code == "list" {
+				fmt.Println("namespace-new: success")
 
-			origin_list_all()
+			}
 
-		} else if code == "trm" {
+		case "namespace-main":
+
+			ns := ""
+			color.Blue("RUN: origin namespace-main")
+
+			fmt.Println("Target namespace:")
+			fmt.Scanln(&ns)
+
+			if err := setRuntimeParams(ns); err != nil {
+
+				err = fmt.Errorf("namespace-main: %s", err.Error())
+
+				fmt.Println(err.Error())
+
+			} else {
+
+				fmt.Println("namespace-main: success")
+
+			}
+
+		case "origin-repo":
+
+			ns := ""
+			repo := ""
+			repo_id := ""
+			repo_pw := ""
+
+			var app_origin dotfs.AppOrigin
+
+			color.Blue("RUN: origin origin-repo")
+
+			fmt.Println("Target namespace:")
+			fmt.Scanln(&ns)
+			fmt.Println("Target repo URL:")
+			fmt.Scanln(&repo)
+			fmt.Println("Target repo ID:")
+			fmt.Scanln(&repo_id)
+			fmt.Println("Target repo PW:")
+			fmt.Scanln(&repo_pw)
+
+			file_byte, err := dotfs.LoadAdmOrigin()
+
+			if err != nil {
+
+				return 1, fmt.Errorf("origin-repo: %s", err.Error())
+
+			}
+
+			err = json.Unmarshal(file_byte, &app_origin)
+
+			if err != nil {
+
+				return 1, fmt.Errorf("origin-repo: %s", err.Error())
+
+			}
+
+			app_origin.REPOS = dotfs.SetRepoInfo(app_origin.REPOS, repo, repo_id, repo_pw)
+
+			err = dotfs.UnloadAdmOrigin(app_origin)
+
+			if err != nil {
+				return 1, fmt.Errorf("origin-repo: %s", err.Error())
+			}
+
+		case "origin-reg":
+
+			ns := ""
+			reg := ""
+			reg_id := ""
+			reg_pw := ""
+
+			var app_origin dotfs.AppOrigin
+
+			color.Blue("RUN: origin origin-reg")
+
+			fmt.Println("Target namespace:")
+			fmt.Scanln(&ns)
+			fmt.Println("Target reg URL:")
+			fmt.Scanln(&reg)
+			fmt.Println("Target reg ID:")
+			fmt.Scanln(&reg_id)
+			fmt.Println("Target reg PW:")
+			fmt.Scanln(&reg_pw)
+
+			file_byte, err := dotfs.LoadAdmOrigin()
+
+			if err != nil {
+
+				return 1, fmt.Errorf("origin-reg: %s", err.Error())
+
+			}
+
+			err = json.Unmarshal(file_byte, &app_origin)
+
+			if err != nil {
+
+				return 1, fmt.Errorf("origin-reg: %s", err.Error())
+
+			}
+
+			app_origin.REGS = dotfs.SetRegInfo(app_origin.REGS, reg, reg_id, reg_pw)
+
+			err = dotfs.UnloadAdmOrigin(app_origin)
+
+			if err != nil {
+				return 1, fmt.Errorf("origin-reg: %s", err.Error())
+			}
+
+		case "list":
+
+			list_all()
+
+		case "back":
+
+			return 0, nil
+
+		case "trm":
 
 			evelp = terminate()
 
-		} else {
+		default:
 
-			fmt.Println("Invalid command")
+			fmt.Println("Invalid option")
+			list_all()
 
 		}
-
 	}
 
-	//cmd = exec.Command("docker-compose", "down", "-f", "./ADM/docker-compose.yaml")
-
-	//cmd.Run()
-
-	fmt.Println("nopainctl session has been successfully terminated")
-
-	fmt.Println("Bye")
-
-}
-
-func origin_set() {
-
-	code := ""
-
-	fmt.Println("COMMAND : /set/<>")
-	fmt.Scanln(&code)
-
-	if code == "kubeconfig-path" {
-
-		kcfg_path_in := ""
-
-		var app_origin admor.AppOrigin
-
-		file_content, _ := os.ReadFile("./ADM/origin.json")
-
-		_ = json.Unmarshal(file_content, &app_origin)
-
-		fmt.Println("Kube config file path (must be absolute path including the file name) : ")
-
-		fmt.Scanln(&kcfg_path_in)
-
-		root_idx := strings.Index(kcfg_path_in, "/")
-
-		if root_idx != 0 {
-
-			fmt.Println("Must be absolute path")
-
-			return
-
-		}
-
-		if _, err := os.Stat(kcfg_path_in); err != nil {
-
-			fmt.Println("Unable to find kube config file at the specified location")
-
-			return
-
-		}
-
-		app_origin.KCFG_PATH = kcfg_path_in
-
-		app_origin_bytes, _ := json.Marshal(app_origin)
-
-		_ = os.WriteFile("./ADM/origin.json", app_origin_bytes, 0644)
-
-		fmt.Println("Kube config path has been set")
-
-	} else if code == "namespace-new" {
-
-		kcfg_path, _ := admor.GetKubeConfigAndTargetNameSpace()
-
-		ns := ""
-		repo_url_in := ""
-		reg_url_in := ""
-
-		var app_origin admor.AppOrigin
-
-		fmt.Println("New namespace to create : ")
-		fmt.Scanln(&ns)
-
-		fmt.Println("Repository url to be used in this namespace : ")
-		fmt.Scanln(&repo_url_in)
-
-		fmt.Println("Registry url to be used in this namespace : ")
-		fmt.Scanln(&reg_url_in)
-
-		file_content, _ := os.ReadFile("./ADM/origin.json")
-
-		_ = json.Unmarshal(file_content, &app_origin)
-
-		repo_url, reg_url := admor.GetRecordInfo(app_origin.RECORDS, ns)
-
-		if repo_url != "N" || reg_url != "N" {
-
-			yorn := "y"
-
-			fmt.Println("Associated repository or registry information already exists")
-
-			fmt.Println("Further action will overwrite the previous information")
-
-			fmt.Println("Are you sure want to proceed? [ y | n ]")
-
-			fmt.Scanln(&yorn)
-
-			if yorn == "n" {
-
-				return
-
-			}
-
-		}
-
-		cmd := exec.Command("kubectl", "--kubeconfig", kcfg_path, "create", "namespace", ns)
-
-		out, err := cmd.Output()
-
-		if err != nil {
-
-			strerr := err.Error()
-
-			fmt.Println(strerr)
-
-			return
-		}
-
-		strout := string(out)
-
-		fmt.Println(strout)
-
-		app_origin.RECORDS = admor.SetRecordInfo(app_origin.RECORDS, ns, repo_url_in, reg_url_in)
-
-		app_origin_bytes, _ := json.Marshal(app_origin)
-
-		_ = os.WriteFile("./ADM/origin.json", app_origin_bytes, 0644)
-
-		fmt.Println("Namespace record has been successfully set")
-
-	} else if code == "namespace-main" {
-
-		kcfg_path, _ := admor.GetKubeConfigAndTargetNameSpace()
-
-		new_main_ns := ""
-
-		var app_origin admor.AppOrigin
-
-		file_content, _ := os.ReadFile("./ADM/origin.json")
-
-		_ = json.Unmarshal(file_content, &app_origin)
-
-		available_list := []string{}
-
-		for i := 0; i < len(app_origin.RECORDS); i++ {
-
-			available_list = append(available_list, app_origin.RECORDS[i].NS)
-
-		}
-
-		cmd := exec.Command("kubectl", "--kubeconfig", kcfg_path, "get", "namespace", "--no-headers", "-o", "custom-columns=:metadata.name")
-
-		out, err := cmd.Output()
-
-		if err != nil {
-
-			strerr := err.Error()
-
-			fmt.Println(strerr)
-
-			return
-
-		}
-
-		fmt.Println("Available namespaces are ----- ")
-
-		strout := string(out)
-
-		strout_list := strings.Split(strout, "\n")
-
-		str_ready_list := []string{}
-
-		for i := 0; i < len(strout_list); i++ {
-
-			a := strout_list[i]
-
-			hit := pkgutils.CheckIfEleInStrList(a, available_list)
-
-			if !hit {
-
-				continue
-
-			}
-
-			str_ready_list = append(str_ready_list, a)
-
-			fmt.Println(a)
-
-		}
-
-		fmt.Println("Choose from the above : ")
-
-		fmt.Scanln(&new_main_ns)
-
-		hit := pkgutils.CheckIfEleInStrList(new_main_ns, str_ready_list)
-
-		if !hit {
-
-			fmt.Println("Not an available namespace")
-
-			return
-
-		}
-
-		app_origin.MAIN_NS = new_main_ns
-
-		app_origin_bytes, _ := json.Marshal(app_origin)
-
-		_ = os.WriteFile("./ADM/origin.json", app_origin_bytes, 0644)
-
-		fmt.Println("Target namespace has been set")
-
-	} else if code == "origin-repo" {
-
-		var app_origin admor.AppOrigin
-
-		file_content, _ := os.ReadFile("./ADM/origin.json")
-
-		_ = json.Unmarshal(file_content, &app_origin)
-
-		repo_url := ""
-
-		repo_id := ""
-
-		repo_pw := ""
-
-		fmt.Println("Type repository url : ")
-
-		fmt.Scanln(&repo_url)
-
-		fmt.Println("Type repository id : ")
-
-		fmt.Scanln(&repo_id)
-
-		fmt.Println("Type repository password: ")
-
-		fmt.Scanln(&repo_pw)
-
-		app_origin.REPOS = admor.SetRepoInfo(app_origin.REPOS, repo_url, repo_id, repo_pw)
-
-		app_origin_bytes, _ := json.Marshal(app_origin)
-
-		_ = os.WriteFile("./ADM/origin.json", app_origin_bytes, 0644)
-
-		fmt.Println("Repository info has been set")
-
-	} else if code == "origin-reg" {
-
-		var app_origin admor.AppOrigin
-
-		file_content, _ := os.ReadFile("./ADM/origin.json")
-
-		_ = json.Unmarshal(file_content, &app_origin)
-
-		reg_url := ""
-
-		reg_id := ""
-
-		reg_pw := ""
-
-		fmt.Println("Type registry url : ")
-
-		fmt.Scanln(&reg_url)
-
-		fmt.Println("Type registry id : ")
-
-		fmt.Scanln(&reg_id)
-
-		fmt.Println("Type registry password: ")
-
-		fmt.Scanln(&reg_pw)
-
-		app_origin.REGS = admor.SetRegInfo(app_origin.REGS, reg_url, reg_id, reg_pw)
-
-		app_origin_bytes, _ := json.Marshal(app_origin)
-
-		_ = os.WriteFile("./ADM/origin.json", app_origin_bytes, 0644)
-
-		fmt.Println("Registry info has been set")
-
-	} else if code == "list" {
-
-		origin_list_all()
-
-	} else if code == "back" {
-
-		return
-
-	} else {
-
-		fmt.Println("Invalid command")
-	}
+	return 0, nil
 
 }
 

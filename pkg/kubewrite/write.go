@@ -2,333 +2,106 @@ package kubewrite
 
 import (
 	"fmt"
-	"os"
 
-	admor "github.com/seantywork/x0f_npia/pkg/adminorigin"
+	"github.com/seantywork/x0f_npia/pkg/dotfs"
 
-	ioman "github.com/seantywork/x0f_npia/pkg/iomanager"
+	apist "github.com/seantywork/x0f_npia/pkg/apistandard"
 
 	"os/exec"
+
+	"encoding/json"
 )
 
-func ReadPod() (ioman.API_OUTPUT, error) {
+func WriteSecret(main_ns string, permit_overwrite int) (apist.API_OUTPUT, error) {
 
-	var api_o ioman.API_OUTPUT
+	// 1 for overwrite
 
-	kcfg_path, main_ns := admor.GetKubeConfigAndTargetNameSpace()
+	var api_o apist.API_OUTPUT
 
-	cmd := exec.Command("kubectl", "--kubeconfig", kcfg_path, "-n", main_ns, "get", "pods")
+	var app_origin dotfs.AppOrigin
 
-	out, err := cmd.Output()
+	file_content, _ := dotfs.LoadAdmOrigin()
+
+	err := json.Unmarshal(file_content, &app_origin)
 
 	if err != nil {
-
 		return api_o, fmt.Errorf(": %s", err.Error())
 	}
 
-	strout := string(out)
+	_, reg_url := dotfs.GetRecordInfo(app_origin.RECORDS, main_ns)
 
-	api_o.BODY = strout
+	if reg_url == "N" {
 
-	return api_o, nil
+		return api_o, fmt.Errorf(": %s", "reg url not set")
 
-}
-
-func qos() {
-
-	code := ""
-
-	fmt.Println("COMMAND : /qos/<>")
-	fmt.Scanln(&code)
-
-	if code == "highest" {
-
-		if _, err := os.Stat("./ADM/ops_src.yaml"); err != nil {
-
-			str_stdout := "Failed Because Ops Resource Doesn't Exist"
-
-			fmt.Println(str_stdout)
-
-			return
-		}
-
-		kcfg_path, main_ns := admor.GetKubeConfigAndTargetNameSpace()
-
-		rsc := "deployment"
-
-		rsc_nm := ""
-
-		code := "highest"
-
-		fmt.Println("Deployment to set highest priority : ")
-		fmt.Scanln(&rsc_nm)
-
-		cmd := exec.Command("python3", "./ADM/yaml_handle.py", "qos", rsc, rsc_nm, code, kcfg_path)
-
-		cmd.Run()
-
-		cmd = exec.Command("kubectl", "--kubeconfig", kcfg_path, "-n", main_ns, "apply", "-f", "./ADM/qos.yaml")
-
-		out, err := cmd.Output()
-
-		if err != nil {
-
-			strerr := err.Error()
-
-			fmt.Println(strerr)
-
-			return
-
-		}
-
-		strout := string(out)
-
-		fmt.Println(strout)
-
-	} else if code == "higher" {
-
-		if _, err := os.Stat("./ADM/ops_src.yaml"); err != nil {
-
-			str_stdout := "Failed Because Ops Resource Doesn't Exist"
-
-			fmt.Println(str_stdout)
-
-			return
-		}
-
-		kcfg_path, main_ns := admor.GetKubeConfigAndTargetNameSpace()
-
-		rsc := "deployment"
-
-		rsc_nm := ""
-
-		code := "higher"
-
-		fmt.Println("Deployment to set higher priority : ")
-		fmt.Scanln(&rsc_nm)
-
-		cmd := exec.Command("python3", "./ADM/yaml_handle.py", "qos", rsc, rsc_nm, code, kcfg_path)
-
-		cmd.Run()
-
-		cmd = exec.Command("kubectl", "--kubeconfig", kcfg_path, "-n", main_ns, "apply", "-f", "./ADM/qos.yaml")
-
-		out, err := cmd.Output()
-
-		if err != nil {
-
-			strerr := err.Error()
-
-			fmt.Println(strerr)
-
-			return
-
-		}
-
-		strout := string(out)
-
-		fmt.Println(strout)
-
-	} else if code == "default" {
-
-		if _, err := os.Stat("./ADM/ops_src.yaml"); err != nil {
-
-			str_stdout := "Failed Because Ops Resource Doesn't Exist"
-
-			fmt.Println(str_stdout)
-
-			return
-		}
-
-		kcfg_path, main_ns := admor.GetKubeConfigAndTargetNameSpace()
-
-		rsc := "deployment"
-
-		rsc_nm := ""
-
-		fmt.Println("Deployment to set default priority : ")
-		fmt.Scanln(&rsc_nm)
-
-		cmd := exec.Command("python3", "./ADM/yaml_handle.py", "qosundo", rsc, rsc_nm)
-
-		cmd.Run()
-
-		cmd = exec.Command("kubectl", "--kubeconfig", kcfg_path, "-n", main_ns, "apply", "-f", "./ADM/qos.yaml")
-
-		out, err := cmd.Output()
-
-		if err != nil {
-
-			strerr := err.Error()
-
-			fmt.Println(strerr)
-
-			return
-
-		}
-
-		strout := string(out)
-
-		fmt.Println(strout)
-
-	} else if code == "list" {
-
-		//list_all()
-
-	} else if code == "back" {
-
-		return
-
-	} else {
-
-		fmt.Println("Invalid command")
 	}
 
-}
+	reg_id, reg_pw := dotfs.GetRegInfo(app_origin.REGS, reg_url)
 
-func lifecycle() {
+	if reg_id == "N" || reg_pw == "N" {
 
-	code := ""
+		return api_o, fmt.Errorf(": %s", "reg info not complete")
 
-	fmt.Println("COMMAND : /lifecycle/<>")
-	fmt.Scanln(&code)
+	}
 
-	if code == "update" {
+	cmd := exec.Command("kubectl", "-n", main_ns, "get", "secret", "docker-secret", "--no-headers", "-o", "custom-columns=:metadata.name")
 
-		kcfg_path, main_ns := admor.GetKubeConfigAndTargetNameSpace()
+	_, err = cmd.Output()
 
-		rsc_rscnm := ""
+	docker_server := "--docker-server="
 
-		fmt.Println("Deployment to update (or restart) : ")
-		fmt.Scanln(&rsc_rscnm)
+	docker_username := "--docker-username="
 
-		rsc_rscnm = "deployment/" + rsc_rscnm
+	docker_password := "--docker-password="
 
-		cmd := exec.Command("kubectl", "--kubeconfig", kcfg_path, "-n", main_ns, "rollout", "restart", rsc_rscnm)
+	docker_server += reg_url
 
-		out, err := cmd.Output()
+	docker_username += reg_id
 
-		if err != nil {
+	docker_password += reg_pw
 
-			strerr := err.Error()
+	if err != nil {
 
-			fmt.Println(strerr)
-
-			return
-		}
-
-		strout := string(out)
-
-		fmt.Println(strout)
-
-	} else if code == "revert" {
-
-		kcfg_path, main_ns := admor.GetKubeConfigAndTargetNameSpace()
-
-		rsc_rscnm := ""
-
-		fmt.Println("Deployment to revert to previous version : ")
-		fmt.Scanln(&rsc_rscnm)
-
-		rsc_rscnm = "deployment/" + rsc_rscnm
-
-		cmd := exec.Command("kubectl", "--kubeconfig", kcfg_path, "-n", main_ns, "rollout", "undo", rsc_rscnm)
+		cmd = exec.Command("kubectl", "-n", main_ns, "create", "secret", "docker-registry", "docker-secret", docker_server, docker_username, docker_password)
 
 		out, err := cmd.Output()
 
 		if err != nil {
-
-			strerr := err.Error()
-
-			fmt.Println(strerr)
-
-			return
+			return api_o, fmt.Errorf(": %s", err.Error())
 		}
 
-		strout := string(out)
+		api_o.BODY = string(out)
 
-		fmt.Println(strout)
+		return api_o, nil
 
-	} else if code == "history" {
+	}
 
-		kcfg_path, main_ns := admor.GetKubeConfigAndTargetNameSpace()
+	if permit_overwrite == 1 {
 
-		rsc_rscnm := ""
+		cmd = exec.Command("kubectl", "-n", main_ns, "delete", "secret", "docker-secret")
 
-		fmt.Println("Deployment to get history of : ")
-		fmt.Scanln(&rsc_rscnm)
+		_, err = cmd.Output()
 
-		rsc_rscnm = "deployment/" + rsc_rscnm
+		if err != nil {
+			return api_o, fmt.Errorf(": %s", err.Error())
+		}
 
-		cmd := exec.Command("kubectl", "--kubeconfig", kcfg_path, "-n", main_ns, "rollout", "history", rsc_rscnm)
+		cmd = exec.Command("kubectl", "-n", main_ns, "create", "secret", "docker-registry", "docker-secret", docker_server, docker_username, docker_password)
 
 		out, err := cmd.Output()
 
 		if err != nil {
-
-			strerr := err.Error()
-
-			fmt.Println(strerr)
-
-			return
+			return api_o, fmt.Errorf(": %s", err.Error())
 		}
 
-		strout := string(out)
+		api_o.BODY = string(out)
 
-		fmt.Println(strout)
-
-	} else if code == "kill" {
-
-		if _, err := os.Stat("./ADM/ops_src.yaml"); err != nil {
-
-			str_stdout := "Failed Because Ops Resource Doesn't Exist"
-
-			fmt.Println(str_stdout)
-
-			return
-		}
-
-		kcfg_path, main_ns := admor.GetKubeConfigAndTargetNameSpace()
-
-		rsc := "deployment"
-
-		rsc_nm := ""
-
-		fmt.Println("Deployment to delete: ")
-		fmt.Scanln(&rsc_nm)
-
-		cmd := exec.Command("python3", "./ADM/yaml_handle.py", "kill", rsc, rsc_nm)
-
-		cmd.Run()
-
-		cmd = exec.Command("kubectl", "--kubeconfig", kcfg_path, "-n", main_ns, "delete", "-f", "./ADM/delete_ops_src.yaml")
-
-		out, err := cmd.Output()
-
-		if err != nil {
-
-			strerr := err.Error()
-
-			fmt.Println(strerr)
-
-			return
-		}
-
-		strout := string(out)
-
-		fmt.Println(strout)
-
-	} else if code == "list" {
-
-		//list_all()
-
-	} else if code == "back" {
-
-		return
+		return api_o, nil
 
 	} else {
 
-		fmt.Println("Invalid command")
+		return api_o, fmt.Errorf(": %s", "secret exists, but overwrite not permitted")
+
 	}
 
 }
@@ -336,7 +109,7 @@ func lifecycle() {
 /*
    if code == "secret" {
 
-   	var app_origin admor.AppOrigin
+   	var app_origin dotfs.AppOrigin
 
    	adm_origin_json := LIBIF.GetLibComponentPath(".etc", "ADM_origin.json")
 
@@ -344,9 +117,9 @@ func lifecycle() {
 
    	_ = json.Unmarshal(file_content, &app_origin)
 
-   	kcfg_path, main_ns := admor.GetKubeConfigAndTargetNameSpace()
+   	kcfg_path, main_ns := dotfs.GetKubeConfigAndTargetNameSpace()
 
-   	_, reg_url := admor.GetRecordInfo(app_origin.RECORDS, main_ns)
+   	_, reg_url := dotfs.GetRecordInfo(app_origin.RECORDS, main_ns)
 
    	if reg_url == "N" {
 
@@ -357,7 +130,7 @@ func lifecycle() {
 
    	}
 
-   	reg_id, reg_pw := admor.GetRegInfo(app_origin.REGS, reg_url)
+   	reg_id, reg_pw := dotfs.GetRegInfo(app_origin.REGS, reg_url)
 
    	if reg_id == "N" || reg_pw == "N" {
 
@@ -438,7 +211,7 @@ func lifecycle() {
    		return
    	}
 
-   	kcfg_path, main_ns := admor.GetKubeConfigAndTargetNameSpace()
+   	kcfg_path, main_ns := dotfs.GetKubeConfigAndTargetNameSpace()
 
    	rsc := "deployment"
 
@@ -475,7 +248,7 @@ func lifecycle() {
 
    } else if code == "external-access" {
 
-   	kcfg_path, main_ns := admor.GetKubeConfigAndTargetNameSpace()
+   	kcfg_path, main_ns := dotfs.GetKubeConfigAndTargetNameSpace()
 
    	host_nm := ""
 
@@ -524,4 +297,308 @@ func lifecycle() {
 
    		fmt.Println("Invalid command")
    	}
+*/
+
+/*
+func qos() {
+
+	code := ""
+
+	fmt.Println("COMMAND : /qos/<>")
+	fmt.Scanln(&code)
+
+	if code == "highest" {
+
+		if _, err := os.Stat("./ADM/ops_src.yaml"); err != nil {
+
+			str_stdout := "Failed Because Ops Resource Doesn't Exist"
+
+			fmt.Println(str_stdout)
+
+			return
+		}
+
+		kcfg_path, main_ns, err := dotfs.GetKubeConfigAndTargetNameSpace()
+
+		}
+
+		rsc := "deployment"
+
+		rsc_nm := ""
+
+		code := "highest"
+
+		fmt.Println("Deployment to set highest priority : ")
+		fmt.Scanln(&rsc_nm)
+
+		cmd := exec.Command("python3", "./ADM/yaml_handle.py", "qos", rsc, rsc_nm, code, kcfg_path)
+
+		cmd.Run()
+
+		cmd = exec.Command("kubectl", "--kubeconfig", kcfg_path, "-n", main_ns, "apply", "-f", "./ADM/qos.yaml")
+
+		out, err := cmd.Output()
+
+		if err != nil {
+
+			strerr := err.Error()
+
+			fmt.Println(strerr)
+
+			return
+
+		}
+
+		strout := string(out)
+
+		fmt.Println(strout)
+
+	} else if code == "higher" {
+
+		if _, err := os.Stat("./ADM/ops_src.yaml"); err != nil {
+
+			str_stdout := "Failed Because Ops Resource Doesn't Exist"
+
+			fmt.Println(str_stdout)
+
+			return
+		}
+
+		kcfg_path, main_ns := dotfs.GetKubeConfigAndTargetNameSpace()
+
+		rsc := "deployment"
+
+		rsc_nm := ""
+
+		code := "higher"
+
+		fmt.Println("Deployment to set higher priority : ")
+		fmt.Scanln(&rsc_nm)
+
+		cmd := exec.Command("python3", "./ADM/yaml_handle.py", "qos", rsc, rsc_nm, code, kcfg_path)
+
+		cmd.Run()
+
+		cmd = exec.Command("kubectl", "--kubeconfig", kcfg_path, "-n", main_ns, "apply", "-f", "./ADM/qos.yaml")
+
+		out, err := cmd.Output()
+
+		if err != nil {
+
+			strerr := err.Error()
+
+			fmt.Println(strerr)
+
+			return
+
+		}
+
+		strout := string(out)
+
+		fmt.Println(strout)
+
+	} else if code == "default" {
+
+		if _, err := os.Stat("./ADM/ops_src.yaml"); err != nil {
+
+			str_stdout := "Failed Because Ops Resource Doesn't Exist"
+
+			fmt.Println(str_stdout)
+
+			return
+		}
+
+		kcfg_path, main_ns := dotfs.GetKubeConfigAndTargetNameSpace()
+
+		rsc := "deployment"
+
+		rsc_nm := ""
+
+		fmt.Println("Deployment to set default priority : ")
+		fmt.Scanln(&rsc_nm)
+
+		cmd := exec.Command("python3", "./ADM/yaml_handle.py", "qosundo", rsc, rsc_nm)
+
+		cmd.Run()
+
+		cmd = exec.Command("kubectl", "--kubeconfig", kcfg_path, "-n", main_ns, "apply", "-f", "./ADM/qos.yaml")
+
+		out, err := cmd.Output()
+
+		if err != nil {
+
+			strerr := err.Error()
+
+			fmt.Println(strerr)
+
+			return
+
+		}
+
+		strout := string(out)
+
+		fmt.Println(strout)
+
+	} else if code == "list" {
+
+		//list_all()
+
+	} else if code == "back" {
+
+		return
+
+	} else {
+
+		fmt.Println("Invalid command")
+	}
+
+}
+
+func lifecycle() {
+
+	code := ""
+
+	fmt.Println("COMMAND : /lifecycle/<>")
+	fmt.Scanln(&code)
+
+	if code == "update" {
+
+		kcfg_path, main_ns := dotfs.GetKubeConfigAndTargetNameSpace()
+
+		rsc_rscnm := ""
+
+		fmt.Println("Deployment to update (or restart) : ")
+		fmt.Scanln(&rsc_rscnm)
+
+		rsc_rscnm = "deployment/" + rsc_rscnm
+
+		cmd := exec.Command("kubectl", "--kubeconfig", kcfg_path, "-n", main_ns, "rollout", "restart", rsc_rscnm)
+
+		out, err := cmd.Output()
+
+		if err != nil {
+
+			strerr := err.Error()
+
+			fmt.Println(strerr)
+
+			return
+		}
+
+		strout := string(out)
+
+		fmt.Println(strout)
+
+	} else if code == "revert" {
+
+		kcfg_path, main_ns := dotfs.GetKubeConfigAndTargetNameSpace()
+
+		rsc_rscnm := ""
+
+		fmt.Println("Deployment to revert to previous version : ")
+		fmt.Scanln(&rsc_rscnm)
+
+		rsc_rscnm = "deployment/" + rsc_rscnm
+
+		cmd := exec.Command("kubectl", "--kubeconfig", kcfg_path, "-n", main_ns, "rollout", "undo", rsc_rscnm)
+
+		out, err := cmd.Output()
+
+		if err != nil {
+
+			strerr := err.Error()
+
+			fmt.Println(strerr)
+
+			return
+		}
+
+		strout := string(out)
+
+		fmt.Println(strout)
+
+	} else if code == "history" {
+
+		kcfg_path, main_ns := dotfs.GetKubeConfigAndTargetNameSpace()
+
+		rsc_rscnm := ""
+
+		fmt.Println("Deployment to get history of : ")
+		fmt.Scanln(&rsc_rscnm)
+
+		rsc_rscnm = "deployment/" + rsc_rscnm
+
+		cmd := exec.Command("kubectl", "--kubeconfig", kcfg_path, "-n", main_ns, "rollout", "history", rsc_rscnm)
+
+		out, err := cmd.Output()
+
+		if err != nil {
+
+			strerr := err.Error()
+
+			fmt.Println(strerr)
+
+			return
+		}
+
+		strout := string(out)
+
+		fmt.Println(strout)
+
+	} else if code == "kill" {
+
+		if _, err := os.Stat("./ADM/ops_src.yaml"); err != nil {
+
+			str_stdout := "Failed Because Ops Resource Doesn't Exist"
+
+			fmt.Println(str_stdout)
+
+			return
+		}
+
+		kcfg_path, main_ns := dotfs.GetKubeConfigAndTargetNameSpace()
+
+		rsc := "deployment"
+
+		rsc_nm := ""
+
+		fmt.Println("Deployment to delete: ")
+		fmt.Scanln(&rsc_nm)
+
+		cmd := exec.Command("python3", "./ADM/yaml_handle.py", "kill", rsc, rsc_nm)
+
+		cmd.Run()
+
+		cmd = exec.Command("kubectl", "--kubeconfig", kcfg_path, "-n", main_ns, "delete", "-f", "./ADM/delete_ops_src.yaml")
+
+		out, err := cmd.Output()
+
+		if err != nil {
+
+			strerr := err.Error()
+
+			fmt.Println(strerr)
+
+			return
+		}
+
+		strout := string(out)
+
+		fmt.Println(strout)
+
+	} else if code == "list" {
+
+		//list_all()
+
+	} else if code == "back" {
+
+		return
+
+	} else {
+
+		fmt.Println("Invalid command")
+	}
+
+}
+
 */
