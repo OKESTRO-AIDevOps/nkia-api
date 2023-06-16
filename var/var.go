@@ -6,6 +6,10 @@ import (
 	"os"
 	"strings"
 
+	. "github.com/seantywork/x0f_npia/pkg/apistandard"
+
+	pkgutils "github.com/seantywork/x0f_npia/pkg/utils"
+
 	goya "github.com/goccy/go-yaml"
 	//"github.com/fatih/color"
 )
@@ -84,8 +88,28 @@ func writeToAdmOrigin() {
 
 }
 
+func callApiDef() {
+
+	ASgi.PrintPrettyDefinition()
+
+}
+
+func callApiDefStructure() {
+
+	ASgi.PrintRawDefinition()
+
+}
+
+func sliceTest() {
+
+	ret := pkgutils.InsertToSliceByIndex[string]([]string{"b", "c", "d"}, 0, "a")
+
+	fmt.Println(ret)
+}
+
 func main() {
 
-	writeToAdmOrigin()
+	//	callApiDefStructure()
 
+	sliceTest()
 }

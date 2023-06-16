@@ -42,3 +42,16 @@ func RenderASCIIGraph(render_target string) {
 	fmt.Println(out)
 
 }
+
+func PopFromSliceByIndex[T comparable](slice []T, idx int) (T, []T) {
+
+	pop_val := slice[idx]
+
+	return pop_val, append(slice[:idx], slice[idx+1:]...)
+
+}
+
+func InsertToSliceByIndex[T comparable](slice []T, idx int, val T) []T {
+
+	return append(slice[:idx], append([]T{val}, slice[idx:]...)...)
+}
