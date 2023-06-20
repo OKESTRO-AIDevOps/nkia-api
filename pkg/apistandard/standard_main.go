@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/seantywork/x0f_npia/pkg/kuberead"
+	"github.com/seantywork/x0f_npia/pkg/kubewrite"
 )
 
 func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
@@ -78,6 +79,15 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 	case "APPLY-SETREPO":
 	case "APPLY-SETREG":
 	case "APPLY-REGSEC":
+		ns := std_cmd["ns"]
+
+		str_out, cmd_err := kubewrite.WriteSecret(ns)
+
+		if cmd_err != nil {
+			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
+		}
+
+		ret_api_out.BODY = str_out
 	case "APPLY-DIST":
 	case "APPLY-CRTOPSSRC":
 	case "APPLY-RESTART":
