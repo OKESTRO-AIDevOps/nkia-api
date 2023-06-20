@@ -5,16 +5,12 @@ import (
 
 	"github.com/seantywork/x0f_npia/pkg/dotfs"
 
-	apist "github.com/seantywork/x0f_npia/pkg/apistandard"
-
 	"os/exec"
 
 	"encoding/json"
 )
 
-func WriteSecret(main_ns string) (apist.API_OUTPUT, error) {
-
-	var api_o apist.API_OUTPUT
+func WriteSecret(main_ns string) (string, error) {
 
 	var app_origin dotfs.AppOrigin
 
@@ -23,14 +19,14 @@ func WriteSecret(main_ns string) (apist.API_OUTPUT, error) {
 	err := json.Unmarshal(file_content, &app_origin)
 
 	if err != nil {
-		return api_o, fmt.Errorf(": %s", err.Error())
+		return "", fmt.Errorf(": %s", err.Error())
 	}
 
 	_, reg_url := dotfs.GetRecordInfo(app_origin.RECORDS, main_ns)
 
 	if reg_url == "N" {
 
-		return api_o, fmt.Errorf(": %s", "reg url not set")
+		return "", fmt.Errorf(": %s", "reg url not set")
 
 	}
 
@@ -38,7 +34,7 @@ func WriteSecret(main_ns string) (apist.API_OUTPUT, error) {
 
 	if reg_id == "N" || reg_pw == "N" {
 
-		return api_o, fmt.Errorf(": %s", "reg info not complete")
+		return "", fmt.Errorf(": %s", "reg info not complete")
 
 	}
 
@@ -65,12 +61,12 @@ func WriteSecret(main_ns string) (apist.API_OUTPUT, error) {
 		out, err := cmd.Output()
 
 		if err != nil {
-			return api_o, fmt.Errorf(": %s", err.Error())
+			return "", fmt.Errorf(": %s", err.Error())
 		}
 
-		api_o.BODY = string(out)
+		strout := string(out)
 
-		return api_o, nil
+		return strout, nil
 
 	} else {
 
@@ -79,7 +75,7 @@ func WriteSecret(main_ns string) (apist.API_OUTPUT, error) {
 		_, err = cmd.Output()
 
 		if err != nil {
-			return api_o, fmt.Errorf(": %s", err.Error())
+			return "", fmt.Errorf(": %s", err.Error())
 		}
 
 		cmd = exec.Command("kubectl", "-n", main_ns, "create", "secret", "docker-registry", "docker-secret", docker_server, docker_username, docker_password)
@@ -87,12 +83,12 @@ func WriteSecret(main_ns string) (apist.API_OUTPUT, error) {
 		out, err := cmd.Output()
 
 		if err != nil {
-			return api_o, fmt.Errorf(": %s", err.Error())
+			return "", fmt.Errorf(": %s", err.Error())
 		}
 
-		api_o.BODY = string(out)
+		strout := string(out)
 
-		return api_o, nil
+		return strout, nil
 
 	}
 
