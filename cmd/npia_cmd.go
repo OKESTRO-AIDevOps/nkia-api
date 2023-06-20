@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"os/user"
 
-	"github.com/seantywork/x0f_npia/pkg/dotfs"
+	"github.com/seantywork/014_npia/pkg/dotfs"
 
-	. "github.com/seantywork/x0f_npia/pkg/apistandard"
+	. "github.com/seantywork/014_npia/pkg/apistandard"
 
 	"github.com/fatih/color"
 )

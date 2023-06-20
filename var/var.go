@@ -6,9 +6,9 @@ import (
 	"os"
 	"strings"
 
-	. "github.com/seantywork/x0f_npia/pkg/apistandard"
+	. "github.com/seantywork/014_npia/pkg/apistandard"
 
-	pkgutils "github.com/seantywork/x0f_npia/pkg/utils"
+	pkgutils "github.com/seantywork/014_npia/pkg/utils"
 
 	goya "github.com/goccy/go-yaml"
 	//"github.com/fatih/color"

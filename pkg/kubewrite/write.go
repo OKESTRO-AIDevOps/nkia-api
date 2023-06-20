@@ -3,7 +3,7 @@ package kubewrite
 import (
 	"fmt"
 
-	"github.com/seantywork/x0f_npia/pkg/dotfs"
+	"github.com/seantywork/014_npia/pkg/dotfs"
 
 	"os/exec"
 

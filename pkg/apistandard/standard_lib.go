@@ -3,7 +3,7 @@ package apistandard
 import (
 	"fmt"
 
-	pkgutils "github.com/seantywork/x0f_npia/pkg/utils"
+	pkgutils "github.com/seantywork/014_npia/pkg/utils"
 )
 
 func (asgi API_STD) Verify(verifiable API_INPUT) error {
