@@ -12,9 +12,7 @@ import (
 	"encoding/json"
 )
 
-func WriteSecret(main_ns string, permit_overwrite int) (apist.API_OUTPUT, error) {
-
-	// 1 for overwrite
+func WriteSecret(main_ns string) (apist.API_OUTPUT, error) {
 
 	var api_o apist.API_OUTPUT
 
@@ -74,9 +72,7 @@ func WriteSecret(main_ns string, permit_overwrite int) (apist.API_OUTPUT, error)
 
 		return api_o, nil
 
-	}
-
-	if permit_overwrite == 1 {
+	} else {
 
 		cmd = exec.Command("kubectl", "-n", main_ns, "delete", "secret", "docker-secret")
 
@@ -97,10 +93,6 @@ func WriteSecret(main_ns string, permit_overwrite int) (apist.API_OUTPUT, error)
 		api_o.BODY = string(out)
 
 		return api_o, nil
-
-	} else {
-
-		return api_o, fmt.Errorf(": %s", "secret exists, but overwrite not permitted")
 
 	}
 

@@ -10,13 +10,13 @@ import (
 	agph "github.com/guptarohit/asciigraph"
 )
 
-func CheckIfEleInStrList(ele string, str_list []string) bool {
+func CheckIfSliceContains[T comparable](slice []T, ele T) bool {
 
 	hit := false
 
-	for i := 0; i < len(str_list); i++ {
+	for i := 0; i < len(slice); i++ {
 
-		if str_list[i] == ele {
+		if slice[i] == ele {
 
 			hit = true
 

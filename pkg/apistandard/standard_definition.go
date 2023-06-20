@@ -2,24 +2,6 @@ package apistandard
 
 import "strings"
 
-type LEGACY_EXCHANGE struct {
-	ACD  string
-	CMD  string
-	DATA string
-	CNT  string
-	MSG  string
-}
-
-type LEGACY_FORM struct {
-	FORM LEGACY_API_OUTPUT
-}
-
-type LEGACY_API_OUTPUT struct {
-	HEAD string
-
-	BODY string
-}
-
 type API_OUTPUT struct {
 	HEAD map[string]map[string]string
 
@@ -34,7 +16,7 @@ var API_DEFINITION string = "" +
 	//            id          :       keys
 	"SUBMIT                   :id                                                           " + "\n" +
 	"CALLME                   :id                                                           " + "\n" +
-	"SETTING-CRTNS            :id                                                           " + "\n" +
+	"SETTING-CRTNS            :id, ns                                                       " + "\n" +
 	"SETTING-CRTNSVOL         :id, ns, volserver                                            " + "\n" +
 	"SETTING-CRTVOL           :id, ns, volserver                                            " + "\n" +
 	"SETTING-CRTMON           :id, ns                                                       " + "\n" +
@@ -80,9 +62,9 @@ var API_DEFINITION string = "" +
 	"RESOURCE-NDISKWT         :id, ns                                                       " + "\n" +
 	"APPLY-SETREPO            :id, ns, repoaddr, repoid, repopw                             " + "\n" +
 	"APPLY-SETREG             :id, ns, regaddr, regid, regpw                                " + "\n" +
-	"APPLY-REGSEC             :id, ns, regaddr                                              " + "\n" +
+	"APPLY-REGSEC             :id, ns                                                       " + "\n" +
 	"APPLY-DIST               :id, ns, repoaddr, regaddr                                    " + "\n" +
-	"APPLY-CRTPOSSRC          :id, ns, repoaddr, regaddr                                    " + "\n" +
+	"APPLY-CRTOPSSRC          :id, ns, repoaddr, regaddr                                    " + "\n" +
 	"APPLY-RESTART            :id, ns, resource, resourcenm                                 " + "\n" +
 	"APPLY-ROLLBACK           :id, ns, resource, resourcenm                                 " + "\n" +
 	"APPLY-KILL               :id, ns, resource, resourcenm                                 " + "\n" +
@@ -106,13 +88,15 @@ var API_DEFINITION string = "" +
 	"ADMIN-ADMRMTSTR          :id, hostaddr, hostport, usernm, userpw, localip, token       " + "\n" +
 	"ADMIN-ADMRMTLOG          :id, hostaddr, hostport, usernm, userpw                       " + "\n" +
 	"ADMIN-ADMRMTSTATUS       :id, hostaddr, hostport, usernm, userpw                       " + "\n" +
-	"ADMIN-LD                 :id, token, targetip                                          " + "\n" +
+	"ADMIN-LEAD               :id, token, targetip                                          " + "\n" +
 	"ADMIN-MSR                :id, token, targetip                                          " + "\n" +
 	"ADMIN-LDVOL              :id, token, targetip                                          " + "\n" +
 	"ADMIN-WRK                :id, token, targetip                                          " + "\n" +
 	"ADMIN-STR                :id, token, targetip                                          " + "\n" +
 	"ADMIN-LOG                :id                                                           " + "\n" +
 	"ADMIN-STATUS             :id, token, targetip                                          " + "\n" +
+	"ADMIN-UP                 :id, token                                                    " + "\n" +
+	"ADMIN-DOWN               :id, token                                                    " + "\n" +
 	"DELND                    :id                                                           " + "\n" +
 	"EXIT                     :id                                                           "
 

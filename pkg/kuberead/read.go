@@ -3,14 +3,10 @@ package kuberead
 import (
 	"fmt"
 
-	apist "github.com/seantywork/x0f_npia/pkg/apistandard"
-
 	"os/exec"
 )
 
-func ReadPod(main_ns string) (apist.API_OUTPUT, error) {
-
-	var api_o apist.API_OUTPUT
+func ReadPod(main_ns string) (string, error) {
 
 	cmd := exec.Command("kubectl", "-n", main_ns, "get", "pods")
 
@@ -18,20 +14,16 @@ func ReadPod(main_ns string) (apist.API_OUTPUT, error) {
 
 	if err != nil {
 
-		return api_o, fmt.Errorf(": %s", err.Error())
+		return "", fmt.Errorf(": %s", err.Error())
 	}
 
 	strout := string(out)
 
-	api_o.BODY = strout
-
-	return api_o, nil
+	return strout, nil
 
 }
 
-func ReadService(main_ns string) (apist.API_OUTPUT, error) {
-
-	var api_o apist.API_OUTPUT
+func ReadService(main_ns string) (string, error) {
 
 	cmd := exec.Command("kubectl", "-n", main_ns, "get", "services")
 
@@ -39,22 +31,16 @@ func ReadService(main_ns string) (apist.API_OUTPUT, error) {
 
 	if err != nil {
 
-		return api_o, fmt.Errorf(": %s", err.Error())
+		return "", fmt.Errorf(": %s", err.Error())
 	}
 
 	strout := string(out)
 
-	fmt.Println(strout)
-
-	api_o.BODY = strout
-
-	return api_o, nil
+	return strout, nil
 
 }
 
-func ReadDeployment(main_ns string) (apist.API_OUTPUT, error) {
-
-	var api_o apist.API_OUTPUT
+func ReadDeployment(main_ns string) (string, error) {
 
 	cmd := exec.Command("kubectl", "-n", main_ns, "get", "services")
 
@@ -62,20 +48,16 @@ func ReadDeployment(main_ns string) (apist.API_OUTPUT, error) {
 
 	if err != nil {
 
-		return api_o, fmt.Errorf(": %s", err.Error())
+		return "", fmt.Errorf(": %s", err.Error())
 	}
 
 	strout := string(out)
 
-	api_o.BODY = strout
-
-	return api_o, nil
+	return strout, nil
 
 }
 
-func ReadNode(main_ns string) (apist.API_OUTPUT, error) {
-
-	var api_o apist.API_OUTPUT
+func ReadNode(main_ns string) (string, error) {
 
 	cmd := exec.Command("kubectl", "get", "nodes")
 
@@ -83,20 +65,16 @@ func ReadNode(main_ns string) (apist.API_OUTPUT, error) {
 
 	if err != nil {
 
-		return api_o, fmt.Errorf(": %s", err.Error())
+		return "", fmt.Errorf(": %s", err.Error())
 	}
 
 	strout := string(out)
 
-	api_o.BODY = strout
-
-	return api_o, nil
+	return strout, nil
 
 }
 
-func ReadEvent(main_ns string) (apist.API_OUTPUT, error) {
-
-	var api_o apist.API_OUTPUT
+func ReadEvent(main_ns string) (string, error) {
 
 	cmd := exec.Command("kubectl", "-n", main_ns, "get", "events")
 
@@ -104,20 +82,16 @@ func ReadEvent(main_ns string) (apist.API_OUTPUT, error) {
 
 	if err != nil {
 
-		return api_o, fmt.Errorf(": %s", err.Error())
+		return "", fmt.Errorf(": %s", err.Error())
 	}
 
 	strout := string(out)
 
-	api_o.BODY = strout
-
-	return api_o, nil
+	return strout, nil
 
 }
 
-func ReadResource(main_ns string) (apist.API_OUTPUT, error) {
-
-	var api_o apist.API_OUTPUT
+func ReadResource(main_ns string) (string, error) {
 
 	cmd := exec.Command("kubectl", "-n", main_ns, "get", "all")
 
@@ -125,20 +99,16 @@ func ReadResource(main_ns string) (apist.API_OUTPUT, error) {
 
 	if err != nil {
 
-		return api_o, fmt.Errorf(": %s", err.Error())
+		return "", fmt.Errorf(": %s", err.Error())
 	}
 
 	strout := string(out)
 
-	api_o.BODY = strout
-
-	return api_o, nil
+	return strout, nil
 
 }
 
-func ReadNamespace(main_ns string) (apist.API_OUTPUT, error) {
-
-	var api_o apist.API_OUTPUT
+func ReadNamespace(main_ns string) (string, error) {
 
 	cmd := exec.Command("kubectl", "get", "namespaces")
 
@@ -146,13 +116,11 @@ func ReadNamespace(main_ns string) (apist.API_OUTPUT, error) {
 
 	if err != nil {
 
-		return api_o, fmt.Errorf(": %s", err.Error())
+		return "", fmt.Errorf(": %s", err.Error())
 	}
 
 	strout := string(out)
 
-	api_o.BODY = strout
-
-	return api_o, nil
+	return strout, nil
 
 }
