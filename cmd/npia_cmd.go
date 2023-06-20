@@ -5,8 +5,8 @@ import (
 	"os/user"
 
 	"github.com/seantywork/x0f_npia/pkg/dotfs"
-	"github.com/seantywork/x0f_npia/pkg/kuberead"
-	"github.com/seantywork/x0f_npia/pkg/kubewrite"
+
+	. "github.com/seantywork/x0f_npia/pkg/apistandard"
 
 	"github.com/fatih/color"
 )
@@ -100,7 +100,7 @@ func run() error {
 		switch code {
 		case "read":
 
-			fmt.Println("Reading cloud resoure...")
+			fmt.Println("Reading cloud resource...")
 
 			if evelp_lower, err := read(); err != nil {
 
@@ -191,13 +191,19 @@ func read() (int, error) {
 
 	for evelp == 0 {
 
+		api_input := make(API_INPUT)
+
 		switch code {
 
 		case "pod":
 
 			color.Blue("RUN: /read/pod")
 
-			if api_o, err := kuberead.ReadPod(RPARAM["NS"]); err != nil {
+			api_input["id"] = "RESOURCE-PDS"
+
+			api_input["ns"] = RPARAM["NS"]
+
+			if api_o, err := ASgi.Run(api_input); err != nil {
 
 				return 1, fmt.Errorf("pod: %s", err.Error())
 
@@ -211,7 +217,11 @@ func read() (int, error) {
 
 			color.Blue("RUN: /read/service")
 
-			if api_o, err := kuberead.ReadService(RPARAM["NS"]); err != nil {
+			api_input["id"] = "RESOURCE-SVC"
+
+			api_input["ns"] = RPARAM["NS"]
+
+			if api_o, err := ASgi.Run(api_input); err != nil {
 
 				return 1, fmt.Errorf("service: %s", err.Error())
 
@@ -225,7 +235,11 @@ func read() (int, error) {
 
 			color.Blue("RUN: /read/deployment")
 
-			if api_o, err := kuberead.ReadDeployment(RPARAM["NS"]); err != nil {
+			api_input["id"] = "RESOURCE-DPL"
+
+			api_input["ns"] = RPARAM["NS"]
+
+			if api_o, err := ASgi.Run(api_input); err != nil {
 
 				return 1, fmt.Errorf("deployment: %s", err.Error())
 
@@ -239,7 +253,11 @@ func read() (int, error) {
 
 			color.Blue("RUN: /read/node")
 
-			if api_o, err := kuberead.ReadNode(RPARAM["NS"]); err != nil {
+			api_input["id"] = "RESOURCE-NDS"
+
+			api_input["ns"] = RPARAM["NS"]
+
+			if api_o, err := ASgi.Run(api_input); err != nil {
 
 				return 1, fmt.Errorf("node: %s", err.Error())
 
@@ -253,7 +271,11 @@ func read() (int, error) {
 
 			color.Blue("RUN: /read/event")
 
-			if api_o, err := kuberead.ReadEvent(RPARAM["NS"]); err != nil {
+			api_input["id"] = "RESOURCE-EVNT"
+
+			api_input["ns"] = RPARAM["NS"]
+
+			if api_o, err := ASgi.Run(api_input); err != nil {
 
 				return 1, fmt.Errorf("event: %s", err.Error())
 
@@ -267,7 +289,11 @@ func read() (int, error) {
 
 			color.Blue("RUN: /read/resource")
 
-			if api_o, err := kuberead.ReadResource(RPARAM["NS"]); err != nil {
+			api_input["id"] = "RESOURCE-RSRC"
+
+			api_input["ns"] = RPARAM["NS"]
+
+			if api_o, err := ASgi.Run(api_input); err != nil {
 
 				return 1, fmt.Errorf("event: %s", err.Error())
 
@@ -281,7 +307,11 @@ func read() (int, error) {
 
 			color.Blue("RUN: /read/namespace")
 
-			if api_o, err := kuberead.ReadNamespace(RPARAM["NS"]); err != nil {
+			api_input["id"] = "RESOURCE-NSPC"
+
+			api_input["ns"] = RPARAM["NS"]
+
+			if api_o, err := ASgi.Run(api_input); err != nil {
 
 				return 1, fmt.Errorf("event: %s", err.Error())
 
@@ -348,24 +378,19 @@ func write() (int, error) {
 
 	for evelp == 0 {
 
+		api_input := make(API_INPUT)
+
 		switch code {
 
 		case "secret":
 
 			color.Blue("RUN: /write/secret")
 
-			permit_overwrite := 1
+			api_input["id"] = "APPLY-REGSEC"
 
-			check := "y"
+			api_input["ns"] = RPARAM["NS"]
 
-			fmt.Println("Permit overwrite if secret exists? [ y | n ] :")
-			fmt.Scanln(&check)
-
-			if check == "n" {
-				permit_overwrite = 0
-			}
-
-			if api_o, err := kubewrite.WriteSecret(RPARAM["NS"], permit_overwrite); err != nil {
+			if api_o, err := ASgi.Run(api_input); err != nil {
 
 				return 1, fmt.Errorf("secret: %s", err.Error())
 

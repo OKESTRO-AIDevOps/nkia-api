@@ -2,90 +2,49 @@ package apistandard
 
 import (
 	"fmt"
-	"strings"
 
 	pkgutils "github.com/seantywork/x0f_npia/pkg/utils"
 )
 
-func (asgi API_STD) LegacyInputTranslate(legacy_in string) (API_INPUT, error) {
+func (asgi API_STD) Verify(verifiable API_INPUT) error {
 
-	ret_api_input := make(API_INPUT)
+	cmd_id, okay := verifiable["id"]
 
-	legacy_list := strings.SplitN(legacy_in, ":", 2)
+	var duplicate_check []string
 
-	matching_key := 0
-
-	new_key := legacy_list[0]
-
-	c_list := strings.Split(legacy_list[1], ",")
-
-	if new_key == "SUBMIT" {
-
-	} else if new_key == "CALLME" {
-
-	} else if new_key == "GITLOG" {
-
-	} else if new_key == "PIPEHIST" {
-
-	} else if new_key == "PIPE" {
-
-	} else if new_key == "PIPELOG" {
-
-	} else if new_key == "BUILD" {
-
-	} else if new_key == "BUILDLOG" {
-
-	} else if new_key == "DELND" {
-
-	} else if new_key == "EXIT" {
-
+	if !okay {
+		return fmt.Errorf("verification failed: %s", "missing command id")
 	}
 
-	obj, resized_c_list := pkgutils.PopFromSliceByIndex[string](c_list, 1)
+	v_list, okay := asgi[cmd_id]
 
-	std_key_obj := ""
+	if !okay {
 
-	if new_key == "SETTING" && obj == "CRTNS" {
-
-		std_key_obj = new_key + "-" + obj
-
-		_ = pkgutils.InsertToSliceByIndex[string](resized_c_list, 0, std_key_obj)
-
+		return fmt.Errorf("verification failed: %s", "invalid command id")
 	}
 
-	if matching_key == 0 {
-
-		return ret_api_input, fmt.Errorf("key not found")
+	if len(v_list) != len(verifiable) {
+		return fmt.Errorf("verification failed: %s", "invalid command structure")
 	}
 
-	return ret_api_input, nil
+	for i := range verifiable {
 
-}
+		hit := pkgutils.CheckIfSliceContains[string](duplicate_check, i)
 
-func (asgi API_STD) LegacyTranslationBuildHelper(std_keys []string, legacy_c_list []string) (API_INPUT, error) {
+		if hit {
+			return fmt.Errorf("verification failed: %s", "invalid command structure: duplicate key")
+		}
 
-	ret_api_std := make(API_INPUT)
+		hit = pkgutils.CheckIfSliceContains[string](v_list, i)
 
-	if len(std_keys) != len(legacy_c_list) {
+		if !hit {
+			return fmt.Errorf("verification failed: %s", "invalid command structure: wrong key")
+		}
 
-		return ret_api_std, fmt.Errorf("unsupported translation format")
-
+		duplicate_check = append(duplicate_check, i)
 	}
 
-	for i := 0; i < len(std_keys); i++ {
-
-		ret_api_std[std_keys[i]] = legacy_c_list[i]
-
-	}
-
-	return ret_api_std, nil
-}
-
-func (asgi API_STD) LegacyOutputTranslate() {
-
-}
-
-func (asgi API_STD) Verify() {
+	return nil
 
 }
 
