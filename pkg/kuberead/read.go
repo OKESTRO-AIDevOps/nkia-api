@@ -23,6 +23,23 @@ func ReadPod(main_ns string) (string, error) {
 
 }
 
+func ReadPodLog(main_ns string, pod_name string) (string, error) {
+
+	cmd := exec.Command("kubectl", "logs", "-n", main_ns, pod_name)
+
+	out, err := cmd.Output()
+
+	if err != nil {
+
+		return "", fmt.Errorf(": %s", err.Error())
+	}
+
+	strout := string(out)
+
+	return strout, nil
+
+}
+
 func ReadService(main_ns string) (string, error) {
 
 	cmd := exec.Command("kubectl", "-n", main_ns, "get", "services")
@@ -42,7 +59,7 @@ func ReadService(main_ns string) (string, error) {
 
 func ReadDeployment(main_ns string) (string, error) {
 
-	cmd := exec.Command("kubectl", "-n", main_ns, "get", "services")
+	cmd := exec.Command("kubectl", "-n", main_ns, "get", "deployments")
 
 	out, err := cmd.Output()
 
@@ -120,6 +137,28 @@ func ReadNamespace(main_ns string) (string, error) {
 	}
 
 	strout := string(out)
+
+	return strout, nil
+
+}
+
+func ReadImageList(main_ns string) (string, error) {
+
+	strout := "implement"
+
+	return strout, nil
+}
+
+func ReadProjectProbe(main_ns string) (string, error) {
+
+	strout := "implement"
+
+	return strout, nil
+}
+
+func ReadPodScheduled(main_ns string) (string, error) {
+
+	strout := "implement"
 
 	return strout, nil
 

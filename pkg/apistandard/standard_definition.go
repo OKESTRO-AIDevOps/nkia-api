@@ -5,7 +5,7 @@ import "strings"
 type API_OUTPUT struct {
 	HEAD map[string]map[string]string
 
-	BODY string
+	BODY []byte
 }
 
 type API_INPUT map[string]string

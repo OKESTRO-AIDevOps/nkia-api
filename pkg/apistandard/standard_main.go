@@ -42,16 +42,82 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = str_out
+		ret_api_out.BODY = []byte(str_out)
 
 	case "RESOURCE-PDS":
+
+		ns := std_cmd["ns"]
+
+		str_out, cmd_err := kuberead.ReadPod(ns)
+
+		if cmd_err != nil {
+			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
+		}
+
+		ret_api_out.BODY = []byte(str_out)
+
 	case "RESOURCE-PLOG":
 	case "RESOURCE-SVC":
+
+		ns := std_cmd["ns"]
+
+		str_out, cmd_err := kuberead.ReadService(ns)
+
+		if cmd_err != nil {
+			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
+		}
+
+		ret_api_out.BODY = []byte(str_out)
+
 	case "RESOURCE-DPL":
+
+		ns := std_cmd["ns"]
+
+		str_out, cmd_err := kuberead.ReadDeployment(ns)
+
+		if cmd_err != nil {
+			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
+		}
+
+		ret_api_out.BODY = []byte(str_out)
+
 	case "RESOURCE-IMGLI":
 	case "RESOURCE-EVNT":
+
+		ns := std_cmd["ns"]
+
+		str_out, cmd_err := kuberead.ReadEvent(ns)
+
+		if cmd_err != nil {
+			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
+		}
+
+		ret_api_out.BODY = []byte(str_out)
+
 	case "RESOURCE-RSRC":
+
+		ns := std_cmd["ns"]
+
+		str_out, cmd_err := kuberead.ReadResource(ns)
+
+		if cmd_err != nil {
+			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
+		}
+
+		ret_api_out.BODY = []byte(str_out)
+
 	case "RESOURCE-NSPC":
+
+		ns := std_cmd["ns"]
+
+		str_out, cmd_err := kuberead.ReadNamespace(ns)
+
+		if cmd_err != nil {
+			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
+		}
+
+		ret_api_out.BODY = []byte(str_out)
+
 	case "RESOURCE-PRJPRB":
 	case "RESOURCE-PSCH":
 	case "RESOURCE-PUNSCH":
@@ -87,7 +153,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = str_out
+		ret_api_out.BODY = []byte(str_out)
 	case "APPLY-DIST":
 	case "APPLY-CRTOPSSRC":
 	case "APPLY-RESTART":
