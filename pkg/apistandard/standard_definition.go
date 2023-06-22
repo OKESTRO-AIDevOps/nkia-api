@@ -3,10 +3,12 @@ package apistandard
 import "strings"
 
 type API_OUTPUT struct {
-	HEAD map[string]map[string]string
+	HEAD API_METADATA
 
 	BODY []byte
 }
+
+type API_METADATA map[string]map[string]string
 
 type API_INPUT map[string]string
 
@@ -45,21 +47,21 @@ var API_DEFINITION string = "" +
 	"RESOURCE-CFSW            :id, ns                                                       " + "\n" +
 	"RESOURCE-CNETR           :id, ns                                                       " + "\n" +
 	"RESOURCE-CNETT           :id, ns                                                       " + "\n" +
-	"RESOURCE-VOLAVAIL        :id, ns                                                       " + "\n" +
-	"RESOURCE-VOLCAP          :id, ns                                                       " + "\n" +
-	"RESOURCE-VOLUSD          :id, ns                                                       " + "\n" +
-	"RESOURCE-NTEMP           :id, ns                                                       " + "\n" +
-	"RESOURCE-NTEMPCH         :id, ns                                                       " + "\n" +
-	"RESOURCE-NTEMPAV         :id, ns                                                       " + "\n" +
-	"RESOURCE-NPROCS          :id, ns                                                       " + "\n" +
-	"RESOURCE-NCORES          :id, ns                                                       " + "\n" +
-	"RESOURCE-NMEM            :id, ns                                                       " + "\n" +
-	"RESOURCE-NMEMTOT         :id, ns                                                       " + "\n" +
-	"RESOURCE-NDISKR          :id, ns                                                       " + "\n" +
-	"RESOURCE-NDISKW          :id, ns                                                       " + "\n" +
-	"RESOURCE-NNETR           :id, ns                                                       " + "\n" +
-	"RESOURCE-NNETT           :id, ns                                                       " + "\n" +
-	"RESOURCE-NDISKWT         :id, ns                                                       " + "\n" +
+	"RESOURCE-VOLAVAIL        :id                                                           " + "\n" +
+	"RESOURCE-VOLCAP          :id                                                           " + "\n" +
+	"RESOURCE-VOLUSD          :id                                                           " + "\n" +
+	"RESOURCE-NTEMP           :id                                                           " + "\n" +
+	"RESOURCE-NTEMPCH         :id                                                           " + "\n" +
+	"RESOURCE-NTEMPAV         :id                                                           " + "\n" +
+	"RESOURCE-NPROCS          :id                                                           " + "\n" +
+	"RESOURCE-NCORES          :id                                                           " + "\n" +
+	"RESOURCE-NMEM            :id                                                           " + "\n" +
+	"RESOURCE-NMEMTOT         :id                                                           " + "\n" +
+	"RESOURCE-NDISKR          :id                                                           " + "\n" +
+	"RESOURCE-NDISKW          :id                                                           " + "\n" +
+	"RESOURCE-NNETR           :id                                                           " + "\n" +
+	"RESOURCE-NNETT           :id                                                           " + "\n" +
+	"RESOURCE-NDISKWT         :id                                                           " + "\n" +
 	"APPLY-SETREPO            :id, ns, repoaddr, repoid, repopw                             " + "\n" +
 	"APPLY-SETREG             :id, ns, regaddr, regid, regpw                                " + "\n" +
 	"APPLY-REGSEC             :id, ns                                                       " + "\n" +
