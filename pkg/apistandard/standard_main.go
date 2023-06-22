@@ -36,112 +36,347 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 
 		ns := std_cmd["ns"]
 
-		str_out, cmd_err := kuberead.ReadNode(ns)
+		b_out, cmd_err := kuberead.ReadNode(ns)
 
 		if cmd_err != nil {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = []byte(str_out)
+		ret_api_out.BODY = b_out
 
 	case "RESOURCE-PDS":
 
 		ns := std_cmd["ns"]
 
-		str_out, cmd_err := kuberead.ReadPod(ns)
+		b_out, cmd_err := kuberead.ReadPod(ns)
 
 		if cmd_err != nil {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = []byte(str_out)
+		ret_api_out.BODY = b_out
 
 	case "RESOURCE-PLOG":
+
+		ns := std_cmd["ns"]
+
+		pod_name := std_cmd["podnm"]
+
+		b_out, cmd_err := kuberead.ReadPodLog(ns, pod_name)
+
+		if cmd_err != nil {
+			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
+		}
+
+		ret_api_out.BODY = b_out
+
 	case "RESOURCE-SVC":
 
 		ns := std_cmd["ns"]
 
-		str_out, cmd_err := kuberead.ReadService(ns)
+		b_out, cmd_err := kuberead.ReadService(ns)
 
 		if cmd_err != nil {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = []byte(str_out)
+		ret_api_out.BODY = b_out
 
 	case "RESOURCE-DPL":
 
 		ns := std_cmd["ns"]
 
-		str_out, cmd_err := kuberead.ReadDeployment(ns)
+		b_out, cmd_err := kuberead.ReadDeployment(ns)
 
 		if cmd_err != nil {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = []byte(str_out)
+		ret_api_out.BODY = b_out
 
 	case "RESOURCE-IMGLI":
 	case "RESOURCE-EVNT":
 
 		ns := std_cmd["ns"]
 
-		str_out, cmd_err := kuberead.ReadEvent(ns)
+		b_out, cmd_err := kuberead.ReadEvent(ns)
 
 		if cmd_err != nil {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = []byte(str_out)
+		ret_api_out.BODY = b_out
 
 	case "RESOURCE-RSRC":
 
 		ns := std_cmd["ns"]
 
-		str_out, cmd_err := kuberead.ReadResource(ns)
+		b_out, cmd_err := kuberead.ReadResource(ns)
 
 		if cmd_err != nil {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = []byte(str_out)
+		ret_api_out.BODY = b_out
 
 	case "RESOURCE-NSPC":
 
 		ns := std_cmd["ns"]
 
-		str_out, cmd_err := kuberead.ReadNamespace(ns)
+		b_out, cmd_err := kuberead.ReadNamespace(ns)
 
 		if cmd_err != nil {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = []byte(str_out)
+		ret_api_out.BODY = b_out
 
 	case "RESOURCE-PRJPRB":
 	case "RESOURCE-PSCH":
+
+		ns := std_cmd["ns"]
+
+		b_out, cmd_err := kuberead.ReadPodScheduled(ns)
+
+		if cmd_err != nil {
+			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
+		}
+
+		ret_api_out.BODY = b_out
+
 	case "RESOURCE-PUNSCH":
+
+		ns := std_cmd["ns"]
+
+		b_out, cmd_err := kuberead.ReadPodUnscheduled(ns)
+
+		if cmd_err != nil {
+			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
+		}
+
+		ret_api_out.BODY = b_out
+
 	case "RESOURCE-CCPU":
+
+		ns := std_cmd["ns"]
+
+		b_out, cmd_err := kuberead.ReadContainerCPUUsage(ns)
+
+		if cmd_err != nil {
+			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
+		}
+
+		ret_api_out.BODY = b_out
+
 	case "RESOURCE-CMEM":
+
+		ns := std_cmd["ns"]
+
+		b_out, cmd_err := kuberead.ReadContainerMemUsage(ns)
+
+		if cmd_err != nil {
+			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
+		}
+
+		ret_api_out.BODY = b_out
+
 	case "RESOURCE-CFSR":
+
+		ns := std_cmd["ns"]
+
+		b_out, cmd_err := kuberead.ReadContainerFSRead(ns)
+
+		if cmd_err != nil {
+			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
+		}
+
+		ret_api_out.BODY = b_out
+
 	case "RESOURCE-CFSW":
+
+		ns := std_cmd["ns"]
+
+		b_out, cmd_err := kuberead.ReadContainerFSWrite(ns)
+
+		if cmd_err != nil {
+			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
+		}
+
+		ret_api_out.BODY = b_out
+
 	case "RESOURCE-CNETR":
+
+		ns := std_cmd["ns"]
+
+		b_out, cmd_err := kuberead.ReadContainerNetworkReceive(ns)
+
+		if cmd_err != nil {
+			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
+		}
+
+		ret_api_out.BODY = b_out
+
 	case "RESOURCE-CNETT":
+
+		ns := std_cmd["ns"]
+
+		b_out, cmd_err := kuberead.ReadContainerNetworkTransmit(ns)
+
+		if cmd_err != nil {
+			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
+		}
+
+		ret_api_out.BODY = b_out
+
 	case "RESOURCE-VOLAVAIL":
+
+		b_out, cmd_err := kuberead.ReadKubeletVolumeAvailable()
+
+		if cmd_err != nil {
+			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
+		}
+
+		ret_api_out.BODY = b_out
+
 	case "RESOURCE-VOLCAP":
+
+		b_out, cmd_err := kuberead.ReadKubeletVolumeCapacity()
+
+		if cmd_err != nil {
+			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
+		}
+
+		ret_api_out.BODY = b_out
+
 	case "RESOURCE-VOLUSD":
+
+		b_out, cmd_err := kuberead.ReadKubeletVolumeUsed()
+
+		if cmd_err != nil {
+			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
+		}
+
+		ret_api_out.BODY = b_out
+
 	case "RESOURCE-NTEMP":
+
+		b_out, cmd_err := kuberead.ReadNodeTemperatureCelsius()
+
+		if cmd_err != nil {
+			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
+		}
+
+		ret_api_out.BODY = b_out
+
 	case "RESOURCE-NTEMPCH":
+
+		b_out, cmd_err := kuberead.ReadNodeTemperatureCelsiusChange()
+
+		if cmd_err != nil {
+			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
+		}
+
+		ret_api_out.BODY = b_out
+
 	case "RESOURCE-NTEMPAV":
+
+		b_out, cmd_err := kuberead.ReadNodeTemperatureCelsiusAverage()
+
+		if cmd_err != nil {
+			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
+		}
+
+		ret_api_out.BODY = b_out
+
 	case "RESOURCE-NPROCS":
+
+		b_out, cmd_err := kuberead.ReadNodeProcessRunning()
+
+		if cmd_err != nil {
+			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
+		}
+
+		ret_api_out.BODY = b_out
+
 	case "RESOURCE-NCORES":
+
+		b_out, cmd_err := kuberead.ReadNodeCPUCores()
+
+		if cmd_err != nil {
+			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
+		}
+
+		ret_api_out.BODY = b_out
+
 	case "RESOURCE-NMEM":
+
+		b_out, cmd_err := kuberead.ReadNodeMemActive()
+
+		if cmd_err != nil {
+			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
+		}
+
+		ret_api_out.BODY = b_out
+
 	case "RESOURCE-NMEMTOT":
+
+		b_out, cmd_err := kuberead.ReadNodeMemTotal()
+
+		if cmd_err != nil {
+			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
+		}
+
+		ret_api_out.BODY = b_out
+
 	case "RESOURCE-NDISKR":
+
+		b_out, cmd_err := kuberead.ReadNodeDiskRead()
+
+		if cmd_err != nil {
+			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
+		}
+
+		ret_api_out.BODY = b_out
+
 	case "RESOURCE-NDISKW":
+
+		b_out, cmd_err := kuberead.ReadNodeDiskWrite()
+
+		if cmd_err != nil {
+			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
+		}
+
+		ret_api_out.BODY = b_out
+
 	case "RESOURCE-NNETR":
+
+		b_out, cmd_err := kuberead.ReadNodeNetworkReceive()
+
+		if cmd_err != nil {
+			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
+		}
+
+		ret_api_out.BODY = b_out
+
 	case "RESOURCE-NNETT":
+		b_out, cmd_err := kuberead.ReadNodeNetworkTransmit()
+
+		if cmd_err != nil {
+			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
+		}
+
+		ret_api_out.BODY = b_out
+
 	case "RESOURCE-NDISKWT":
+
+		b_out, cmd_err := kuberead.ReadNodeDiskWrittenTotal()
+
+		if cmd_err != nil {
+			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
+		}
+
+		ret_api_out.BODY = b_out
+
 	case "APPLY-SETREPO":
 	case "APPLY-SETREG":
 	case "APPLY-REGSEC":

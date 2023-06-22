@@ -1,12 +1,17 @@
 package kuberead
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"os/exec"
+
+	pq "github.com/seantywork/014_npia/pkg/promquery"
 )
 
-func ReadPod(main_ns string) (string, error) {
+func ReadPod(main_ns string) ([]byte, error) {
+
+	var ret_byte []byte
 
 	cmd := exec.Command("kubectl", "-n", main_ns, "get", "pods")
 
@@ -14,16 +19,18 @@ func ReadPod(main_ns string) (string, error) {
 
 	if err != nil {
 
-		return "", fmt.Errorf(": %s", err.Error())
+		return ret_byte, fmt.Errorf(": %s", err.Error())
 	}
 
-	strout := string(out)
+	ret_byte = out
 
-	return strout, nil
+	return ret_byte, nil
 
 }
 
-func ReadPodLog(main_ns string, pod_name string) (string, error) {
+func ReadPodLog(main_ns string, pod_name string) ([]byte, error) {
+
+	var ret_byte []byte
 
 	cmd := exec.Command("kubectl", "logs", "-n", main_ns, pod_name)
 
@@ -31,16 +38,18 @@ func ReadPodLog(main_ns string, pod_name string) (string, error) {
 
 	if err != nil {
 
-		return "", fmt.Errorf(": %s", err.Error())
+		return ret_byte, fmt.Errorf(": %s", err.Error())
 	}
 
-	strout := string(out)
+	ret_byte = out
 
-	return strout, nil
+	return ret_byte, nil
 
 }
 
-func ReadService(main_ns string) (string, error) {
+func ReadService(main_ns string) ([]byte, error) {
+
+	var ret_byte []byte
 
 	cmd := exec.Command("kubectl", "-n", main_ns, "get", "services")
 
@@ -48,16 +57,18 @@ func ReadService(main_ns string) (string, error) {
 
 	if err != nil {
 
-		return "", fmt.Errorf(": %s", err.Error())
+		return ret_byte, fmt.Errorf(": %s", err.Error())
 	}
 
-	strout := string(out)
+	ret_byte = out
 
-	return strout, nil
+	return ret_byte, nil
 
 }
 
-func ReadDeployment(main_ns string) (string, error) {
+func ReadDeployment(main_ns string) ([]byte, error) {
+
+	var ret_byte []byte
 
 	cmd := exec.Command("kubectl", "-n", main_ns, "get", "deployments")
 
@@ -65,16 +76,18 @@ func ReadDeployment(main_ns string) (string, error) {
 
 	if err != nil {
 
-		return "", fmt.Errorf(": %s", err.Error())
+		return ret_byte, fmt.Errorf(": %s", err.Error())
 	}
 
-	strout := string(out)
+	ret_byte = out
 
-	return strout, nil
+	return ret_byte, nil
 
 }
 
-func ReadNode(main_ns string) (string, error) {
+func ReadNode(main_ns string) ([]byte, error) {
+
+	var ret_byte []byte
 
 	cmd := exec.Command("kubectl", "get", "nodes")
 
@@ -82,16 +95,18 @@ func ReadNode(main_ns string) (string, error) {
 
 	if err != nil {
 
-		return "", fmt.Errorf(": %s", err.Error())
+		return ret_byte, fmt.Errorf(": %s", err.Error())
 	}
 
-	strout := string(out)
+	ret_byte = out
 
-	return strout, nil
+	return ret_byte, nil
 
 }
 
-func ReadEvent(main_ns string) (string, error) {
+func ReadEvent(main_ns string) ([]byte, error) {
+
+	var ret_byte []byte
 
 	cmd := exec.Command("kubectl", "-n", main_ns, "get", "events")
 
@@ -99,16 +114,18 @@ func ReadEvent(main_ns string) (string, error) {
 
 	if err != nil {
 
-		return "", fmt.Errorf(": %s", err.Error())
+		return ret_byte, fmt.Errorf(": %s", err.Error())
 	}
 
-	strout := string(out)
+	ret_byte = out
 
-	return strout, nil
+	return ret_byte, nil
 
 }
 
-func ReadResource(main_ns string) (string, error) {
+func ReadResource(main_ns string) ([]byte, error) {
+
+	var ret_byte []byte
 
 	cmd := exec.Command("kubectl", "-n", main_ns, "get", "all")
 
@@ -116,16 +133,18 @@ func ReadResource(main_ns string) (string, error) {
 
 	if err != nil {
 
-		return "", fmt.Errorf(": %s", err.Error())
+		return ret_byte, fmt.Errorf(": %s", err.Error())
 	}
 
-	strout := string(out)
+	ret_byte = out
 
-	return strout, nil
+	return ret_byte, nil
 
 }
 
-func ReadNamespace(main_ns string) (string, error) {
+func ReadNamespace(main_ns string) ([]byte, error) {
+
+	var ret_byte []byte
 
 	cmd := exec.Command("kubectl", "get", "namespaces")
 
@@ -133,33 +152,577 @@ func ReadNamespace(main_ns string) (string, error) {
 
 	if err != nil {
 
-		return "", fmt.Errorf(": %s", err.Error())
+		return ret_byte, fmt.Errorf(": %s", err.Error())
 	}
 
-	strout := string(out)
+	ret_byte = out
 
-	return strout, nil
+	return ret_byte, nil
 
 }
 
-func ReadImageList(main_ns string) (string, error) {
+func ReadImageList(main_ns string) ([]byte, error) {
 
-	strout := "implement"
+	var ret_byte []byte
 
-	return strout, nil
+	return ret_byte, nil
 }
 
-func ReadProjectProbe(main_ns string) (string, error) {
+func ReadProjectProbe(main_ns string) ([]byte, error) {
 
-	strout := "implement"
+	var ret_byte []byte
 
-	return strout, nil
+	return ret_byte, nil
 }
 
-func ReadPodScheduled(main_ns string) (string, error) {
+func ReadPodScheduled(main_ns string) ([]byte, error) {
 
-	strout := "implement"
+	var ret_byte []byte
 
-	return strout, nil
+	pq_out, err := pq.PQ_PodScheduled(main_ns)
+
+	if err != nil {
+
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+
+	}
+
+	ret_byte, err = json.Marshal(pq_out)
+
+	if err != nil {
+
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+
+	}
+
+	return ret_byte, nil
+
+}
+
+func ReadPodUnscheduled(main_ns string) ([]byte, error) {
+
+	var ret_byte []byte
+
+	pq_out, err := pq.PQ_PodUnscheduled(main_ns)
+
+	if err != nil {
+
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+
+	}
+
+	ret_byte, err = json.Marshal(pq_out)
+
+	if err != nil {
+
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+
+	}
+
+	return ret_byte, nil
+
+}
+
+func ReadContainerCPUUsage(main_ns string) ([]byte, error) {
+
+	var ret_byte []byte
+
+	pq_out, err := pq.PQ_ContainerCPUUsage(main_ns)
+
+	if err != nil {
+
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+
+	}
+
+	ret_byte, err = json.Marshal(pq_out)
+
+	if err != nil {
+
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+
+	}
+
+	return ret_byte, nil
+
+}
+
+func ReadContainerMemUsage(main_ns string) ([]byte, error) {
+
+	var ret_byte []byte
+
+	pq_out, err := pq.PQ_ContainerMemUsage(main_ns)
+
+	if err != nil {
+
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+
+	}
+
+	ret_byte, err = json.Marshal(pq_out)
+
+	if err != nil {
+
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+
+	}
+
+	return ret_byte, nil
+
+}
+
+func ReadContainerFSRead(main_ns string) ([]byte, error) {
+
+	var ret_byte []byte
+
+	pq_out, err := pq.PQ_ContainerFSRead(main_ns)
+
+	if err != nil {
+
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+
+	}
+
+	ret_byte, err = json.Marshal(pq_out)
+
+	if err != nil {
+
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+
+	}
+
+	return ret_byte, nil
+
+}
+
+func ReadContainerFSWrite(main_ns string) ([]byte, error) {
+
+	var ret_byte []byte
+
+	pq_out, err := pq.PQ_ContainerFSWrite(main_ns)
+
+	if err != nil {
+
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+
+	}
+
+	ret_byte, err = json.Marshal(pq_out)
+
+	if err != nil {
+
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+
+	}
+
+	return ret_byte, nil
+
+}
+
+func ReadContainerNetworkReceive(main_ns string) ([]byte, error) {
+
+	var ret_byte []byte
+
+	pq_out, err := pq.PQ_ContainerNetworkReceive(main_ns)
+
+	if err != nil {
+
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+
+	}
+
+	ret_byte, err = json.Marshal(pq_out)
+
+	if err != nil {
+
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+
+	}
+
+	return ret_byte, nil
+
+}
+
+func ReadContainerNetworkTransmit(main_ns string) ([]byte, error) {
+
+	var ret_byte []byte
+
+	pq_out, err := pq.PQ_ContainerNetworkTransmit(main_ns)
+
+	if err != nil {
+
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+
+	}
+
+	ret_byte, err = json.Marshal(pq_out)
+
+	if err != nil {
+
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+
+	}
+
+	return ret_byte, nil
+
+}
+
+func ReadKubeletVolumeAvailable() ([]byte, error) {
+
+	var ret_byte []byte
+
+	pq_out, err := pq.PQ_KubeletVolumeAvailable()
+
+	if err != nil {
+
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+
+	}
+
+	ret_byte, err = json.Marshal(pq_out)
+
+	if err != nil {
+
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+
+	}
+
+	return ret_byte, nil
+
+}
+
+func ReadKubeletVolumeCapacity() ([]byte, error) {
+
+	var ret_byte []byte
+
+	pq_out, err := pq.PQ_KubeletVolumeCapacity()
+
+	if err != nil {
+
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+
+	}
+
+	ret_byte, err = json.Marshal(pq_out)
+
+	if err != nil {
+
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+
+	}
+
+	return ret_byte, nil
+
+}
+
+func ReadKubeletVolumeUsed() ([]byte, error) {
+
+	var ret_byte []byte
+
+	pq_out, err := pq.PQ_KubeletVolumeUsed()
+
+	if err != nil {
+
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+
+	}
+
+	ret_byte, err = json.Marshal(pq_out)
+
+	if err != nil {
+
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+
+	}
+
+	return ret_byte, nil
+
+}
+
+func ReadNodeTemperatureCelsius() ([]byte, error) {
+
+	var ret_byte []byte
+
+	pq_out, err := pq.PQ_NodeTemperatureCelsius()
+
+	if err != nil {
+
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+
+	}
+
+	ret_byte, err = json.Marshal(pq_out)
+
+	if err != nil {
+
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+
+	}
+
+	return ret_byte, nil
+
+}
+
+func ReadNodeTemperatureCelsiusChange() ([]byte, error) {
+
+	var ret_byte []byte
+
+	pq_out, err := pq.PQ_NodeTemperatureCelsiusChange()
+
+	if err != nil {
+
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+
+	}
+
+	ret_byte, err = json.Marshal(pq_out)
+
+	if err != nil {
+
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+
+	}
+
+	return ret_byte, nil
+
+}
+
+func ReadNodeTemperatureCelsiusAverage() ([]byte, error) {
+
+	var ret_byte []byte
+
+	pq_out, err := pq.PQ_NodeTemperatureCelsiusAverage()
+
+	if err != nil {
+
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+
+	}
+
+	ret_byte, err = json.Marshal(pq_out)
+
+	if err != nil {
+
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+
+	}
+
+	return ret_byte, nil
+
+}
+
+func ReadNodeProcessRunning() ([]byte, error) {
+
+	var ret_byte []byte
+
+	pq_out, err := pq.PQ_NodeProcessRunning()
+
+	if err != nil {
+
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+
+	}
+
+	ret_byte, err = json.Marshal(pq_out)
+
+	if err != nil {
+
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+
+	}
+
+	return ret_byte, nil
+
+}
+
+func ReadNodeCPUCores() ([]byte, error) {
+
+	var ret_byte []byte
+
+	pq_out, err := pq.PQ_NodeCPUCores()
+
+	if err != nil {
+
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+
+	}
+
+	ret_byte, err = json.Marshal(pq_out)
+
+	if err != nil {
+
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+
+	}
+
+	return ret_byte, nil
+
+}
+
+func ReadNodeMemActive() ([]byte, error) {
+
+	var ret_byte []byte
+
+	pq_out, err := pq.PQ_NodeMemActive()
+
+	if err != nil {
+
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+
+	}
+
+	ret_byte, err = json.Marshal(pq_out)
+
+	if err != nil {
+
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+
+	}
+
+	return ret_byte, nil
+
+}
+
+func ReadNodeMemTotal() ([]byte, error) {
+
+	var ret_byte []byte
+
+	pq_out, err := pq.PQ_NodeMemTotal()
+
+	if err != nil {
+
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+
+	}
+
+	ret_byte, err = json.Marshal(pq_out)
+
+	if err != nil {
+
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+
+	}
+
+	return ret_byte, nil
+
+}
+
+func ReadNodeDiskRead() ([]byte, error) {
+
+	var ret_byte []byte
+
+	pq_out, err := pq.PQ_NodeDiskRead()
+
+	if err != nil {
+
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+
+	}
+
+	ret_byte, err = json.Marshal(pq_out)
+
+	if err != nil {
+
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+
+	}
+
+	return ret_byte, nil
+
+}
+
+func ReadNodeDiskWrite() ([]byte, error) {
+
+	var ret_byte []byte
+
+	pq_out, err := pq.PQ_NodeDiskWrite()
+
+	if err != nil {
+
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+
+	}
+
+	ret_byte, err = json.Marshal(pq_out)
+
+	if err != nil {
+
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+
+	}
+
+	return ret_byte, nil
+
+}
+
+func ReadNodeNetworkReceive() ([]byte, error) {
+
+	var ret_byte []byte
+
+	pq_out, err := pq.PQ_NodeNetworkReceive()
+
+	if err != nil {
+
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+
+	}
+
+	ret_byte, err = json.Marshal(pq_out)
+
+	if err != nil {
+
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+
+	}
+
+	return ret_byte, nil
+
+}
+
+func ReadNodeNetworkTransmit() ([]byte, error) {
+
+	var ret_byte []byte
+
+	pq_out, err := pq.PQ_NodeNetworkTransmit()
+
+	if err != nil {
+
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+
+	}
+
+	ret_byte, err = json.Marshal(pq_out)
+
+	if err != nil {
+
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+
+	}
+
+	return ret_byte, nil
+
+}
+
+func ReadNodeDiskWrittenTotal() ([]byte, error) {
+
+	var ret_byte []byte
+
+	pq_out, err := pq.PQ_NodeDiskWrittenTotal()
+
+	if err != nil {
+
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+
+	}
+
+	ret_byte, err = json.Marshal(pq_out)
+
+	if err != nil {
+
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+
+	}
+
+	return ret_byte, nil
 
 }
