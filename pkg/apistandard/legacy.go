@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	pkgutils "github.com/seantywork/014_npia/pkg/utils"
+	pkgutils "github.com/OKESTRO-AIDevOps/npia-api/pkg/utils"
 )
 
 type LEGACY_EXCHANGE struct {

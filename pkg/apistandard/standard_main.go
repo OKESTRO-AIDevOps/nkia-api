@@ -3,8 +3,8 @@ package apistandard
 import (
 	"fmt"
 
-	"github.com/seantywork/014_npia/pkg/kuberead"
-	"github.com/seantywork/014_npia/pkg/kubewrite"
+	"github.com/OKESTRO-AIDevOps/npia-api/pkg/kuberead"
+	"github.com/OKESTRO-AIDevOps/npia-api/pkg/kubewrite"
 )
 
 func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
