@@ -7,9 +7,9 @@ import (
 	"os/exec"
 	"strings"
 
-	. "github.com/seantywork/014_npia/pkg/apistandard"
+	. "github.com/OKESTRO-AIDevOps/npia-api/pkg/apistandard"
 
-	pkgutils "github.com/seantywork/014_npia/pkg/utils"
+	pkgutils "github.com/OKESTRO-AIDevOps/npia-api/pkg/utils"
 
 	goya "github.com/goccy/go-yaml"
 	//"github.com/fatih/color"

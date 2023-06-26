@@ -6,7 +6,7 @@ import (
 
 	"os/exec"
 
-	pq "github.com/seantywork/014_npia/pkg/promquery"
+	pq "github.com/OKESTRO-AIDevOps/npia-api/pkg/promquery"
 )
 
 func ReadPod(main_ns string) ([]byte, error) {
