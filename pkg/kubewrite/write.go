@@ -200,7 +200,7 @@ func WriteDeployment(main_ns string, repoaddr string, regaddr string) ([]byte, e
 
 	}
 
-	_, err = libif.GetLibComponentAddress("bin", "kompose")
+	LIBIF_BIN_KOMPOSE, err := libif.GetLibComponentAddress("bin", "kompose")
 
 	if err != nil {
 
@@ -229,6 +229,12 @@ func WriteDeployment(main_ns string, repoaddr string, regaddr string) ([]byte, e
 	}
 
 	err = runfs.InitUsrTarget(repoaddr)
+
+	if err != nil {
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+	}
+
+	err = runfs.CreateUsrTargetOperationSource(LIBIF_BIN_KOMPOSE)
 
 	if err != nil {
 		return ret_byte, fmt.Errorf(": %s", err.Error())

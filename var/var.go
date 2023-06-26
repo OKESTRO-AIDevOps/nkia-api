@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"os/exec"
 	"strings"
 
 	. "github.com/seantywork/014_npia/pkg/apistandard"
@@ -58,12 +59,28 @@ func readFromYAML(yaml_file string, yaml_path string) {
 
 	ypath, _ := goya.PathString(yaml_path)
 
+	goya.JSON()
+
 	var value int
 
 	_ = ypath.Read(strings.NewReader(yaml_file), &value)
 
 	fmt.Println(value)
 
+}
+
+func komposeTest() {
+
+	cmd := exec.Command("../lib/bin/kompose", "convert", "-f", "../lib/bin/docker-compose.yaml", "--stdout")
+
+	out, err := cmd.Output()
+
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+
+	fmt.Println(string(out))
 }
 
 func writeToAdmOrigin() {
@@ -111,5 +128,7 @@ func main() {
 
 	//	callApiDefStructure()
 
-	sliceTest()
+	// sliceTest()
+
+	komposeTest()
 }
