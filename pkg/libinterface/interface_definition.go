@@ -8,11 +8,11 @@ import (
 
 type LibIface map[string]string
 
-func ConstructLibIface(lib_root string) (LibIface, error) {
+func ConstructLibIface() (LibIface, error) {
 
 	tmp_libif := make(LibIface)
 
-	_ROOT, err := filepath.Abs(lib_root)
+	_ROOT, err := filepath.Abs("lib")
 
 	if err != nil {
 

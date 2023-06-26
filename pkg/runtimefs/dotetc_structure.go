@@ -1,4 +1,4 @@
-package dotfs
+package runtimefs
 
 type AppOrigin struct {
 	RECORDS []RecordInfo

@@ -38,6 +38,8 @@ var API_DEFINITION string = "" +
 	"RESOURCE-EVNT            :id, ns                                                       " + "\n" +
 	"RESOURCE-RSRC            :id, ns                                                       " + "\n" +
 	"RESOURCE-NSPC            :id, ns                                                       " + "\n" +
+	"RESOURCE-INGR            :id, ns                                                       " + "\n" +
+	"RESOURCE-NDPORT          :id, ns                                                       " + "\n" +
 	"RESOURCE-PRJPRB          :id, ns                                                       " + "\n" +
 	"RESOURCE-PSCH            :id, ns                                                       " + "\n" +
 	"RESOURCE-PUNSCH          :id, ns                                                       " + "\n" +
@@ -75,10 +77,8 @@ var API_DEFINITION string = "" +
 	"APPLY-HPAUN              :id, ns, resource, resourcenm                                 " + "\n" +
 	"APPLY-QOS                :id, ns, resource, resourcenm                                 " + "\n" +
 	"APPLY-QOSUN              :id, ns, resource, resourcenm                                 " + "\n" +
-	"APPLY-GETINGR            :id, ns                                                       " + "\n" +
 	"APPLY-INGR               :id, ns, hostnm, svcnm                                        " + "\n" +
 	"APPLY-INGRUN             :id, ns, hostnm, svcnm                                        " + "\n" +
-	"APPLY-GETNDPORT          :id, ns                                                       " + "\n" +
 	"APPLY-NDPORT             :id, ns, svcnm                                                " + "\n" +
 	"APPLY-NDPORTUN           :id, ns, svcnm                                                " + "\n" +
 	"ADMIN-ADMRMTCHK          :id, hostaddr, hostport, usernm, userpw, machinerole, acd     " + "\n" +

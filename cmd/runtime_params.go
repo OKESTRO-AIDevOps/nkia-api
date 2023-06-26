@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/seantywork/014_npia/pkg/dotfs"
+	runfs "github.com/seantywork/014_npia/pkg/runtimefs"
 )
 
 var RPARAM = map[string]string{
@@ -13,9 +13,9 @@ var RPARAM = map[string]string{
 
 func setRuntimeParamNS(ns string) error {
 
-	var app_origin dotfs.AppOrigin
+	var app_origin runfs.AppOrigin
 
-	file_byte, err := dotfs.LoadAdmOrigin()
+	file_byte, err := runfs.LoadAdmOrigin()
 
 	if err != nil {
 
@@ -31,15 +31,15 @@ func setRuntimeParamNS(ns string) error {
 
 	}
 
-	repo, reg := dotfs.GetRecordInfo(app_origin.RECORDS, ns)
+	ns_found, _, _ := runfs.GetRecordInfo(app_origin.RECORDS, ns)
 
-	if repo == "N" || reg == "N" {
+	if !ns_found {
 
 		return fmt.Errorf("runtime params: %s", "incomplete ns record")
 
 	}
 
-	err = dotfs.CheckKubeNS(ns)
+	err = runfs.CheckKubeNS(ns)
 
 	if err != nil {
 

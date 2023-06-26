@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/seantywork/014_npia/pkg/dotfs"
+	runfs "github.com/seantywork/014_npia/pkg/runtimefs"
 
 	"github.com/fatih/color"
 )
@@ -36,7 +36,7 @@ func origin_set() (int, error) {
 			fmt.Println("New reg URL:")
 			fmt.Scanln(&reg)
 
-			if err := dotfs.SetAdminOriginNewNS(ns, repo, reg); err != nil {
+			if err := runfs.SetAdminOriginNewNS(ns, repo, reg); err != nil {
 
 				return 1, fmt.Errorf("namespace-new: %s", err.Error())
 
@@ -73,7 +73,7 @@ func origin_set() (int, error) {
 			repo_id := ""
 			repo_pw := ""
 
-			var app_origin dotfs.AppOrigin
+			var app_origin runfs.AppOrigin
 
 			color.Blue("RUN: origin origin-repo")
 
@@ -86,7 +86,7 @@ func origin_set() (int, error) {
 			fmt.Println("Target repo PW:")
 			fmt.Scanln(&repo_pw)
 
-			file_byte, err := dotfs.LoadAdmOrigin()
+			file_byte, err := runfs.LoadAdmOrigin()
 
 			if err != nil {
 
@@ -102,9 +102,9 @@ func origin_set() (int, error) {
 
 			}
 
-			app_origin.REPOS = dotfs.SetRepoInfo(app_origin.REPOS, repo, repo_id, repo_pw)
+			app_origin.REPOS = runfs.SetRepoInfo(app_origin.REPOS, repo, repo_id, repo_pw)
 
-			err = dotfs.UnloadAdmOrigin(app_origin)
+			err = runfs.UnloadAdmOrigin(app_origin)
 
 			if err != nil {
 				return 1, fmt.Errorf("origin-repo: %s", err.Error())
@@ -117,7 +117,7 @@ func origin_set() (int, error) {
 			reg_id := ""
 			reg_pw := ""
 
-			var app_origin dotfs.AppOrigin
+			var app_origin runfs.AppOrigin
 
 			color.Blue("RUN: origin origin-reg")
 
@@ -130,7 +130,7 @@ func origin_set() (int, error) {
 			fmt.Println("Target reg PW:")
 			fmt.Scanln(&reg_pw)
 
-			file_byte, err := dotfs.LoadAdmOrigin()
+			file_byte, err := runfs.LoadAdmOrigin()
 
 			if err != nil {
 
@@ -146,9 +146,9 @@ func origin_set() (int, error) {
 
 			}
 
-			app_origin.REGS = dotfs.SetRegInfo(app_origin.REGS, reg, reg_id, reg_pw)
+			app_origin.REGS = runfs.SetRegInfo(app_origin.REGS, reg, reg_id, reg_pw)
 
-			err = dotfs.UnloadAdmOrigin(app_origin)
+			err = runfs.UnloadAdmOrigin(app_origin)
 
 			if err != nil {
 				return 1, fmt.Errorf("origin-reg: %s", err.Error())

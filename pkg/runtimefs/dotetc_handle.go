@@ -1,4 +1,4 @@
-package dotfs
+package runtimefs
 
 import (
 	"encoding/json"
@@ -143,7 +143,7 @@ func SetAdminOriginNewNS(ns string, repo_url_in string, reg_url_in string) error
 
 }
 
-func GetRecordInfo(records []RecordInfo, ns string) (string, string) {
+func GetRecordInfo(records []RecordInfo, ns string) (bool, string, string) {
 
 	arr_leng := len(records)
 
@@ -151,9 +151,13 @@ func GetRecordInfo(records []RecordInfo, ns string) (string, string) {
 
 	var reg_addr string = "N"
 
+	ns_found := false
+
 	for i := 0; i < arr_leng; i++ {
 
 		if records[i].NS == ns {
+
+			ns_found = true
 
 			repo_addr = records[i].REPO_ADDR
 
@@ -165,7 +169,7 @@ func GetRecordInfo(records []RecordInfo, ns string) (string, string) {
 
 	}
 
-	return repo_addr, reg_addr
+	return ns_found, repo_addr, reg_addr
 
 }
 
@@ -208,7 +212,7 @@ func SetRecordInfo(records []RecordInfo, ns string, repo_addr string, reg_addr s
 
 }
 
-func GetRepoInfo(repos []RepoInfo, addr string) (string, string) {
+func GetRepoInfo(repos []RepoInfo, addr string) (bool, string, string) {
 
 	arr_leng := len(repos)
 
@@ -216,9 +220,13 @@ func GetRepoInfo(repos []RepoInfo, addr string) (string, string) {
 
 	var repo_pw string = "N"
 
+	addr_found := false
+
 	for i := 0; i < arr_leng; i++ {
 
 		if repos[i].REPO_ADDR == addr {
+
+			addr_found = true
 
 			repo_id = repos[i].REPO_ID
 
@@ -229,7 +237,7 @@ func GetRepoInfo(repos []RepoInfo, addr string) (string, string) {
 		}
 	}
 
-	return repo_id, repo_pw
+	return addr_found, repo_id, repo_pw
 
 }
 
@@ -276,7 +284,7 @@ func SetRepoInfo(repos []RepoInfo, addr string, id string, pw string) []RepoInfo
 
 }
 
-func GetRegInfo(regs []RegInfo, addr string) (string, string) {
+func GetRegInfo(regs []RegInfo, addr string) (bool, string, string) {
 
 	arr_leng := len(regs)
 
@@ -284,9 +292,13 @@ func GetRegInfo(regs []RegInfo, addr string) (string, string) {
 
 	var reg_pw string = "N"
 
+	addr_found := false
+
 	for i := 0; i < arr_leng; i++ {
 
 		if regs[i].REG_ADDR == addr {
+
+			addr_found = true
 
 			reg_id = regs[i].REG_ID
 
@@ -297,7 +309,7 @@ func GetRegInfo(regs []RegInfo, addr string) (string, string) {
 		}
 	}
 
-	return reg_id, reg_pw
+	return addr_found, reg_id, reg_pw
 
 }
 

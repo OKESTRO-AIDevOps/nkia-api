@@ -161,6 +161,43 @@ func ReadNamespace(main_ns string) ([]byte, error) {
 
 }
 
+func ReadIngress(main_ns string) ([]byte, error) {
+
+	var ret_byte []byte
+
+	cmd := exec.Command("kubectl", "-n", main_ns, "get", "ingress")
+
+	stdout, err := cmd.Output()
+
+	if err != nil {
+
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+	}
+
+	ret_byte = stdout
+
+	return ret_byte, nil
+
+}
+
+func ReadNodePort(main_ns string) ([]byte, error) {
+
+	var ret_byte []byte
+
+	cmd := exec.Command("kubectl", "-n", main_ns, "get", "services")
+
+	stdout, err := cmd.Output()
+
+	if err != nil {
+
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+	}
+
+	ret_byte = stdout
+
+	return ret_byte, nil
+}
+
 func ReadImageList(main_ns string) ([]byte, error) {
 
 	var ret_byte []byte
