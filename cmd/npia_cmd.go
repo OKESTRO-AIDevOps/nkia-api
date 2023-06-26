@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os/user"
 
-	"github.com/seantywork/014_npia/pkg/dotfs"
+	runfs "github.com/seantywork/014_npia/pkg/runtimefs"
 
 	. "github.com/seantywork/014_npia/pkg/apistandard"
 
@@ -13,7 +13,7 @@ import (
 
 func run() error {
 
-	check_app_origin, err := dotfs.CheckAppOrigin()
+	check_app_origin, err := runfs.CheckAppOrigin()
 
 	if err != nil {
 

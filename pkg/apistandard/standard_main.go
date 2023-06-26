@@ -131,6 +131,30 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 
 		ret_api_out.BODY = b_out
 
+	case "RESOURCE-INGR":
+
+		ns := std_cmd["ns"]
+
+		b_out, cmd_err := kuberead.ReadIngress(ns)
+
+		if cmd_err != nil {
+			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
+		}
+
+		ret_api_out.BODY = b_out
+
+	case "RESOURCE-NDPORT":
+
+		ns := std_cmd["ns"]
+
+		b_out, cmd_err := kuberead.ReadNodePort(ns)
+
+		if cmd_err != nil {
+			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
+		}
+
+		ret_api_out.BODY = b_out
+
 	case "RESOURCE-PRJPRB":
 	case "RESOURCE-PSCH":
 
@@ -378,18 +402,55 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 		ret_api_out.BODY = b_out
 
 	case "APPLY-SETREPO":
-	case "APPLY-SETREG":
-	case "APPLY-REGSEC":
 		ns := std_cmd["ns"]
+		repoaddr := std_cmd["repoaddr"]
+		repoid := std_cmd["repoid"]
+		repopw := std_cmd["repopw"]
 
-		str_out, cmd_err := kubewrite.WriteSecret(ns)
+		b_out, cmd_err := kubewrite.WriteRepoInfo(ns, repoaddr, repoid, repopw)
 
 		if cmd_err != nil {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = []byte(str_out)
+		ret_api_out.BODY = b_out
+	case "APPLY-SETREG":
+		ns := std_cmd["ns"]
+		regaddr := std_cmd["regaddr"]
+		regid := std_cmd["regid"]
+		regpw := std_cmd["regpw"]
+
+		b_out, cmd_err := kubewrite.WriteRegInfo(ns, regaddr, regid, regpw)
+
+		if cmd_err != nil {
+			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
+		}
+
+		ret_api_out.BODY = b_out
+	case "APPLY-REGSEC":
+		ns := std_cmd["ns"]
+
+		b_out, cmd_err := kubewrite.WriteSecret(ns)
+
+		if cmd_err != nil {
+			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
+		}
+
+		ret_api_out.BODY = b_out
+
 	case "APPLY-DIST":
+		ns := std_cmd["ns"]
+		repoaddr := std_cmd["repoaddr"]
+		regaddr := std_cmd["regaddr"]
+
+		b_out, cmd_err := kubewrite.WriteDeployment(ns, repoaddr, regaddr)
+
+		if cmd_err != nil {
+			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
+		}
+
+		ret_api_out.BODY = b_out
+
 	case "APPLY-CRTOPSSRC":
 	case "APPLY-RESTART":
 	case "APPLY-ROLLBACK":
@@ -399,10 +460,8 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 	case "APPLY-HPAUN":
 	case "APPLY-QOS":
 	case "APPLY-QOSUN":
-	case "APPLY-GETINGR":
 	case "APPLY-INGR":
 	case "APPLY-INGRUN":
-	case "APPLY-GETNDPORT":
 	case "APPLY-NDPORT":
 	case "APPLY-NDPORTUN":
 	case "ADMIN-ADMRMTCHK":
