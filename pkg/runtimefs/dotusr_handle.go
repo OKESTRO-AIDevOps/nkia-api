@@ -107,3 +107,33 @@ func InitUsrTarget(repoaddr string) error {
 	return nil
 
 }
+
+func CreateUsrTargetOperationSource(LIBIF_BIN_KOMPOSE string) error {
+
+	if _, err := os.Stat(".usr/target"); err != nil {
+
+		return fmt.Errorf("failed to create ops src: %s", err.Error())
+
+	}
+
+	if _, err := os.Stat(".usr/target/docker-compose.yaml"); err != nil {
+
+		return fmt.Errorf("failed to create ops src: %s", err.Error())
+	}
+
+	cmd := exec.Command(LIBIF_BIN_KOMPOSE, "convert", "-f", ".usr/target/docker-compose.yaml", "--stdout")
+
+	out, err := cmd.Output()
+
+	if err != nil {
+		return fmt.Errorf("failed to create ops src: %s", err.Error())
+	}
+
+	err = os.WriteFile(".usr/ops_src.yaml", out, 0644)
+
+	if err != nil {
+		return fmt.Errorf("failed to create ops src: %s", err.Error())
+	}
+
+	return nil
+}
