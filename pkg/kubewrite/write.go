@@ -234,7 +234,7 @@ func WriteDeployment(main_ns string, repoaddr string, regaddr string) ([]byte, e
 		return ret_byte, fmt.Errorf(": %s", err.Error())
 	}
 
-	err = runfs.CreateUsrTargetOperationSource(LIBIF_BIN_KOMPOSE)
+	err = runfs.CreateUsrTargetOperationSource(LIBIF_BIN_KOMPOSE, regaddr)
 
 	if err != nil {
 		return ret_byte, fmt.Errorf(": %s", err.Error())

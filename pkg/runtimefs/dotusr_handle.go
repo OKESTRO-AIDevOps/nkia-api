@@ -6,6 +6,8 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+
+	goya "github.com/goccy/go-yaml"
 )
 
 func InitUsrTarget(repoaddr string) error {
@@ -108,7 +110,12 @@ func InitUsrTarget(repoaddr string) error {
 
 }
 
-func CreateUsrTargetOperationSource(LIBIF_BIN_KOMPOSE string) error {
+func CreateUsrTargetOperationSource(LIBIF_BIN_KOMPOSE string, regaddr string) error {
+
+	var ops_src_list [][]byte
+	var ops_src_file []byte
+
+	regaddr_effective := strings.Split(regaddr, "://")[1]
 
 	if _, err := os.Stat(".usr/target"); err != nil {
 
@@ -129,7 +136,83 @@ func CreateUsrTargetOperationSource(LIBIF_BIN_KOMPOSE string) error {
 		return fmt.Errorf("failed to create ops src: %s", err.Error())
 	}
 
-	err = os.WriteFile(".usr/ops_src.yaml", out, 0644)
+	var yaml_items []interface{}
+
+	yaml_str := string(out)
+
+	yaml_path_items := "$.items"
+
+	ypath, err := goya.PathString(yaml_path_items)
+
+	if err != nil {
+		return fmt.Errorf("failed to create ops src: %s", err.Error())
+	}
+
+	err = ypath.Read(strings.NewReader(yaml_str), &yaml_items)
+
+	if err != nil {
+		return fmt.Errorf("failed to create ops src: %s", err.Error())
+	}
+
+	for _, val := range yaml_items {
+
+		yaml_if := make(map[interface{}]interface{})
+
+		resource_b, err := goya.Marshal(val)
+
+		err = goya.Unmarshal(resource_b, &yaml_if)
+
+		if err != nil {
+			return fmt.Errorf("failed to create ops src: %s", err.Error())
+		}
+
+		if yaml_if["kind"] == "Deployment" {
+
+			image_pull_secrets := make([]map[string]string, 0)
+
+			value := map[string]string{
+				"name": "docker-secret",
+			}
+
+			image_pull_secrets = append(image_pull_secrets, value)
+
+			yaml_if["spec"].(map[string]interface{})["template"].(map[string]interface{})["spec"].(map[string]interface{})["imgaePullSecrets"] = image_pull_secrets
+
+			c_count := len(yaml_if["spec"].(map[string]interface{})["template"].(map[string]interface{})["spec"].(map[string]interface{})["containers"].([]interface{}))
+
+			for j := 0; j < c_count; j++ {
+
+				prefix := "/target_"
+
+				reg_fix := regaddr_effective + prefix
+
+				reg_fix += yaml_if["spec"].(map[string]interface{})["template"].(map[string]interface{})["spec"].(map[string]interface{})["containers"].([]interface{})[j].(map[string]interface{})["image"].(string)
+
+				yaml_if["spec"].(map[string]interface{})["template"].(map[string]interface{})["spec"].(map[string]interface{})["containers"].([]interface{})[j].(map[string]interface{})["image"] = reg_fix
+
+				yaml_if["spec"].(map[string]interface{})["template"].(map[string]interface{})["spec"].(map[string]interface{})["containers"].([]interface{})[j].(map[string]interface{})["imagePullPolicy"] = "Always"
+			}
+		}
+
+		result_b, err := goya.Marshal(yaml_if)
+
+		if err != nil {
+			return fmt.Errorf("failed to create ops src: %s", err.Error())
+		}
+
+		ops_src_list = append(ops_src_list, result_b)
+
+	}
+
+	for i := 0; i < len(ops_src_list); i++ {
+
+		ops_src_file = append(ops_src_file, []byte("---\n")...)
+
+		ops_src_file = append(ops_src_file, ops_src_list[i]...)
+
+	}
+
+	err = os.WriteFile(".usr/ops_src.yaml", ops_src_file, 0644)
 
 	if err != nil {
 		return fmt.Errorf("failed to create ops src: %s", err.Error())
