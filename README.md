@@ -1,4 +1,4 @@
-# NPIA (CloudAgentCLI)
+# NPIA-API
 
 ## Officially: eNabling Product Integration Architecture
 
@@ -9,6 +9,6 @@
 
 It runs on Kubernetes master node, making it easier to interact with the cluster
 
-using command line interface. However, it doesn't just stop there. I'm working 
+via internet or command line. 
 
-hard to offer API for remote cluster management.
+This is the core api used by both npia-server and npia-cmd
