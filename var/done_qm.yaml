@@ -1,0 +1,23 @@
+services:
+  tgdb:
+    build: ./mysql
+    container_name: tgdb
+  tgtraffic:
+    build: ./nginx
+    container_name: tgtraffic
+    depends_on:
+    - tgweb
+    ports:
+    - "5005:5005"
+    volumes:
+    - ./ngnix:/var/www/htmls
+  tgweb:
+    build: ./UC
+    container_name: tgweb
+    depends_on:
+    - tgdb
+    ports:
+    - "8000:8000"
+    volumes:
+    - ./uc:/home
+version: "3"

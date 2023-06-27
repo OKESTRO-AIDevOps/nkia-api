@@ -41,6 +41,47 @@ type RegInfo struct {
 	REG_PW   string
 }
 
+func callApiDef() {
+
+	ASgi.PrintPrettyDefinition()
+
+}
+
+func callApiDefStructure() {
+
+	ASgi.PrintRawDefinition()
+
+}
+
+func sliceTest() {
+
+	ret := pkgutils.InsertToSliceByIndex[string]([]string{"b", "c", "d"}, 0, "a")
+
+	fmt.Println(ret)
+}
+
+func writeToAdmOrigin() {
+
+	var test_ao AppOrigin
+
+	var test_ri RecordInfo
+
+	var test_rep RepoInfo
+
+	var test_reg RegInfo
+
+	test_ao.RECORDS = append(test_ao.RECORDS, test_ri)
+
+	test_ao.REPOS = append(test_ao.REPOS, test_rep)
+
+	test_ao.REGS = append(test_ao.REGS, test_reg)
+
+	file_byte, _ := json.Marshal(test_ao)
+
+	_ = os.WriteFile("testadmorigin.json", file_byte, 0644)
+
+}
+
 func yamlLoad(file_path string) {
 
 	file_byte, _ := os.ReadFile(file_path)
@@ -165,45 +206,34 @@ func komposeTest() {
 
 }
 
-func writeToAdmOrigin() {
+func dockercomposeyamlTest() {
 
-	var test_ao AppOrigin
+	file_byte, err := os.ReadFile("../lib/bin/docker-compose.yaml")
 
-	var test_ri RecordInfo
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
 
-	var test_rep RepoInfo
+	yaml_if := make(map[interface{}]interface{})
 
-	var test_reg RegInfo
+	err = goya.Unmarshal(file_byte, &yaml_if)
 
-	test_ao.RECORDS = append(test_ao.RECORDS, test_ri)
+	if err != nil {
 
-	test_ao.REPOS = append(test_ao.REPOS, test_rep)
+		fmt.Println(err.Error())
+		return
+	}
 
-	test_ao.REGS = append(test_ao.REGS, test_reg)
+	fmt.Println(len(yaml_if["services"].(map[string]interface{})))
 
-	file_byte, _ := json.Marshal(test_ao)
+	delete(yaml_if["services"].(map[string]interface{})["tgdb"].(map[string]interface{}), "ports")
+	delete(yaml_if["services"].(map[string]interface{})["tgdb"].(map[string]interface{}), "volumes")
 
-	_ = os.WriteFile("testadmorigin.json", file_byte, 0644)
+	tofile, err := goya.Marshal(yaml_if)
 
-}
+	_ = os.WriteFile("done_qm.yaml", tofile, 0644)
 
-func callApiDef() {
-
-	ASgi.PrintPrettyDefinition()
-
-}
-
-func callApiDefStructure() {
-
-	ASgi.PrintRawDefinition()
-
-}
-
-func sliceTest() {
-
-	ret := pkgutils.InsertToSliceByIndex[string]([]string{"b", "c", "d"}, 0, "a")
-
-	fmt.Println(ret)
 }
 
 func main() {
@@ -212,5 +242,7 @@ func main() {
 
 	// sliceTest()
 
-	komposeTest()
+	// komposeTest()
+
+	dockercomposeyamlTest()
 }

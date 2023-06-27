@@ -110,7 +110,7 @@ func InitUsrTarget(repoaddr string) error {
 
 }
 
-func CreateUsrTargetOperationSource(LIBIF_BIN_KOMPOSE string, regaddr string) error {
+func CreateUsrTargetOperationSource(LIBIF_BIN_KOMPOSE string, regaddr string) (string, error) {
 
 	var ops_src_list [][]byte
 	var ops_src_file []byte
@@ -119,13 +119,13 @@ func CreateUsrTargetOperationSource(LIBIF_BIN_KOMPOSE string, regaddr string) er
 
 	if _, err := os.Stat(".usr/target"); err != nil {
 
-		return fmt.Errorf("failed to create ops src: %s", err.Error())
+		return "", fmt.Errorf("failed to create ops src: %s", err.Error())
 
 	}
 
 	if _, err := os.Stat(".usr/target/docker-compose.yaml"); err != nil {
 
-		return fmt.Errorf("failed to create ops src: %s", err.Error())
+		return "", fmt.Errorf("failed to create ops src: %s", err.Error())
 	}
 
 	cmd := exec.Command(LIBIF_BIN_KOMPOSE, "convert", "-f", ".usr/target/docker-compose.yaml", "--stdout")
@@ -133,7 +133,7 @@ func CreateUsrTargetOperationSource(LIBIF_BIN_KOMPOSE string, regaddr string) er
 	out, err := cmd.Output()
 
 	if err != nil {
-		return fmt.Errorf("failed to create ops src: %s", err.Error())
+		return "", fmt.Errorf("failed to create ops src: %s", err.Error())
 	}
 
 	var yaml_items []interface{}
@@ -145,13 +145,13 @@ func CreateUsrTargetOperationSource(LIBIF_BIN_KOMPOSE string, regaddr string) er
 	ypath, err := goya.PathString(yaml_path_items)
 
 	if err != nil {
-		return fmt.Errorf("failed to create ops src: %s", err.Error())
+		return "", fmt.Errorf("failed to create ops src: %s", err.Error())
 	}
 
 	err = ypath.Read(strings.NewReader(yaml_str), &yaml_items)
 
 	if err != nil {
-		return fmt.Errorf("failed to create ops src: %s", err.Error())
+		return "", fmt.Errorf("failed to create ops src: %s", err.Error())
 	}
 
 	for _, val := range yaml_items {
@@ -163,7 +163,7 @@ func CreateUsrTargetOperationSource(LIBIF_BIN_KOMPOSE string, regaddr string) er
 		err = goya.Unmarshal(resource_b, &yaml_if)
 
 		if err != nil {
-			return fmt.Errorf("failed to create ops src: %s", err.Error())
+			return "", fmt.Errorf("failed to create ops src: %s", err.Error())
 		}
 
 		if yaml_if["kind"] == "Deployment" {
@@ -197,7 +197,7 @@ func CreateUsrTargetOperationSource(LIBIF_BIN_KOMPOSE string, regaddr string) er
 		result_b, err := goya.Marshal(yaml_if)
 
 		if err != nil {
-			return fmt.Errorf("failed to create ops src: %s", err.Error())
+			return "", fmt.Errorf("failed to create ops src: %s", err.Error())
 		}
 
 		ops_src_list = append(ops_src_list, result_b)
@@ -215,8 +215,8 @@ func CreateUsrTargetOperationSource(LIBIF_BIN_KOMPOSE string, regaddr string) er
 	err = os.WriteFile(".usr/ops_src.yaml", ops_src_file, 0644)
 
 	if err != nil {
-		return fmt.Errorf("failed to create ops src: %s", err.Error())
+		return "", fmt.Errorf("failed to create ops src: %s", err.Error())
 	}
 
-	return nil
+	return ".usr/ops_src.yaml", nil
 }
