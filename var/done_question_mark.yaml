@@ -1,0 +1,240 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: ../lib/bin/kompose convert -f ../lib/bin/docker-compose.yaml --stdout
+    kompose.version: 1.26.0 (40646f47)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: tgdb
+  name: tgdb
+spec:
+  ports:
+  - name: "3306"
+    port: 3306
+    targetPort: 3306
+  selector:
+    io.kompose.service: tgdb
+status:
+  loadBalancer: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: ../lib/bin/kompose convert -f ../lib/bin/docker-compose.yaml --stdout
+    kompose.version: 1.26.0 (40646f47)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: tgtraffic
+  name: tgtraffic
+spec:
+  ports:
+  - name: "5005"
+    port: 5005
+    targetPort: 5005
+  selector:
+    io.kompose.service: tgtraffic
+status:
+  loadBalancer: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: ../lib/bin/kompose convert -f ../lib/bin/docker-compose.yaml --stdout
+    kompose.version: 1.26.0 (40646f47)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: tgweb
+  name: tgweb
+spec:
+  ports:
+  - name: "8000"
+    port: 8000
+    targetPort: 8000
+  selector:
+    io.kompose.service: tgweb
+status:
+  loadBalancer: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: ../lib/bin/kompose convert -f ../lib/bin/docker-compose.yaml --stdout
+    kompose.version: 1.26.0 (40646f47)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: tgdb
+  name: tgdb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: tgdb
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: ../lib/bin/kompose convert -f ../lib/bin/docker-compose.yaml --stdout
+        kompose.version: 1.26.0 (40646f47)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: tgdb
+    spec:
+      containers:
+      - image: damn/go_tgdb
+        imagePullPolicy: Always
+        name: tgdb
+        ports:
+        - containerPort: 3306
+        resources: {}
+        volumeMounts:
+        - mountPath: /var/lib/mysql
+          name: tgdb-claim0
+      imgaePullSecrets:
+      - name: docker-secret
+      restartPolicy: Always
+      volumes:
+      - name: tgdb-claim0
+        persistentVolumeClaim:
+          claimName: tgdb-claim0
+status: {}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: tgdb-claim0
+  name: tgdb-claim0
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+status: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: ../lib/bin/kompose convert -f ../lib/bin/docker-compose.yaml --stdout
+    kompose.version: 1.26.0 (40646f47)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: tgtraffic
+  name: tgtraffic
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: tgtraffic
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: ../lib/bin/kompose convert -f ../lib/bin/docker-compose.yaml --stdout
+        kompose.version: 1.26.0 (40646f47)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: tgtraffic
+    spec:
+      containers:
+      - image: damn/go_tgtraffic
+        imagePullPolicy: Always
+        name: tgtraffic
+        ports:
+        - containerPort: 5005
+        resources: {}
+        volumeMounts:
+        - mountPath: /var/www/htmls
+          name: tgtraffic-claim0
+      imgaePullSecrets:
+      - name: docker-secret
+      restartPolicy: Always
+      volumes:
+      - name: tgtraffic-claim0
+        persistentVolumeClaim:
+          claimName: tgtraffic-claim0
+status: {}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: tgtraffic-claim0
+  name: tgtraffic-claim0
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+status: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: ../lib/bin/kompose convert -f ../lib/bin/docker-compose.yaml --stdout
+    kompose.version: 1.26.0 (40646f47)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: tgweb
+  name: tgweb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: tgweb
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: ../lib/bin/kompose convert -f ../lib/bin/docker-compose.yaml --stdout
+        kompose.version: 1.26.0 (40646f47)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: tgweb
+    spec:
+      containers:
+      - image: damn/go_tgweb
+        imagePullPolicy: Always
+        name: tgweb
+        ports:
+        - containerPort: 8000
+        resources: {}
+        volumeMounts:
+        - mountPath: /home
+          name: tgweb-claim0
+      imgaePullSecrets:
+      - name: docker-secret
+      restartPolicy: Always
+      volumes:
+      - name: tgweb-claim0
+        persistentVolumeClaim:
+          claimName: tgweb-claim0
+status: {}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: tgweb-claim0
+  name: tgweb-claim0
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+status: {}

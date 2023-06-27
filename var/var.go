@@ -59,8 +59,6 @@ func readFromYAML(yaml_file string, yaml_path string) {
 
 	ypath, _ := goya.PathString(yaml_path)
 
-	goya.JSON()
-
 	var value int
 
 	_ = ypath.Read(strings.NewReader(yaml_file), &value)
@@ -80,7 +78,91 @@ func komposeTest() {
 		return
 	}
 
-	fmt.Println(string(out))
+	var test_arr []interface{}
+
+	yaml_str := string(out)
+
+	yaml_path_items := "$.items"
+
+	ypath, _ := goya.PathString(yaml_path_items)
+
+	err = ypath.Read(strings.NewReader(yaml_str), &test_arr)
+
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+
+	var to_file_list [][]byte
+
+	var to_file []byte
+
+	for _, val := range test_arr {
+
+		yaml_if := make(map[interface{}]interface{})
+
+		resource_b, err := goya.Marshal(val)
+
+		err = goya.Unmarshal(resource_b, &yaml_if)
+
+		if err != nil {
+
+			fmt.Println(err.Error())
+			return
+		}
+
+		if yaml_if["kind"] == "Deployment" {
+
+			image_pull_secrets := make([]map[string]string, 0)
+
+			value := map[string]string{
+				"name": "docker-secret",
+			}
+
+			image_pull_secrets = append(image_pull_secrets, value)
+
+			yaml_if["spec"].(map[string]interface{})["template"].(map[string]interface{})["spec"].(map[string]interface{})["imgaePullSecrets"] = image_pull_secrets
+
+			c_count := len(yaml_if["spec"].(map[string]interface{})["template"].(map[string]interface{})["spec"].(map[string]interface{})["containers"].([]interface{}))
+
+			for j := 0; j < c_count; j++ {
+
+				prefix := "damn/go_"
+
+				prefix += yaml_if["spec"].(map[string]interface{})["template"].(map[string]interface{})["spec"].(map[string]interface{})["containers"].([]interface{})[j].(map[string]interface{})["image"].(string)
+
+				yaml_if["spec"].(map[string]interface{})["template"].(map[string]interface{})["spec"].(map[string]interface{})["containers"].([]interface{})[j].(map[string]interface{})["image"] = prefix
+
+				yaml_if["spec"].(map[string]interface{})["template"].(map[string]interface{})["spec"].(map[string]interface{})["containers"].([]interface{})[j].(map[string]interface{})["imagePullPolicy"] = "Always"
+			}
+		}
+
+		result_b, err := goya.Marshal(yaml_if)
+
+		if err != nil {
+			fmt.Println(err.Error())
+			return
+		}
+
+		to_file_list = append(to_file_list, result_b)
+
+	}
+
+	for i := 0; i < len(to_file_list); i++ {
+
+		to_file = append(to_file, []byte("---\n")...)
+
+		to_file = append(to_file, to_file_list[i]...)
+
+	}
+
+	err = os.WriteFile("done_question_mark.yaml", to_file, 0644)
+
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+
 }
 
 func writeToAdmOrigin() {
