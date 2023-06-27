@@ -234,19 +234,81 @@ func WriteDeployment(main_ns string, repoaddr string, regaddr string) ([]byte, e
 		return ret_byte, fmt.Errorf(": %s", err.Error())
 	}
 
-	err = runfs.CreateUsrTargetOperationSource(LIBIF_BIN_KOMPOSE, regaddr)
+	USR_OPS_SRC, err := runfs.CreateUsrTargetOperationSource(LIBIF_BIN_KOMPOSE, regaddr)
 
 	if err != nil {
 		return ret_byte, fmt.Errorf(": %s", err.Error())
 	}
 
+	cmd := exec.Command("kubectl", "-n", main_ns, "apply", "-f", USR_OPS_SRC)
+
+	out, err := cmd.Output()
+
+	if err != nil {
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+	}
+
+	ret_byte = out
+
 	return ret_byte, nil
 
 }
 
-func WriteOperationSource() ([]byte, error) {
+func WriteOperationSource(main_ns string, repoaddr string, regaddr string) ([]byte, error) {
 
 	var ret_byte []byte
+
+	libif, err := libinterface.ConstructLibIface()
+
+	if err != nil {
+
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+
+	}
+
+	LIBIF_BIN_KOMPOSE, err := libif.GetLibComponentAddress("bin", "kompose")
+
+	if err != nil {
+
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+
+	}
+
+	var app_origin runfs.AppOrigin
+
+	adm_origin_byte, err := runfs.LoadAdmOrigin()
+
+	if err != nil {
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+	}
+
+	err = json.Unmarshal(adm_origin_byte, &app_origin)
+
+	if err != nil {
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+	}
+
+	ns_found, repoaddr, _ := runfs.GetRecordInfo(app_origin.RECORDS, main_ns)
+
+	if !ns_found {
+		return ret_byte, fmt.Errorf(": %s", "no such namespace")
+	}
+
+	err = runfs.InitUsrTarget(repoaddr)
+
+	if err != nil {
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+	}
+
+	USR_OPS_SRC, err := runfs.CreateUsrTargetOperationSource(LIBIF_BIN_KOMPOSE, regaddr)
+
+	if err != nil {
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+	}
+
+	ret_byte = append(ret_byte, []byte(USR_OPS_SRC)...)
+
+	ret_byte = append(ret_byte, []byte(" created successfully")...)
 
 	return ret_byte, nil
 
