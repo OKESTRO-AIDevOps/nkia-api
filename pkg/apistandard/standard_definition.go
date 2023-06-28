@@ -72,7 +72,7 @@ var API_DEFINITION string = "" +
 	"APPLY-RESTART            :id, ns, resource, resourcenm                                 " + "\n" +
 	"APPLY-ROLLBACK           :id, ns, resource, resourcenm                                 " + "\n" +
 	"APPLY-KILL               :id, ns, resource, resourcenm                                 " + "\n" +
-	"APPLY-NETRESH            :id, ns                                                       " + "\n" +
+	"APPLY-NETRESH            :id,                                                          " + "\n" +
 	"APPLY-HPA                :id, ns, resource, resourcenm                                 " + "\n" +
 	"APPLY-HPAUN              :id, ns, resource, resourcenm                                 " + "\n" +
 	"APPLY-QOS                :id, ns, resource, resourcenm                                 " + "\n" +
