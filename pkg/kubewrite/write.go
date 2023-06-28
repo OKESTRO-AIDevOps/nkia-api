@@ -314,17 +314,64 @@ func WriteOperationSource(main_ns string, repoaddr string, regaddr string) ([]by
 
 }
 
-func WriteUpdateOrRestart() ([]byte, error) {
+func WriteUpdateOrRestart(main_ns string, resource string, resourcenm string) ([]byte, error) {
 
 	var ret_byte []byte
+
+	rsc_rscnm := resource + "/" + resourcenm
+
+	cmd := exec.Command("kubectl", "-n", main_ns, "rollout", "restart", rsc_rscnm)
+
+	out, err := cmd.Output()
+
+	if err != nil {
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+	}
+
+	ret_byte = out
 
 	return ret_byte, nil
 
 }
 
-func WriteDeletion() ([]byte, error) {
+func WriteRollback(main_ns string, resource string, resourcenm string) ([]byte, error) {
 
 	var ret_byte []byte
+
+	rsc_rscnm := resource + "/" + resourcenm
+
+	cmd := exec.Command("kubectl", "-n", main_ns, "rollout", "undo", rsc_rscnm)
+
+	out, err := cmd.Output()
+
+	if err != nil {
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+	}
+
+	ret_byte = out
+
+	return ret_byte, nil
+}
+
+func WriteDeletion(main_ns string, resource string, resourcenm string) ([]byte, error) {
+
+	var ret_byte []byte
+
+	USR_DEL_OPS_SRC, err := runfs.CreateUsrDelOperationSource(resourcenm)
+
+	if err != nil {
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+	}
+
+	cmd := exec.Command("kubectl", "-n", main_ns, "delete", "-f", USR_DEL_OPS_SRC)
+
+	out, err := cmd.Output()
+
+	if err != nil {
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+	}
+
+	ret_byte = out
 
 	return ret_byte, nil
 
@@ -334,32 +381,124 @@ func WriteNetworkRefresh() ([]byte, error) {
 
 	var ret_byte []byte
 
-	return ret_byte, nil
+	cmd := exec.Command("kubectl", "-n", "kube-system", "rollout", "restart", "deployment/coredns")
 
-}
+	_, err := cmd.Output()
 
-func WriteHPA() ([]byte, error) {
+	if err != nil {
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+	}
 
-	var ret_byte []byte
-
-	return ret_byte, nil
-
-}
-
-func WriteHPAUndo() ([]byte, error) {
-
-	var ret_byte []byte
+	ret_byte = []byte("network refreshed")
 
 	return ret_byte, nil
 
 }
 
-func WriteQOS() ([]byte, error) {
+func WriteHPA(main_ns string, resource string, resourcenm string) ([]byte, error) {
+
+	var ret_byte []byte
+
+	var resource_key string
+
+	if resource == "deployment" {
+		resource_key = "Deployment"
+
+	} else {
+		return ret_byte, fmt.Errorf(": %s", "not a deployment")
+	}
+
+	USR_HPA_SRC, err := runfs.CreateHPASource(resourcenm, resource_key)
+
+	if err != nil {
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+	}
+
+	cmd := exec.Command("kubectl", "-n", main_ns, "apply", "-f", USR_HPA_SRC)
+
+	out, err := cmd.Output()
+
+	if err != nil {
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+	}
+
+	ret_byte = out
+
+	return ret_byte, nil
+
+}
+
+func WriteHPAUndo(main_ns string, resource string, resourcenm string) ([]byte, error) {
+
+	var ret_byte []byte
+
+	var resource_key string
+
+	if resource == "deployment" {
+		resource_key = "Deployment"
+
+	} else {
+		return ret_byte, fmt.Errorf(": %s", "not a deployment")
+	}
+
+	USR_HPA_SRC, err := runfs.CreateHPASource(resourcenm, resource_key)
+
+	if err != nil {
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+	}
+
+	cmd := exec.Command("kubectl", "-n", main_ns, "delete", "-f", USR_HPA_SRC)
+
+	out, err := cmd.Output()
+
+	if err != nil {
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+	}
+
+	ret_byte = out
+
+	return ret_byte, nil
+
+}
+
+func WriteQOS(main_ns string, resource string, resourcenm string) ([]byte, error) {
+
+	var ret_byte []byte
+
+	var resource_key string
+
+	if resource == "deployment" {
+		resource_key = "Deployment"
+
+	} else {
+		return ret_byte, fmt.Errorf(": %s", "not a deployment")
+	}
+
+	USR_QOS_SRC, err := runfs.CreateQOSSource(resourcenm, resource_key)
+
+	if err != nil {
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+	}
+
+	cmd := exec.Command("kubectl", "-n", main_ns, "apply", "-f", USR_QOS_SRC)
+
+	out, err := cmd.Output()
+
+	if err != nil {
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+	}
+
+	ret_byte = out
+
+	return ret_byte, nil
+
+}
+
+func WriteQOSUndo() ([]byte, error) {
 
 	var ret_byte []byte
 
 	return ret_byte, nil
-
 }
 
 func WriteIngress() ([]byte, error) {
