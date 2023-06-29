@@ -28,24 +28,49 @@ type Ingress struct {
 		} `yaml:"annotations"`
 	} `yaml:"metadata"`
 	Spec struct {
-		Rules []struct {
-			Host string `yaml:"host"`
-			HTTP struct {
-				Paths []struct {
-					Path     string `yaml:"path"`
-					PathType string `yaml:"pathType"`
-					Backend  struct {
-						Service struct {
-							Name string `yaml:"name"`
-							Port struct {
-								Number string `yaml:"number"`
-							} `yaml:"port"`
-						} `yaml:"service"`
-					} `yaml:"backend"`
-				} `yaml:"paths"`
-			} `yaml:"http"`
-		} `yaml:"rules"`
+		Rules []Ingress_Rules `yaml:"rules"`
 	} `yaml:"spec"`
+}
+
+type Ingress_Rules struct {
+	Host string `yaml:"host"`
+	HTTP struct {
+		Paths []Ingress_Rules_Paths `yaml:"paths"`
+	} `yaml:"http"`
+}
+
+type Ingress_Rules_Paths struct {
+	Path     string `yaml:"path"`
+	PathType string `yaml:"pathType"`
+	Backend  struct {
+		Service struct {
+			Name string `yaml:"name"`
+			Port struct {
+				Number int `yaml:"number"`
+			} `yaml:"port"`
+		} `yaml:"service"`
+	} `yaml:"backend"`
+}
+
+type NodePort struct {
+	Kind       string `yaml:"kind"`
+	APIVersion string `yaml:"apiVersion"`
+	Metadata   struct {
+		Name string `yaml:"name"`
+	} `yaml:"metadata"`
+	Spec struct {
+		Type     string `yaml:"type"`
+		Selector struct {
+			IoKomposeService string `yaml:"io.kompose.service"`
+		} `yaml:"selector"`
+		Ports []NodePort_Ports `yaml:"ports"`
+	} `yaml:"spec"`
+}
+
+type NodePort_Ports struct {
+	NodePort   int `yaml:"nodePort"`
+	Port       int `yaml:"port"`
+	TargetPort int `yaml:"targetPort"`
 }
 
 type Service struct {
@@ -58,16 +83,18 @@ type Service struct {
 		} `yaml:"labels"`
 	} `yaml:"metadata"`
 	Spec struct {
-		Type  string `yaml:"type"`
-		Ports []struct {
-			Port       int    `yaml:"port"`
-			TargetPort int    `yaml:"targetPort"`
-			Protocol   string `yaml:"protocol"`
-		} `yaml:"ports"`
+		Type     string          `yaml:"type"`
+		Ports    []Service_Ports `yaml:"ports"`
 		Selector struct {
 			App string `yaml:"app"`
 		} `yaml:"selector"`
 	} `yaml:"spec"`
+}
+
+type Service_Ports struct {
+	Port       int    `yaml:"port"`
+	TargetPort int    `yaml:"targetPort"`
+	Protocol   string `yaml:"protocol"`
 }
 
 type Deployment struct {
@@ -90,18 +117,24 @@ type Deployment struct {
 				} `yaml:"labels"`
 			} `yaml:"metadata"`
 			Spec struct {
-				ImagePullSecrets []struct {
-					Name string `yaml:"name"`
-				} `yaml:"imagePullSecrets"`
-				Containers []struct {
-					Name            string `yaml:"name"`
-					Image           string `yaml:"image"`
-					ImagePullPolicy string `yaml:"imagePullPolicy"`
-					Ports           []struct {
-						ContainerPort int `yaml:"containerPort"`
-					} `yaml:"ports"`
-				} `yaml:"containers"`
+				ImagePullSecrets []Deployment_ImagePullSecrets `yaml:"imagePullSecrets"`
+				Containers       []Deployment_Containers       `yaml:"containers"`
 			} `yaml:"spec"`
 		} `yaml:"template"`
 	} `yaml:"spec"`
+}
+
+type Deployment_ImagePullSecrets struct {
+	Name string `yaml:"name"`
+}
+
+type Deployment_Containers struct {
+	Name            string                        `yaml:"name"`
+	Image           string                        `yaml:"image"`
+	ImagePullPolicy string                        `yaml:"imagePullPolicy"`
+	Ports           []Deployment_Containers_Ports `yaml:"ports"`
+}
+
+type Deployment_Containers_Ports struct {
+	ContainerPort int `yaml:"containerPort"`
 }
