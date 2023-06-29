@@ -3,10 +3,12 @@ package runtimefs
 import (
 	"encoding/json"
 	"fmt"
+	"math/rand"
 	"os"
 	"os/exec"
 	"strconv"
 	"strings"
+	"time"
 
 	bsrc "github.com/OKESTRO-AIDevOps/npia-api/pkg/builtinresource"
 	goya "github.com/goccy/go-yaml"
@@ -564,13 +566,13 @@ func CreateQOSSource(resourcenm string, resource_key string) (string, error) {
 		c_byte := []byte(content)
 
 		if err != nil {
-			return "", fmt.Errorf("failed to create hpa src: %s", err.Error())
+			return "", fmt.Errorf("failed to create qos src: %s", err.Error())
 		}
 
 		err = goya.Unmarshal(c_byte, &yaml_if)
 
 		if err != nil {
-			return "", fmt.Errorf("failed to create hpa src: %s", err.Error())
+			return "", fmt.Errorf("failed to create qos src: %s", err.Error())
 		}
 
 		if yaml_if["kind"] == resource_key && yaml_if["metadata"].(map[string]interface{})["name"] == resourcenm {
@@ -613,7 +615,7 @@ func CreateQOSSource(resourcenm string, resource_key string) (string, error) {
 		return "", fmt.Errorf("failed to create qos src: %s", "matching key not found")
 	}
 
-	err = os.WriteFile("done_question_mark_qos.yaml", out_qos, 0644)
+	err = os.WriteFile(".usr/qos_src.yaml", out_qos, 0644)
 
 	if err != nil {
 		return "", fmt.Errorf("failed to create qos src: %s", err.Error())
@@ -623,6 +625,243 @@ func CreateQOSSource(resourcenm string, resource_key string) (string, error) {
 
 }
 
-func CreateDelQOSSource(resourcenm string, resource_key string) {
+func CreateDelQOSSource(resourcenm string, resource_key string) (string, error) {
 
+	src_found := 0
+
+	file_byte, err := os.ReadFile(".usr/ops_src.yaml")
+
+	if err != nil {
+		return "", fmt.Errorf("failed to create del qos src: %s", err.Error())
+	}
+
+	var out_del_qos []byte
+
+	file_str := string(file_byte)
+
+	file_str_list := strings.Split(file_str, "---\n")
+
+	for _, content := range file_str_list {
+
+		if content == "\n" || content == "" {
+			continue
+		}
+
+		yaml_if := make(map[interface{}]interface{})
+
+		c_byte := []byte(content)
+
+		if err != nil {
+			return "", fmt.Errorf("failed to create del qos src: %s", err.Error())
+		}
+
+		err = goya.Unmarshal(c_byte, &yaml_if)
+
+		if err != nil {
+			return "", fmt.Errorf("failed to create del qos src: %s", err.Error())
+		}
+
+		if yaml_if["kind"] == resource_key && yaml_if["metadata"].(map[string]interface{})["name"] == resourcenm {
+
+			src_found = 1
+
+			b_yaml_if, err := goya.Marshal(yaml_if)
+
+			if err != nil {
+				return "", fmt.Errorf("failed to create del qos src: %s", err.Error())
+			}
+
+			out_del_qos = b_yaml_if
+
+			break
+		}
+
+	}
+
+	if src_found == 0 {
+		return "", fmt.Errorf("failed to create qos src: %s", "matching key not found")
+	}
+
+	err = os.WriteFile(".usr/del_qos_src.yaml", out_del_qos, 0644)
+
+	if err != nil {
+		return "", fmt.Errorf("failed to create del qos src: %s", err.Error())
+	}
+
+	return ".usr/del_qos_src.yaml", nil
+
+}
+
+func CreateIngressSource(ns string, host string, svc string) (string, error) {
+
+	src_found := 0
+
+	file_byte, err := os.ReadFile(".usr/ops_src.yaml")
+
+	if err != nil {
+		return "", fmt.Errorf("failed to create ingr src: %s", err.Error())
+	}
+
+	var port_number uint64
+
+	var out_ingr bsrc.Ingress
+
+	var ingr_rules bsrc.Ingress_Rules
+
+	var ingr_rules_paths bsrc.Ingress_Rules_Paths
+
+	file_str := string(file_byte)
+
+	file_str_list := strings.Split(file_str, "---\n")
+
+	for _, content := range file_str_list {
+
+		if content == "\n" || content == "" {
+			continue
+		}
+
+		yaml_if := make(map[interface{}]interface{})
+
+		c_byte := []byte(content)
+
+		if err != nil {
+			return "", fmt.Errorf("failed to create ingr src: %s", err.Error())
+		}
+
+		err = goya.Unmarshal(c_byte, &yaml_if)
+
+		if err != nil {
+			return "", fmt.Errorf("failed to create ingr src: %s", err.Error())
+		}
+
+		if yaml_if["kind"] == "Service" && yaml_if["metadata"].(map[string]interface{})["name"] == svc {
+
+			src_found = 1
+
+			port_number = yaml_if["spec"].(map[string]interface{})["ports"].([]interface{})[0].(map[string]interface{})["port"].(uint64)
+
+			break
+		}
+
+	}
+
+	if src_found == 0 {
+		return "", fmt.Errorf("failed to create ingr src: %s", "matching key not found")
+	}
+
+	ingr_rules_paths.Backend.Service.Name = svc
+	ingr_rules_paths.Backend.Service.Port.Number = int(port_number)
+	ingr_rules_paths.Path = "/"
+	ingr_rules_paths.PathType = "Prefix"
+
+	ingr_rules.Host = host
+	ingr_rules.HTTP.Paths = append(ingr_rules.HTTP.Paths, ingr_rules_paths)
+
+	out_ingr.APIVersion = "networking.k8s.io/v1"
+	out_ingr.Kind = "Ingress"
+	out_ingr.Metadata.Name = "ingress-" + ns
+	out_ingr.Metadata.Annotations.NginxIngressKubernetesIoProxyBodySize = "0"
+
+	out_ingr.Spec.Rules = append(out_ingr.Spec.Rules, ingr_rules)
+
+	out_ingr_byte, err := goya.Marshal(out_ingr)
+
+	if err != nil {
+		return "", fmt.Errorf("failed to create ingr src: %s", err.Error())
+	}
+
+	err = os.WriteFile(".usr/ingr_src.yaml", out_ingr_byte, 0644)
+
+	if err != nil {
+		return "", fmt.Errorf("failed to create ingr src: %s", err.Error())
+	}
+
+	return ".usr/ingr_src.yaml", nil
+}
+
+func CreateNodePortSource(ns string, svc string) (string, error) {
+
+	src_found := 0
+
+	file_byte, err := os.ReadFile(".usr/ops_src.yaml")
+
+	if err != nil {
+		return "", fmt.Errorf("failed to create ndpt src: %s", err.Error())
+	}
+
+	var node_port_number int
+
+	var port_number uint64
+
+	var out_ndpt bsrc.NodePort
+
+	var ndpt_ports bsrc.NodePort_Ports
+
+	file_str := string(file_byte)
+
+	file_str_list := strings.Split(file_str, "---\n")
+
+	for _, content := range file_str_list {
+
+		if content == "\n" || content == "" {
+			continue
+		}
+
+		yaml_if := make(map[interface{}]interface{})
+
+		c_byte := []byte(content)
+
+		if err != nil {
+			return "", fmt.Errorf("failed to create ndpt src: %s", err.Error())
+		}
+
+		err = goya.Unmarshal(c_byte, &yaml_if)
+
+		if err != nil {
+			return "", fmt.Errorf("failed to create ndpt src: %s", err.Error())
+		}
+
+		if yaml_if["kind"] == "Service" && yaml_if["metadata"].(map[string]interface{})["name"] == svc {
+
+			src_found = 1
+
+			port_number = yaml_if["spec"].(map[string]interface{})["ports"].([]interface{})[0].(map[string]interface{})["port"].(uint64)
+
+			break
+		}
+
+	}
+
+	if src_found == 0 {
+		return "", fmt.Errorf("failed to create ndpt src: %s", "matching key not found")
+	}
+
+	rand.Seed(time.Now().UnixNano())
+	min := 30000
+	max := 32767
+	node_port_number = rand.Intn(max-min+1) + min
+
+	ndpt_ports.NodePort = node_port_number
+	ndpt_ports.Port = int(port_number)
+	ndpt_ports.TargetPort = int(port_number)
+
+	out_ndpt.Spec.Selector.IoKomposeService = svc
+	out_ndpt.Spec.Type = "NodePort"
+	out_ndpt.Metadata.Name = "nodeport-" + ns
+	out_ndpt.APIVersion = "v1"
+	out_ndpt.Kind = "Service"
+
+	out_ndpt_byte, err := goya.Marshal(out_ndpt)
+
+	if err != nil {
+		return "", fmt.Errorf("failed to create ndpt src: %s", err.Error())
+	}
+
+	err = os.WriteFile(".usr/ndpt_src.yaml", out_ndpt_byte, 0644)
+
+	if err != nil {
+		return "", fmt.Errorf("failed to create ndpt src: %s", err.Error())
+	}
+
+	return ".usr/ndpt_src.yaml", nil
 }

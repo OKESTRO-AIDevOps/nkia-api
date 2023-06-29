@@ -494,40 +494,129 @@ func WriteQOS(main_ns string, resource string, resourcenm string) ([]byte, error
 
 }
 
-func WriteQOSUndo() ([]byte, error) {
+func WriteQOSUndo(main_ns string, resource string, resourcenm string) ([]byte, error) {
 
 	var ret_byte []byte
+
+	var resource_key string
+
+	if resource == "deployment" {
+		resource_key = "Deployment"
+
+	} else {
+		return ret_byte, fmt.Errorf(": %s", "not a deployment")
+	}
+
+	USR_DEL_QOS_SRC, err := runfs.CreateDelQOSSource(resourcenm, resource_key)
+
+	if err != nil {
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+	}
+
+	cmd := exec.Command("kubectl", "-n", main_ns, "apply", "-f", USR_DEL_QOS_SRC)
+
+	out, err := cmd.Output()
+
+	if err != nil {
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+	}
+
+	ret_byte = out
 
 	return ret_byte, nil
 }
 
-func WriteIngress() ([]byte, error) {
+func WriteIngress(main_ns string, hostnm string, svcnm string) ([]byte, error) {
 
 	var ret_byte []byte
+
+	USR_INGR_SRC, err := runfs.CreateIngressSource(main_ns, hostnm, svcnm)
+
+	if err != nil {
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+	}
+
+	cmd := exec.Command("kubectl", "-n", main_ns, "apply", "-f", USR_INGR_SRC)
+
+	out, err := cmd.Output()
+
+	if err != nil {
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+	}
+
+	ret_byte = out
 
 	return ret_byte, nil
 
 }
 
-func WriteIngressUndo() ([]byte, error) {
+func WriteIngressUndo(main_ns string, hostnm string, svcnm string) ([]byte, error) {
 
 	var ret_byte []byte
+
+	USR_DEL_INGR_SRC, err := runfs.CreateIngressSource(main_ns, hostnm, svcnm)
+
+	if err != nil {
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+	}
+
+	cmd := exec.Command("kubectl", "-n", main_ns, "delete", "-f", USR_DEL_INGR_SRC)
+
+	out, err := cmd.Output()
+
+	if err != nil {
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+	}
+
+	ret_byte = out
 
 	return ret_byte, nil
 
 }
 
-func WriteNodePort() ([]byte, error) {
+func WriteNodePort(main_ns string, svcnm string) ([]byte, error) {
 
 	var ret_byte []byte
+
+	USR_NDPT_SRC, err := runfs.CreateNodePortSource(main_ns, svcnm)
+
+	if err != nil {
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+	}
+
+	cmd := exec.Command("kubectl", "-n", main_ns, "apply", "-f", USR_NDPT_SRC)
+
+	out, err := cmd.Output()
+
+	if err != nil {
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+	}
+
+	ret_byte = out
 
 	return ret_byte, nil
 
 }
 
-func WriteNodePortUndo() ([]byte, error) {
+func WriteNodePortUndo(main_ns string, svcnm string) ([]byte, error) {
 
 	var ret_byte []byte
+
+	USR_DEL_NDPT_SRC, err := runfs.CreateNodePortSource(main_ns, svcnm)
+
+	if err != nil {
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+	}
+
+	cmd := exec.Command("kubectl", "-n", main_ns, "delete", "-f", USR_DEL_NDPT_SRC)
+
+	out, err := cmd.Output()
+
+	if err != nil {
+		return ret_byte, fmt.Errorf(": %s", err.Error())
+	}
+
+	ret_byte = out
 
 	return ret_byte, nil
 
