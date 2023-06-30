@@ -19,17 +19,17 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 	cmd_id := std_cmd["id"]
 
 	switch cmd_id {
-	case "SUBMIT":
-	case "CALLME":
+	//	case "SUBMIT":
+	//	case "CALLME":
 	case "SETTING-CRTNS":
-	case "SETTING-CRTNSVOL":
-	case "SETTING-CRTVOL":
+		//	case "SETTING-CRTNSVOL":
+		//	case "SETTING-CRTVOL":
 	case "SETTING-CRTMON":
-	case "SETTING-DELNS":
-	case "GITLOG":
-	case "PIPEHIST":
-	case "PIPE":
-	case "PIPELOG":
+		//	case "SETTING-DELNS":
+		//	case "GITLOG":
+		//	case "PIPEHIST":
+		//	case "PIPE":
+		//	case "PIPELOG":
 	case "BUILD":
 	case "BUILDLOG":
 	case "RESOURCE-NDS":
@@ -464,25 +464,25 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 	case "APPLY-INGRUN":
 	case "APPLY-NDPORT":
 	case "APPLY-NDPORTUN":
-	case "ADMIN-ADMRMTCHK":
-	case "ADMIN-ADMRMTLDHA":
-	case "ADMIN-ADMRMTLDMV":
-	case "ADMIN-ADMRMTMSR":
-	case "ADMIN-ADMRMTLDWRK":
-	case "ADMIN-ADMRMTWRK":
-	case "ADMIN-ADMRMTSTR":
-	case "ADMIN-ADMRMTLOG":
-	case "ADMIN-ADMRMTSTATUS":
-	case "ADMIN-LEAD":
-	case "ADMIN-MSR":
-	case "ADMIN-LDVOL":
-	case "ADMIN-WRK":
-	case "ADMIN-STR":
-	case "ADMIN-LOG":
-	case "ADMIN-STATUS":
-	case "ADMIN-UP":
-	case "ADMIN-DOWN":
-	case "DELND":
+		//	case "ADMIN-ADMRMTCHK":
+		//	case "ADMIN-ADMRMTLDHA":
+		//	case "ADMIN-ADMRMTLDMV":
+		//	case "ADMIN-ADMRMTMSR":
+		//	case "ADMIN-ADMRMTLDWRK":
+		//	case "ADMIN-ADMRMTWRK":
+		//	case "ADMIN-ADMRMTSTR":
+		//	case "ADMIN-ADMRMTLOG":
+		//	case "ADMIN-ADMRMTSTATUS":
+		//	case "ADMIN-LEAD":
+		//	case "ADMIN-MSR":
+		//	case "ADMIN-LDVOL":
+		//	case "ADMIN-WRK":
+		//	case "ADMIN-STR":
+		//	case "ADMIN-LOG":
+		//	case "ADMIN-STATUS":
+		//	case "ADMIN-UP":
+		//	case "ADMIN-DOWN":
+		//	case "DELND":
 	case "EXIT":
 	default:
 
