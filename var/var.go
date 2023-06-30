@@ -232,10 +232,20 @@ func dockercomposeyamlTest() {
 		return
 	}
 
-	fmt.Println(len(yaml_if["services"].(map[string]interface{})))
+	service_map := yaml_if["services"].(map[string]interface{})
 
-	delete(yaml_if["services"].(map[string]interface{})["tgdb"].(map[string]interface{}), "ports")
-	delete(yaml_if["services"].(map[string]interface{})["tgdb"].(map[string]interface{}), "volumes")
+	keys := make([]string, 0)
+	for k := range service_map {
+
+		keys = append(keys, k)
+	}
+
+	for i := 0; i < len(keys); i++ {
+
+		delete(yaml_if["services"].(map[string]interface{})[keys[i]].(map[string]interface{}), "ports")
+		delete(yaml_if["services"].(map[string]interface{})[keys[i]].(map[string]interface{}), "volumes")
+
+	}
 
 	tofile, err := goya.Marshal(yaml_if)
 
@@ -925,7 +935,13 @@ func nodeportTest() (string, error) {
 
 func yaml_dynamic_string() {
 
+	top := make(map[interface{}]interface{})
 	shit := make(map[interface{}]interface{})
+	shit_append := make(map[interface{}]interface{})
+	bogus :=
+		`
+bogus: {}
+	`
 	test :=
 		`
 kind: Service
@@ -936,13 +952,16 @@ spec:
   type: NodePort
   selector:
     io.kompose.service: none
-  ports:
-    - nodePort: none
-      port: none
-      targetPort: none
+  ports: []
+	`
+	test_append :=
+		`
+nodePort: none-append
+port: none-append
+targetPort: none-append
 	`
 
-	err := goya.Unmarshal([]byte(test), &shit)
+	err := goya.Unmarshal([]byte(bogus), &top)
 
 	if err != nil {
 
@@ -950,7 +969,109 @@ spec:
 		return
 	}
 
-	fmt.Println(shit)
+	err = goya.Unmarshal([]byte(test), &shit)
+
+	if err != nil {
+
+		fmt.Println(err.Error())
+		return
+	}
+
+	err = goya.Unmarshal([]byte(test_append), &shit_append)
+
+	if err != nil {
+
+		fmt.Println(err.Error())
+		return
+	}
+
+	shit["spec"].(map[string]interface{})["ports"] = append(shit["spec"].(map[string]interface{})["ports"].([]interface{}), shit_append)
+
+	top["bogus"] = shit
+
+	top_b, err := goya.Marshal(top)
+
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+
+	fmt.Println(string(top_b))
+}
+
+func json_dynamic_string() {
+
+	iter := make([]interface{}, 0)
+	top := make(map[string]interface{})
+	shit := make(map[string]interface{})
+	shit_append := make(map[string]interface{})
+	bogus :=
+		`
+{
+	"bogus": {}
+}
+	`
+	test :=
+		`
+{
+	"kind": "Service",
+	"apiVersion": "v1",
+	"metadata": {
+		"name": "none"
+	},
+	"spec": {
+		"type": "NodePort",
+		"selector": {
+		"io.kompose.service": "none"
+		},
+		"ports": []
+	}
+}
+	`
+	test_append :=
+		`
+{
+	"nodePort": "none-append",
+	"port": "none-append",
+	"targetPort": "none-append"
+}
+	`
+
+	err := json.Unmarshal([]byte(bogus), &top)
+
+	if err != nil {
+
+		fmt.Println(err.Error())
+		return
+	}
+
+	err = json.Unmarshal([]byte(test), &shit)
+
+	if err != nil {
+
+		fmt.Println(err.Error())
+		return
+	}
+
+	err = json.Unmarshal([]byte(test_append), &shit_append)
+
+	if err != nil {
+
+		fmt.Println(err.Error())
+		return
+	}
+
+	shit["spec"].(map[string]interface{})["ports"] = append(shit["spec"].(map[string]interface{})["ports"].([]interface{}), shit_append)
+
+	top["bogus"] = shit
+
+	iter = append(iter, top)
+	iter = append(iter, top)
+
+	iter_b, err := json.Marshal(iter)
+
+	fmt.Println(string(iter_b))
+
 }
 
 func main() {
@@ -961,7 +1082,7 @@ func main() {
 
 	// komposeTest()
 
-	//dockercomposeyamlTest()
+	dockercomposeyamlTest()
 
 	// delresourceTest()
 
@@ -1009,5 +1130,6 @@ func main() {
 			fmt.Println(string(s))
 		}
 	*/
-	yaml_dynamic_string()
+	//yaml_dynamic_string()
+	// json_dynamic_string()
 }

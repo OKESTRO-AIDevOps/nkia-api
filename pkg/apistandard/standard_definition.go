@@ -16,19 +16,19 @@ type API_STD map[string][]string
 
 var API_DEFINITION string = "" +
 	//            id          :       keys
-	"SUBMIT                   :id                                                           " + "\n" +
+	//  "SUBMIT                   :id                                                           " + "\n" +
 	//	"CALLME                   :id                                                           " + "\n" +
 	"SETTING-CRTNS            :id, ns                                                       " + "\n" +
-	"SETTING-CRTNSVOL         :id, ns, volserver                                            " + "\n" +
-	"SETTING-CRTVOL           :id, ns, volserver                                            " + "\n" +
+	// "SETTING-CRTNSVOL         :id, ns, volserver                                            " + "\n" +
+	// "SETTING-CRTVOL           :id, ns, volserver                                            " + "\n" +
 	"SETTING-CRTMON           :id, ns                                                       " + "\n" +
-	"SETTING-DELNS            :id, ns                                                       " + "\n" +
-	"GITLOG                   :id, ns, repoaddr                                             " + "\n" +
+	// "SETTING-DELNS            :id, ns                                                       " + "\n" +
+	//  "GITLOG                   :id, ns, repoaddr                                             " + "\n" +
 	//	"PIPEHIST                 :id, ns                                                       " + "\n" +
 	//	"PIPE                     :id, ns, repoaddr, regaddr                                    " + "\n" +
 	//	"PIPELOG                  :id                                                           " + "\n" +
 	"BUILD                    :id, ns, repoaddr, regaddr                                    " + "\n" +
-	"BUILDLOG                 :id, ns                                                       " + "\n" +
+	"BUILDLOG                 :id                                                           " + "\n" +
 	"RESOURCE-NDS             :id, ns                                                       " + "\n" +
 	"RESOURCE-PDS             :id, ns                                                       " + "\n" +
 	"RESOURCE-PLOG            :id, ns, podnm                                                " + "\n" +
