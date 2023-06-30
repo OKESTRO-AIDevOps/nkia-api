@@ -34,13 +34,13 @@ var API_DEFINITION string = "" +
 	"RESOURCE-PLOG            :id, ns, podnm                                                " + "\n" +
 	"RESOURCE-SVC             :id, ns                                                       " + "\n" +
 	"RESOURCE-DPL             :id, ns                                                       " + "\n" +
-	"RESOURCE-IMGLI           :id, ns                                                       " + "\n" +
+	//	"RESOURCE-IMGLI           :id, ns                                                       " + "\n" +
 	"RESOURCE-EVNT            :id, ns                                                       " + "\n" +
 	"RESOURCE-RSRC            :id, ns                                                       " + "\n" +
 	"RESOURCE-NSPC            :id, ns                                                       " + "\n" +
 	"RESOURCE-INGR            :id, ns                                                       " + "\n" +
 	"RESOURCE-NDPORT          :id, ns                                                       " + "\n" +
-	"RESOURCE-PRJPRB          :id, ns                                                       " + "\n" +
+	//	"RESOURCE-PRJPRB          :id, ns                                                       " + "\n" +
 	"RESOURCE-PSCH            :id, ns                                                       " + "\n" +
 	"RESOURCE-PUNSCH          :id, ns                                                       " + "\n" +
 	"RESOURCE-CCPU            :id, ns                                                       " + "\n" +
