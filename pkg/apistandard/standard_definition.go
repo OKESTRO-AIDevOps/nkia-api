@@ -5,7 +5,7 @@ import "strings"
 type API_OUTPUT struct {
 	HEAD API_METADATA
 
-	BODY []byte
+	BODY string
 }
 
 type API_METADATA map[string]map[string]string
