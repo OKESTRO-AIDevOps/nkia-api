@@ -1,7 +1,6 @@
 package runtimefs
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
 	"os/exec"
@@ -50,13 +49,7 @@ func InitUsrTarget(repoaddr string) error {
 
 	cmd.Run()
 
-	file_byte, err := LoadAdmOrigin()
-
-	if err != nil {
-		return fmt.Errorf("failed to init target: %s", err.Error())
-	}
-
-	err = json.Unmarshal(file_byte, &app_origin)
+	app_origin, err := LoadAdmOrigin()
 
 	if err != nil {
 		return fmt.Errorf("failed to init target: %s", err.Error())
