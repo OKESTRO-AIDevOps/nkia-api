@@ -46,7 +46,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 
 		b_out := []byte("npia init started\n")
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 
 	case "ADMIN-INITLOG":
 
@@ -56,7 +56,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 
 	case "SETTING-CRTNS":
 
@@ -70,7 +70,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 
 	case "SETTING-SETREPO":
 		ns := std_cmd["ns"]
@@ -84,7 +84,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 	case "SETTING-SETREG":
 		ns := std_cmd["ns"]
 		regaddr := std_cmd["regaddr"]
@@ -97,7 +97,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 		//	case "SETTING-CRTNSVOL":
 		//	case "SETTING-CRTVOL":
 	case "SETTING-CRTMON":
@@ -108,7 +108,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 
 		//	case "SETTING-DELNS":
 		//	case "SUBMIT":
@@ -127,7 +127,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 
 		b_out := []byte("build images started\n")
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 
 	case "BUILDLOG":
 
@@ -137,7 +137,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 
 	case "RESOURCE-NDS":
 
@@ -149,7 +149,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 
 	case "RESOURCE-PDS":
 
@@ -161,7 +161,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 
 	case "RESOURCE-PLOG":
 
@@ -175,7 +175,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 
 	case "RESOURCE-SVC":
 
@@ -187,7 +187,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 
 	case "RESOURCE-DPL":
 
@@ -199,7 +199,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 
 	//case "RESOURCE-IMGLI":
 	case "RESOURCE-EVNT":
@@ -212,7 +212,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 
 	case "RESOURCE-RSRC":
 
@@ -224,7 +224,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 
 	case "RESOURCE-NSPC":
 
@@ -236,7 +236,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 
 	case "RESOURCE-INGR":
 
@@ -248,7 +248,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 
 	case "RESOURCE-NDPORT":
 
@@ -260,7 +260,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 
 	//case "RESOURCE-PRJPRB":
 	case "RESOURCE-PSCH":
@@ -273,7 +273,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 
 	case "RESOURCE-PUNSCH":
 
@@ -285,7 +285,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 
 	case "RESOURCE-CCPU":
 
@@ -297,7 +297,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 
 	case "RESOURCE-CMEM":
 
@@ -309,7 +309,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 
 	case "RESOURCE-CFSR":
 
@@ -321,7 +321,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 
 	case "RESOURCE-CFSW":
 
@@ -333,7 +333,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 
 	case "RESOURCE-CNETR":
 
@@ -345,7 +345,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 
 	case "RESOURCE-CNETT":
 
@@ -357,7 +357,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 
 	case "RESOURCE-VOLAVAIL":
 
@@ -367,7 +367,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 
 	case "RESOURCE-VOLCAP":
 
@@ -377,7 +377,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 
 	case "RESOURCE-VOLUSD":
 
@@ -387,7 +387,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 
 	case "RESOURCE-NTEMP":
 
@@ -397,7 +397,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 
 	case "RESOURCE-NTEMPCH":
 
@@ -407,7 +407,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 
 	case "RESOURCE-NTEMPAV":
 
@@ -417,7 +417,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 
 	case "RESOURCE-NPROCS":
 
@@ -427,7 +427,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 
 	case "RESOURCE-NCORES":
 
@@ -437,7 +437,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 
 	case "RESOURCE-NMEM":
 
@@ -447,7 +447,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 
 	case "RESOURCE-NMEMTOT":
 
@@ -457,7 +457,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 
 	case "RESOURCE-NDISKR":
 
@@ -467,7 +467,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 
 	case "RESOURCE-NDISKW":
 
@@ -477,7 +477,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 
 	case "RESOURCE-NNETR":
 
@@ -487,7 +487,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 
 	case "RESOURCE-NNETT":
 		b_out, cmd_err := kuberead.ReadNodeNetworkTransmit()
@@ -496,7 +496,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 
 	case "RESOURCE-NDISKWT":
 
@@ -506,7 +506,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 
 	case "APPLY-REGSEC":
 		ns := std_cmd["ns"]
@@ -517,7 +517,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 
 	case "APPLY-DIST":
 		ns := std_cmd["ns"]
@@ -530,7 +530,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 
 	case "APPLY-CRTOPSSRC":
 		ns := std_cmd["ns"]
@@ -543,7 +543,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 	case "APPLY-RESTART":
 		ns := std_cmd["ns"]
 		resource := std_cmd["resource"]
@@ -554,7 +554,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 
 	case "APPLY-ROLLBACK":
 
@@ -567,7 +567,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 	case "APPLY-KILL":
 		ns := std_cmd["ns"]
 		resource := std_cmd["resource"]
@@ -578,7 +578,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 	case "APPLY-NETRESH":
 
 		b_out, cmd_err := kubewrite.WriteNetworkRefresh()
@@ -587,7 +587,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 	case "APPLY-HPA":
 		ns := std_cmd["ns"]
 		resource := std_cmd["resource"]
@@ -598,7 +598,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 	case "APPLY-HPAUN":
 		ns := std_cmd["ns"]
 		resource := std_cmd["resource"]
@@ -609,7 +609,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 	case "APPLY-QOS":
 		ns := std_cmd["ns"]
 		resource := std_cmd["resource"]
@@ -620,7 +620,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 	case "APPLY-QOSUN":
 		ns := std_cmd["ns"]
 		resource := std_cmd["resource"]
@@ -631,7 +631,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 	case "APPLY-INGR":
 		ns := std_cmd["ns"]
 		hostnm := std_cmd["hostnm"]
@@ -642,7 +642,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 	case "APPLY-INGRUN":
 		ns := std_cmd["ns"]
 		hostnm := std_cmd["hostnm"]
@@ -653,7 +653,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 	case "APPLY-NDPORT":
 		ns := std_cmd["ns"]
 		svcnm := std_cmd["svcnm"]
@@ -663,7 +663,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 	case "APPLY-NDPORTUN":
 		ns := std_cmd["ns"]
 		svcnm := std_cmd["svcnm"]
@@ -674,7 +674,7 @@ func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {
 			return ret_api_out, fmt.Errorf("run failed: %s", cmd_err.Error())
 		}
 
-		ret_api_out.BODY = b_out
+		ret_api_out.BODY = string(b_out)
 	// case "EXIT":
 	default:
 

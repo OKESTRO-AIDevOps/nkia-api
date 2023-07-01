@@ -65,6 +65,8 @@ func (asgi API_STD) StdCmdInputBuildFromLinearInstruction(linear_string string) 
 
 	linear_value_split := strings.Split(linear_split[1], ",")
 
+	linear_value_split = pkgutils.InsertToSliceByIndex[string](linear_value_split, 0, linear_key)
+
 	ret_api_std, err := asgi.StdCmdInputBuildHelper(std_keys, linear_value_split)
 
 	if err != nil {
