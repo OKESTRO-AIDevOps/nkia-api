@@ -81,7 +81,7 @@ func (asgi API_STD) LegacyInputTranslate(legacy_in string) (API_INPUT, error) {
 			return ret_api_input, fmt.Errorf("failed to translate: %s", "key not found")
 		}
 
-		ret_api_input, err = asgi.LegacyTranslationBuildHelper(std_keys, legacy_c_list)
+		ret_api_input, err = asgi.StdCmdInputBuildHelper(std_keys, legacy_c_list)
 
 		if err != nil {
 
@@ -162,7 +162,7 @@ func (asgi API_STD) LegacyInputTranslate(legacy_in string) (API_INPUT, error) {
 			return ret_api_input, fmt.Errorf("failed to translate: %s", "key not found")
 		}
 
-		ret_api_input, err = asgi.LegacyTranslationBuildHelper(std_keys, legacy_c_list)
+		ret_api_input, err = asgi.StdCmdInputBuildHelper(std_keys, legacy_c_list)
 
 		if err != nil {
 
@@ -190,7 +190,7 @@ func (asgi API_STD) LegacyInputTranslate(legacy_in string) (API_INPUT, error) {
 		return ret_api_input, fmt.Errorf("failed to translate: %s", "key not found")
 	}
 
-	ret_api_input, err = asgi.LegacyTranslationBuildHelper(std_keys, legacy_c_list)
+	ret_api_input, err = asgi.StdCmdInputBuildHelper(std_keys, legacy_c_list)
 
 	if err != nil {
 
@@ -200,19 +200,6 @@ func (asgi API_STD) LegacyInputTranslate(legacy_in string) (API_INPUT, error) {
 
 	return ret_api_input, nil
 
-}
-
-func (asgi API_STD) LegacyTranslationBuildHelper(std_keys []string, legacy_c_list []string) (API_INPUT, error) {
-
-	ret_api_std := make(API_INPUT)
-
-	for i := 0; i < len(std_keys); i++ {
-
-		ret_api_std[std_keys[i]] = legacy_c_list[i]
-
-	}
-
-	return ret_api_std, nil
 }
 
 func (asgi API_STD) LegacyOutputTranslate() {

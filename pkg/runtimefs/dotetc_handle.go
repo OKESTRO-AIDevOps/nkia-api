@@ -7,21 +7,25 @@ import (
 	"os/exec"
 )
 
-func LoadAdmOrigin() ([]byte, error) {
+func LoadAdmOrigin() (AppOrigin, error) {
 
-	var ret_byte []byte
+	var ao AppOrigin
 
 	file_byte, err := os.ReadFile(".etc/ADM_origin.json")
 
 	if err != nil {
 
-		return ret_byte, fmt.Errorf("failed to load admin origin: %s", err.Error())
+		return ao, fmt.Errorf("failed to load admin origin: %s", err.Error())
 
 	}
 
-	ret_byte = file_byte
+	err = json.Unmarshal(file_byte, &ao)
 
-	return ret_byte, nil
+	if err != nil {
+		return ao, fmt.Errorf("failed to load admin origin: %s", err.Error())
+	}
+
+	return ao, nil
 
 }
 
@@ -101,21 +105,11 @@ func CreateAdmOrigin() error {
 
 func SetAdminOriginNewNS(ns string, repo_url_in string, reg_url_in string) error {
 
-	var app_origin AppOrigin
-
-	file_content, err := LoadAdmOrigin()
+	app_origin, err := LoadAdmOrigin()
 
 	if err != nil {
 
-		return fmt.Errorf("failed to set new: %s", err.Error())
-
-	}
-
-	err = json.Unmarshal(file_content, &app_origin)
-
-	if err != nil {
-
-		return fmt.Errorf("failed to set new: %s", err.Error())
+		return fmt.Errorf("failed to set new record: %s", err.Error())
 
 	}
 
@@ -127,7 +121,7 @@ func SetAdminOriginNewNS(ns string, repo_url_in string, reg_url_in string) error
 
 	if err != nil {
 
-		return fmt.Errorf("failed to set new: %s", err.Error())
+		return fmt.Errorf("failed to set new record: %s", err.Error())
 	}
 
 	app_origin.RECORDS = SetRecordInfo(app_origin.RECORDS, ns, repo_url_in, reg_url_in)
@@ -136,7 +130,7 @@ func SetAdminOriginNewNS(ns string, repo_url_in string, reg_url_in string) error
 
 	if err != nil {
 
-		return fmt.Errorf("failed to set new: %s", err.Error())
+		return fmt.Errorf("failed to set new record: %s", err.Error())
 	}
 
 	return nil
@@ -357,21 +351,12 @@ func SetRegInfo(regs []RegInfo, addr string, id string, pw string) []RegInfo {
 
 func CheckAppOrigin() (string, error) {
 
-	var app_origin AppOrigin
-
-	file_content, err := LoadAdmOrigin()
+	app_origin, err := LoadAdmOrigin()
 
 	if err != nil {
 
 		return "ERRLOAD", fmt.Errorf("check failed: %s", err.Error())
 
-	}
-
-	err = json.Unmarshal(file_content, &app_origin)
-
-	if err != nil {
-
-		return "ERRJSON", fmt.Errorf("check failed: %s", err.Error())
 	}
 
 	cmd := exec.Command("kubectl", "get", "nodes")

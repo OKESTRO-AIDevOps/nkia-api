@@ -8,105 +8,13 @@ import (
 	"github.com/OKESTRO-AIDevOps/npia-api/pkg/libinterface"
 
 	"os/exec"
-
-	"encoding/json"
 )
-
-func WriteRepoInfo(main_ns string, repoaddr string, repoid string, repopw string) ([]byte, error) {
-
-	var ret_byte []byte
-
-	var app_origin runfs.AppOrigin
-
-	adm_origin_byte, err := runfs.LoadAdmOrigin()
-
-	if err != nil {
-		return ret_byte, fmt.Errorf(": %s", err.Error())
-	}
-
-	err = json.Unmarshal(adm_origin_byte, &app_origin)
-
-	if err != nil {
-		return ret_byte, fmt.Errorf(": %s", err.Error())
-	}
-
-	ns_found, _, rec_regaddr := runfs.GetRecordInfo(app_origin.RECORDS, main_ns)
-
-	if !ns_found {
-		return ret_byte, fmt.Errorf(": %s", "no such namespace")
-	}
-
-	app_origin.RECORDS = runfs.SetRecordInfo(app_origin.RECORDS, main_ns, repoaddr, rec_regaddr)
-
-	app_origin.REPOS = runfs.SetRepoInfo(app_origin.REPOS, repoaddr, repoid, repopw)
-
-	err = runfs.UnloadAdmOrigin(app_origin)
-
-	if err != nil {
-
-		return ret_byte, fmt.Errorf(": %s", err.Error())
-
-	}
-
-	ret_byte = []byte("repo info registered\n")
-
-	return ret_byte, nil
-}
-
-func WriteRegInfo(main_ns string, regaddr string, regid string, regpw string) ([]byte, error) {
-
-	var ret_byte []byte
-
-	var app_origin runfs.AppOrigin
-
-	adm_origin_byte, err := runfs.LoadAdmOrigin()
-
-	if err != nil {
-		return ret_byte, fmt.Errorf(": %s", err.Error())
-	}
-
-	err = json.Unmarshal(adm_origin_byte, &app_origin)
-
-	if err != nil {
-		return ret_byte, fmt.Errorf(": %s", err.Error())
-	}
-
-	ns_found, rec_repoaddr, _ := runfs.GetRecordInfo(app_origin.RECORDS, main_ns)
-
-	if !ns_found {
-		return ret_byte, fmt.Errorf(": %s", "no such namespace")
-	}
-
-	app_origin.RECORDS = runfs.SetRecordInfo(app_origin.RECORDS, main_ns, rec_repoaddr, regaddr)
-
-	app_origin.REGS = runfs.SetRegInfo(app_origin.REGS, regaddr, regid, regpw)
-
-	err = runfs.UnloadAdmOrigin(app_origin)
-
-	if err != nil {
-
-		return ret_byte, fmt.Errorf(": %s", err.Error())
-
-	}
-
-	ret_byte = []byte("reg infor registered\n")
-
-	return ret_byte, nil
-}
 
 func WriteSecret(main_ns string) ([]byte, error) {
 
 	var ret_byte []byte
 
-	var app_origin runfs.AppOrigin
-
-	adm_origin_byte, err := runfs.LoadAdmOrigin()
-
-	if err != nil {
-		return ret_byte, fmt.Errorf(": %s", err.Error())
-	}
-
-	err = json.Unmarshal(adm_origin_byte, &app_origin)
+	app_origin, err := runfs.LoadAdmOrigin()
 
 	if err != nil {
 		return ret_byte, fmt.Errorf(": %s", err.Error())
@@ -210,13 +118,7 @@ func WriteDeployment(main_ns string, repoaddr string, regaddr string) ([]byte, e
 
 	var app_origin runfs.AppOrigin
 
-	adm_origin_byte, err := runfs.LoadAdmOrigin()
-
-	if err != nil {
-		return ret_byte, fmt.Errorf(": %s", err.Error())
-	}
-
-	err = json.Unmarshal(adm_origin_byte, &app_origin)
+	app_origin, err = runfs.LoadAdmOrigin()
 
 	if err != nil {
 		return ret_byte, fmt.Errorf(": %s", err.Error())
@@ -274,15 +176,7 @@ func WriteOperationSource(main_ns string, repoaddr string, regaddr string) ([]by
 
 	}
 
-	var app_origin runfs.AppOrigin
-
-	adm_origin_byte, err := runfs.LoadAdmOrigin()
-
-	if err != nil {
-		return ret_byte, fmt.Errorf(": %s", err.Error())
-	}
-
-	err = json.Unmarshal(adm_origin_byte, &app_origin)
+	app_origin, err := runfs.LoadAdmOrigin()
 
 	if err != nil {
 		return ret_byte, fmt.Errorf(": %s", err.Error())

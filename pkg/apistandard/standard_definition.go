@@ -16,13 +16,36 @@ type API_STD map[string][]string
 
 var API_DEFINITION string = "" +
 	//            id          :       keys
+	//	"ADMIN-ADMRMTCHK          :id, hostaddr, hostport, usernm, userpw, machinerole, acd     " + "\n" +
+	//	"ADMIN-ADMRMTLDHA         :id, hostaddr, hostport, usernm, userpw, remoteip             " + "\n" +
+	//	"ADMIN-ADMRMTLDMV         :id, hostaddr, hostport, usernm, userpw                       " + "\n" +
+	//	"ADMIN-ADMRMTMSR          :id, hostaddr, hostport, usernm, userpw, localip, token       " + "\n" +
+	//	"ADMIN-ADMRMTLDWRK        :id, hostaddr, hostport, usernm, userpw, localip, token       " + "\n" +
+	//	"ADMIN-ADMRMTWRK          :id, hostaddr, hostport, usernm, userpw, localip, token       " + "\n" +
+	//	"ADMIN-ADMRMTSTR          :id, hostaddr, hostport, usernm, userpw, localip, token       " + "\n" +
+	//	"ADMIN-ADMRMTLOG          :id, hostaddr, hostport, usernm, userpw                       " + "\n" +
+	//	"ADMIN-ADMRMTSTATUS       :id, hostaddr, hostport, usernm, userpw                       " + "\n" +
+	//	"ADMIN-LEAD               :id, token, targetip                                          " + "\n" +
+	//	"ADMIN-MSR                :id, token, targetip                                          " + "\n" +
+	//	"ADMIN-LDVOL              :id, token, targetip                                          " + "\n" +
+	//	"ADMIN-WRK                :id, token, targetip                                          " + "\n" +
+	//	"ADMIN-STR                :id, token, targetip                                          " + "\n" +
+	//	"ADMIN-LOG                :id                                                           " + "\n" +
+	//	"ADMIN-STATUS             :id, token, targetip                                          " + "\n" +
+	//	"ADMIN-UP                 :id, token                                                    " + "\n" +
+	//	"ADMIN-DOWN               :id, token                                                    " + "\n" +
+	//	"DELND                    :id                                                           " + "\n" +
+	"ADMIN-INIT               :id                                                           " + "\n" +
+	"ADMIN-INITLOG            :id                                                           " + "\n" +
+	"SETTING-CRTNS            :id, ns, repoaddr, regaddr                                    " + "\n" +
+	"SETTING-SETREPO          :id, ns, repoaddr, repoid, repopw                             " + "\n" +
+	"SETTING-SETREG           :id, ns, regaddr, regid, regpw                                " + "\n" +
+	// "SETTING-CRTNSVOL          :id, ns, volserver                                            " + "\n" +
+	// "SETTING-CRTVOL            :id, ns, volserver                                            " + "\n" +
+	"SETTING-CRTMON           :id                                                           " + "\n" +
+	//  "SETTING-DELNS            :id, ns                                                       " + "\n" +
 	//  "SUBMIT                   :id                                                           " + "\n" +
 	//	"CALLME                   :id                                                           " + "\n" +
-	"SETTING-CRTNS            :id, ns                                                       " + "\n" +
-	// "SETTING-CRTNSVOL         :id, ns, volserver                                            " + "\n" +
-	// "SETTING-CRTVOL           :id, ns, volserver                                            " + "\n" +
-	"SETTING-CRTMON           :id, ns                                                       " + "\n" +
-	// "SETTING-DELNS            :id, ns                                                       " + "\n" +
 	//  "GITLOG                   :id, ns, repoaddr                                             " + "\n" +
 	//	"PIPEHIST                 :id, ns                                                       " + "\n" +
 	//	"PIPE                     :id, ns, repoaddr, regaddr                                    " + "\n" +
@@ -64,15 +87,13 @@ var API_DEFINITION string = "" +
 	"RESOURCE-NNETR           :id                                                           " + "\n" +
 	"RESOURCE-NNETT           :id                                                           " + "\n" +
 	"RESOURCE-NDISKWT         :id                                                           " + "\n" +
-	"APPLY-SETREPO            :id, ns, repoaddr, repoid, repopw                             " + "\n" +
-	"APPLY-SETREG             :id, ns, regaddr, regid, regpw                                " + "\n" +
 	"APPLY-REGSEC             :id, ns                                                       " + "\n" +
 	"APPLY-DIST               :id, ns, repoaddr, regaddr                                    " + "\n" +
 	"APPLY-CRTOPSSRC          :id, ns, repoaddr, regaddr                                    " + "\n" +
 	"APPLY-RESTART            :id, ns, resource, resourcenm                                 " + "\n" +
 	"APPLY-ROLLBACK           :id, ns, resource, resourcenm                                 " + "\n" +
 	"APPLY-KILL               :id, ns, resource, resourcenm                                 " + "\n" +
-	"APPLY-NETRESH            :id,                                                          " + "\n" +
+	"APPLY-NETRESH            :id                                                           " + "\n" +
 	"APPLY-HPA                :id, ns, resource, resourcenm                                 " + "\n" +
 	"APPLY-HPAUN              :id, ns, resource, resourcenm                                 " + "\n" +
 	"APPLY-QOS                :id, ns, resource, resourcenm                                 " + "\n" +
@@ -80,27 +101,8 @@ var API_DEFINITION string = "" +
 	"APPLY-INGR               :id, ns, hostnm, svcnm                                        " + "\n" +
 	"APPLY-INGRUN             :id, ns, hostnm, svcnm                                        " + "\n" +
 	"APPLY-NDPORT             :id, ns, svcnm                                                " + "\n" +
-	"APPLY-NDPORTUN           :id, ns, svcnm                                                " + "\n" +
-	//	"ADMIN-ADMRMTCHK          :id, hostaddr, hostport, usernm, userpw, machinerole, acd     " + "\n" +
-	//	"ADMIN-ADMRMTLDHA         :id, hostaddr, hostport, usernm, userpw, remoteip             " + "\n" +
-	//	"ADMIN-ADMRMTLDMV         :id, hostaddr, hostport, usernm, userpw                       " + "\n" +
-	//	"ADMIN-ADMRMTMSR          :id, hostaddr, hostport, usernm, userpw, localip, token       " + "\n" +
-	//	"ADMIN-ADMRMTLDWRK        :id, hostaddr, hostport, usernm, userpw, localip, token       " + "\n" +
-	//	"ADMIN-ADMRMTWRK          :id, hostaddr, hostport, usernm, userpw, localip, token       " + "\n" +
-	//	"ADMIN-ADMRMTSTR          :id, hostaddr, hostport, usernm, userpw, localip, token       " + "\n" +
-	//	"ADMIN-ADMRMTLOG          :id, hostaddr, hostport, usernm, userpw                       " + "\n" +
-	//	"ADMIN-ADMRMTSTATUS       :id, hostaddr, hostport, usernm, userpw                       " + "\n" +
-	//	"ADMIN-LEAD               :id, token, targetip                                          " + "\n" +
-	//	"ADMIN-MSR                :id, token, targetip                                          " + "\n" +
-	//	"ADMIN-LDVOL              :id, token, targetip                                          " + "\n" +
-	//	"ADMIN-WRK                :id, token, targetip                                          " + "\n" +
-	//	"ADMIN-STR                :id, token, targetip                                          " + "\n" +
-	//	"ADMIN-LOG                :id                                                           " + "\n" +
-	//	"ADMIN-STATUS             :id, token, targetip                                          " + "\n" +
-	//	"ADMIN-UP                 :id, token                                                    " + "\n" +
-	//	"ADMIN-DOWN               :id, token                                                    " + "\n" +
-	//	"DELND                    :id                                                           " + "\n" +
-	"EXIT                     :id                                                           "
+	"APPLY-NDPORTUN           :id, ns, svcnm                                                "
+	//"EXIT                     :id                                                           "
 
 func _CONSTRUCT_API_INPUT() API_STD {
 

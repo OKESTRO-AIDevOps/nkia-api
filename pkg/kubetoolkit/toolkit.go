@@ -1,7 +1,6 @@
 package kubetoolkit
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
 	"os/exec"
@@ -23,11 +22,7 @@ func ToolkitBuildImagesStart(main_ns string, repoaddr string, regaddr string) {
 
 	LIBIF_BIN_DOCKER_COMPOSE, err := libif.GetLibComponentAddress("bin", "docker-compose")
 
-	var app_origin runfs.AppOrigin
-
-	adm_origin_byte, err := runfs.LoadAdmOrigin()
-
-	err = json.Unmarshal(adm_origin_byte, &app_origin)
+	app_origin, err := runfs.LoadAdmOrigin()
 
 	ns_found, _, _ := runfs.GetRecordInfo(app_origin.RECORDS, main_ns)
 

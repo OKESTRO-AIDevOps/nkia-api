@@ -2,6 +2,7 @@ package apistandard
 
 import (
 	"fmt"
+	"strings"
 
 	pkgutils "github.com/OKESTRO-AIDevOps/npia-api/pkg/utils"
 )
@@ -46,6 +47,44 @@ func (asgi API_STD) Verify(verifiable API_INPUT) error {
 
 	return nil
 
+}
+
+func (asgi API_STD) StdCmdInputBuildFromLinearInstruction(linear_string string) (API_INPUT, error) {
+
+	var ret_api_std API_INPUT
+
+	linear_split := strings.SplitN(linear_string, ":", 2)
+
+	linear_key := linear_split[0]
+
+	std_keys, okay := asgi[linear_key]
+
+	if !okay {
+		return ret_api_std, fmt.Errorf("failed to interpret linear instruction: %s", "matching key not found")
+	}
+
+	linear_value_split := strings.Split(linear_split[1], ",")
+
+	ret_api_std, err := asgi.StdCmdInputBuildHelper(std_keys, linear_value_split)
+
+	if err != nil {
+		return ret_api_std, fmt.Errorf("failed to interpret linear instruction: %s", err.Error())
+	}
+
+	return ret_api_std, nil
+}
+
+func (asgi API_STD) StdCmdInputBuildHelper(std_keys []string, v_list []string) (API_INPUT, error) {
+
+	ret_api_std := make(API_INPUT)
+
+	for i := 0; i < len(std_keys); i++ {
+
+		ret_api_std[std_keys[i]] = v_list[i]
+
+	}
+
+	return ret_api_std, nil
 }
 
 func (asgi API_STD) PrintPrettyDefinition() {
