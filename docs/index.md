@@ -1,5 +1,17 @@
 # npia-api
 
+- [Implemented Use Cases](#implemented-use-cases)
+- [Description](#description)
+- [Project Overview](#project-overview)
+- [Details and Examples](#details-and-examples)
+
+
+## Implemented Use Cases
+
+1. [Secured Server for both http request and web socket request (hub)](https://github.com/OKESTRO-AIDevOps/npia-server)
+
+2. [Http client in Golang](https://github.com/OKESTRO-AIDevOps/npia-go-client)
+
 
 ## Description
 
@@ -65,7 +77,8 @@ Let me guide you through the each entrypoint briefly.
 - lib\
   Stores the third-party libraries which consist mainly of executables (not shared libraries for now) and scripts.\
     This directory is available at this repository's Release list and gets downloaded in runtime so that the user\
-    doesn't have to do it by him or herself.\
+    doesn't have to do it by him or herself.
+
 
 - [lib/bin](#lib-bin)\
   Stores the third-party executables.\
@@ -128,7 +141,7 @@ Let me guide you through the each entrypoint briefly.
 - var\
   Has various this and that artifacts when developing the apis
 
-## Details & Examples
+## Details and Examples
 
 This section dives into the details of each entry point.
 
@@ -312,7 +325,7 @@ you could just run it yourself.
   Has all functions to create, modify, and delete the operation source file that is used when\
   deploying the application and managing application lifecycle including qos and auto-scaling 
 
-- dotusr_source.go
+- dotusr_source.go\
   Based on the operation source file, creates applicable manifest files whose tasks include\
   application and revocation of auto-scaling, qos, ingress, nodeport so and so.
 
@@ -326,11 +339,7 @@ you could just run it yourself.
 
 > Examples
 
-## Implemented Use Cases
 
-1. [Server that is accessible over the internet both through http request and web socket request (hub)](https://github.com/OKESTRO-AIDevOps/npia-server)
-
-2. [Http client in Golang](https://github.com/OKESTRO-AIDevOps/npia-go-client)
 
 
 [Logs](logs.md)
