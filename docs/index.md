@@ -3,7 +3,7 @@
 - [Implemented Use Cases](#implemented-use-cases)
 - [Description](#description)
 - [Project Overview](#project-overview)
-- [Details and Examples](#details-and-examples)
+- [Details](#details)
 
 
 ## Implemented Use Cases
@@ -141,7 +141,7 @@ Let me guide you through the each entrypoint briefly.
 - var\
   Has various this and that artifacts when developing the apis
 
-## Details and Examples
+## Details
 
 This section dives into the details of each entry point.
 
@@ -185,7 +185,7 @@ you could just run it yourself.
   Is a Bash shell script that contains command lines for installing and setting Prometheus server onto\
   the target cluster specified by kubeconfig at times of execution and runs in background as a demon to\ maintain the connection to a port-forwarded Prometheus server endpoint.
 
-> Examples
+
 
 ### pkg apistandard
 
@@ -212,8 +212,6 @@ you could just run it yourself.
   Commented out entries are to be implemented in future versions
   
 
-> Examples
-
 
 ### pkg builtinresource
 
@@ -221,7 +219,6 @@ you could just run it yourself.
   Self explanatory. It defines the Kubernetes manifest resource such as Deployment, Service, Ingress,\
   NodePort, HorizontalPodAutoscaler that are used across the whole project, but mainly by runtimefs.
 
-> Examples
 
 ### pkg kubebase
 
@@ -239,7 +236,6 @@ you could just run it yourself.
   The functions include setting a namespace (yes, this one directly applied to the cluster I know),\
   and setting repository and registry information in the runtimefs and creating monitoring (Prometheus server)\ endpoint.     
 
-> Examples
 
 ### pkg kuberead
 
@@ -251,7 +247,7 @@ you could just run it yourself.
   enabled work in conjunction with Prometheus server endpoint, such container or node network received\
   bytes over time or something equivalent to that.  
 
-> Examples
+
 
 ### pkg kubetoolkit
 
@@ -262,7 +258,7 @@ you could just run it yourself.
   time compared to other tasks handled by npia-api. Therefore, it is also recommended to run the \
   build function in a Goroutine, and is implemented so in this project.
 
-> Examples
+
   
 
 ### pkg kubewrite
@@ -288,7 +284,7 @@ you could just run it yourself.
   just a mapped container for library directory structure. 
   
 
-> Examples
+
 
 ### pkg promquery
 
@@ -305,7 +301,7 @@ you could just run it yourself.
   namespace formate is valid.
 
 
-> Examples
+
 
 ### pkg runtimefs
 
@@ -329,7 +325,7 @@ you could just run it yourself.
   Based on the operation source file, creates applicable manifest files whose tasks include\
   application and revocation of auto-scaling, qos, ingress, nodeport so and so.
 
-> Examples
+
 
 ### pkg utils
 
@@ -337,9 +333,3 @@ you could just run it yourself.
   Are basic utilities that Golang itself refuses to offer (not that I don't like it though!	⊙ω⊙ ).
   
 
-> Examples
-
-
-
-
-[Logs](logs.md)
