@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	pkgutils "github.com/OKESTRO-AIDevOps/npia-api/pkg/utils"
+	pkgutils "github.com/OKESTRO-AIDevOps/nkia/pkg/utils"
 )
 
 func (asgi API_STD) Verify(verifiable API_INPUT) error {

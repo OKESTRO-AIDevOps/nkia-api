@@ -3,10 +3,10 @@ package apistandard
 import (
 	"fmt"
 
-	"github.com/OKESTRO-AIDevOps/npia-api/pkg/kubebase"
-	"github.com/OKESTRO-AIDevOps/npia-api/pkg/kuberead"
-	"github.com/OKESTRO-AIDevOps/npia-api/pkg/kubetoolkit"
-	"github.com/OKESTRO-AIDevOps/npia-api/pkg/kubewrite"
+	"github.com/OKESTRO-AIDevOps/nkia/pkg/kubebase"
+	"github.com/OKESTRO-AIDevOps/nkia/pkg/kuberead"
+	"github.com/OKESTRO-AIDevOps/nkia/pkg/kubetoolkit"
+	"github.com/OKESTRO-AIDevOps/nkia/pkg/kubewrite"
 )
 
 func (asgi API_STD) Run(std_cmd API_INPUT) (API_OUTPUT, error) {

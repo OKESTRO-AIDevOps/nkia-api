@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/OKESTRO-AIDevOps/npia-api/pkg/builtinresource"
+	"github.com/OKESTRO-AIDevOps/nkia/pkg/builtinresource"
 )
 
 func Test_pkg() error {

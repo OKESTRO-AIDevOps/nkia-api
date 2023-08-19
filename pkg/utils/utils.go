@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/OKESTRO-AIDevOps/npia-api/pkg/promquery"
+	"github.com/OKESTRO-AIDevOps/nkia/pkg/promquery"
 
 	agph "github.com/guptarohit/asciigraph"
 )

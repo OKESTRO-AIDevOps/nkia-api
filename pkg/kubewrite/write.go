@@ -3,9 +3,9 @@ package kubewrite
 import (
 	"fmt"
 
-	runfs "github.com/OKESTRO-AIDevOps/npia-api/pkg/runtimefs"
+	runfs "github.com/OKESTRO-AIDevOps/nkia/pkg/runtimefs"
 
-	"github.com/OKESTRO-AIDevOps/npia-api/pkg/libinterface"
+	"github.com/OKESTRO-AIDevOps/nkia/pkg/libinterface"
 
 	"os/exec"
 )
