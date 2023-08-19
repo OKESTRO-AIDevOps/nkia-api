@@ -6,8 +6,8 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/OKESTRO-AIDevOps/npia-api/pkg/libinterface"
-	runfs "github.com/OKESTRO-AIDevOps/npia-api/pkg/runtimefs"
+	"github.com/OKESTRO-AIDevOps/nkia/pkg/libinterface"
+	runfs "github.com/OKESTRO-AIDevOps/nkia/pkg/runtimefs"
 )
 
 func ToolkitBuildImagesStart(main_ns string, repoaddr string, regaddr string) {

@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	bsrc "github.com/OKESTRO-AIDevOps/npia-api/pkg/builtinresource"
+	bsrc "github.com/OKESTRO-AIDevOps/nkia/pkg/builtinresource"
 	goya "github.com/goccy/go-yaml"
 )
 

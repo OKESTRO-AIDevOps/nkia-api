@@ -7,9 +7,9 @@ import (
 	"os/exec"
 	"strings"
 
-	. "github.com/OKESTRO-AIDevOps/npia-api/pkg/apistandard"
+	. "github.com/OKESTRO-AIDevOps/nkia/pkg/apistandard"
 
-	pkgutils "github.com/OKESTRO-AIDevOps/npia-api/pkg/utils"
+	pkgutils "github.com/OKESTRO-AIDevOps/nkia/pkg/utils"
 
 	goya "github.com/goccy/go-yaml"
 
@@ -18,7 +18,7 @@ import (
 	"math/rand"
 	"time"
 
-	bsrc "github.com/OKESTRO-AIDevOps/npia-api/pkg/builtinresource"
+	bsrc "github.com/OKESTRO-AIDevOps/nkia/pkg/builtinresource"
 	//"github.com/fatih/color"
 )
 
