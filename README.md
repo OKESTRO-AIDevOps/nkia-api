@@ -1,10 +1,5 @@
-# NPIA-API
-
-## Officially: eNabling Product Integration Architecture
-
-## Unofficially: No Pain In the A**
-
+# nkia-api
 
 ## Documentation
 
-Refer to [/docs](https://okestro-aidevops.github.io/npia-api/) 
+Refer to [/docs](https://okestro-aidevops.github.io/nkia-api/) 
